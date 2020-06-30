@@ -42,6 +42,8 @@ int main(){
 
     bool setIntersectionPassed = testSetIntersection();
 
+    bool setStringSpecPassed = testStringSpecialisation();
+
     bool addPassed = testAdd();
 
     bool simplifyPassed = testSimplify();

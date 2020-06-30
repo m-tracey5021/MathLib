@@ -6,5 +6,7 @@ bool testSetUnion();
 
 bool testSetIntersection();
 
+bool testStringSpecialisation();
+
 
 

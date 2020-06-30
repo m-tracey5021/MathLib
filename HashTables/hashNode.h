@@ -13,7 +13,7 @@ class HashNode{
             next = nullptr;
         }
 
-        int getVal(){return value;}
+        t getVal(){return value;}
         HashNode* getNext(){return next;}
         void setNext(HashNode* node){next = node;}
 

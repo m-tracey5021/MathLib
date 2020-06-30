@@ -66,3 +66,21 @@ bool testSetIntersection(){
     }
     
 }
+
+bool testStringSpecialisation(){
+    std::string strings1[] = {"hippos", "are", "often", "hungry"};
+    std::string strings2[] = {"giraffes", "tell", "lies", "often"};
+
+    Set<std::string> set1(8, 4, strings1);
+    Set<std::string> set2(8, 4, strings2);
+
+    std::string setStr1 = set1.toString();
+    std::string setStr2 = set2.toString();
+
+    if (setStr1 == "| - hippos - hungry - || - are - || - || - || - || - || - || - often - |" & 
+        setStr2 == "| - || - || - || - || - tell - lies - || - || - || - giraffes - often - |"){
+        return true;
+    }else{
+        return false;
+    }
+}
