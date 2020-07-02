@@ -84,3 +84,20 @@ bool testStringSpecialisation(){
         return false;
     }
 }
+
+bool testSetEquality(){
+    std::string strings1[] = {"hippos", "are", "often", "hungry"};
+    HashSet<std::string> set1(8, 4, strings1);
+    HashSet<std::string> set2(8, 4, strings1);
+
+    int toHash1[] = {1, 39, 23, 33, 5};
+    int toHash2[] = {1, 39, 41, 6, 70};
+    HashSet<int> set3(10, 5, toHash1);
+    HashSet<int> set4(10, 5, toHash2);
+
+    if (set1 == set2 & set3 == set3 & set3 != set4){
+        return true;
+    }else{
+        return false;
+    }
+}

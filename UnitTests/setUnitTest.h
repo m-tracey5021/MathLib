@@ -8,5 +8,5 @@ bool testSetIntersection();
 
 bool testStringSpecialisation();
 
-
+bool testSetEquality();
 

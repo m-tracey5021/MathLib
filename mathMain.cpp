@@ -44,6 +44,8 @@ int main(){
 
     bool setStringSpecPassed = testStringSpecialisation();
 
+    bool setEqualityPassed = testSetEquality();
+
     bool addPassed = testAdd();
 
     bool simplifyPassed = testSimplify();

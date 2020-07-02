@@ -1,6 +1,7 @@
 #pragma once
 
 #include "..\HashTables\hashSet.h"
+#include "..\basicArithmeticFunctions.h"
 
 template<class t>
 
@@ -14,6 +15,14 @@ class Set : public HashSet<t>{
         int getSize(){return this->size;}
         int getNumberOfNodes(){return this->numberOfNodes;}
         HashNode<t>** getTable(){return this->table;}
+
+        friend bool operator == (const Set<t>& set1, const Set<t>& set2){
+
+        }
+
+        friend bool operator != (const Set<t>& set1, const Set<t>& set2){
+            
+        }
 
         Set setDifference(Set& other){
             Set<t> setDiff(this->size);
@@ -72,6 +81,15 @@ class Set : public HashSet<t>{
                 }
             }
             return setIntersection;
+        }
+
+        Set powerSet(){
+            int size = power(2.0, this->numberOfNodes);
+            bool done = false;
+
+            while (!done){
+                
+            }
         }
 
 };
