@@ -21,10 +21,10 @@ class BinaryTree {
 
         void initVariableCount();
         void simplifyEquation(char term);
+        void isolateNode(BinaryNode* targetNode, char side);
         bool variableIsIsolated();
-    
-        
 
+    
         BinaryNode* removeMainFunctionLeft();
         BinaryNode* removeMainFunctionRight();
         void insertMainFunctionLeft(Operator op, StaticOperand operand);

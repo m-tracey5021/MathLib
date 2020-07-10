@@ -1,0 +1,20 @@
+ToDo Short-term:
+
+	
+	- write unit tests for fraction arithmetic
+	- write function to convert to fraction from decimal, integer etc
+	- figure out how to restrict possible types for Set class
+
+Goals Long-term:
+
+	
+	
+	
+Done:
+
+	
+	
+	
+	
+	
+	

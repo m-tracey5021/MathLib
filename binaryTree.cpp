@@ -22,6 +22,29 @@ void BinaryTree::simplifyEquation(char term){
     }
 }
 
+void BinaryTree::isolateNode(BinaryNode* targetNode, char side){
+    BinaryNode* targetParent = targetNode->getParentNode();
+    BinaryNode* targetCompanion;
+
+    if (targetParent->getLeftNode() == targetNode){
+        targetCompanion = targetParent->getRightNode();
+    }else if (targetParent->getRightNode() == targetNode){
+        targetCompanion = targetParent->getLeftNode();
+    }else{
+        // throw error
+    }
+
+    BinaryNode* newTargetParent = targetParent->getParentNode();
+    BinaryNode* oldRoot;
+    if (side =='l'){
+        oldRoot = rootNode->getRightNode();
+    }else if (side == 'r'){
+        oldRoot = rootNode->getLeftNode();
+    }else{
+        // throw error
+    }
+}
+
 bool BinaryTree::variableIsIsolated(){
     if (rootNode->getLeftNode()->isEmptyNode() & 
         rootNode->getLeftNode()->getElement()->getElementType() == "operand"){

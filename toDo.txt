@@ -1,0 +1,15 @@
+Short term:
+
+    - for binnaryFunctions:
+        - add
+        - subtract
+        - half adder
+        - full adder
+        - convert to decimal
+        - convert to binary
+
+Long term:
+
+
+
+Done:
