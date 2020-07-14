@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Trees\binaryTree.h"
-#include "Trees\operatorType.h"
+#include "Trees\EqTrees\eqTree.h"
+#include "Trees\EqTrees\operatorType.h"
 #include <string>
 
-BinaryTree createTreeFromEquation(char* eq, int size);
+EqTree createTreeFromEquation(char* eq, int size);
 
 void printEqTree(BinaryNode root);
 

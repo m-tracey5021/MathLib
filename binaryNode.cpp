@@ -1,6 +1,6 @@
 #include "Trees\binaryNode.h"
-#include "Trees\operator.h"
-#include "Trees\staticOperand.h"
+#include "Trees\EqTrees\operator.h"
+#include "Trees\EqTrees\staticOperand.h"
 #include "util.h"
 #include <cstring>
 #include <iostream>
@@ -52,6 +52,7 @@ bool BinaryNode::isEmptyNode(){
     }
 }
 
+/*
 void BinaryNode::countVariables(int count){
     if (element->isVariable()){
         count ++;
@@ -64,6 +65,7 @@ void BinaryNode::countVariables(int count){
     }
     return;
 }
+*/
 
 int BinaryNode::buildString(std::string& str, int index){
     int thisLength = 0;
@@ -123,6 +125,73 @@ void BinaryNode::splitEquation(char* eq, int start, int end){
         //StaticOperand* operand = new StaticOperand(parseForFirstInt(eq, start, end), "operand");
         //element = operand;
         element = parseForFirstOperand(eq, start, end);
+        return;
+    }
+}
+
+void BinaryNode::calculateResultantNode(Operator op, StaticOperand operand){
+    TreeElement* nodeElement = this->getElement();
+
+    bool removed = false;
+    // check if operator is opposite
+    if (nodeElement->getType() != nullptr){
+        if (operatorTypeCancels(*nodeElement->getType(), *op.getType())){
+            BinaryNode* newParent = this->getParentNode();
+            BinaryNode* newChild = nullptr;
+
+            // find child which is same as the input operand
+
+            if (left->getElement()->getValue() != nullptr){
+                if (*left->getElement()->getValue() == *operand.getValue()){
+                    newChild = right;
+                }
+            }
+
+            if (right->getElement()->getValue() != nullptr){
+                if (*right->getElement()->getValue() == *operand.getValue()){
+                    newChild = left;
+                }
+            }
+
+            if (newChild != nullptr){
+                if (newParent->getLeftNode() == this){
+                    newParent->setLeftNode(newChild);
+                }else if (newParent->getRightNode() == this){
+                    newParent->setRightNode(newChild);
+                }else{
+                    // throw error
+                }
+                newChild->setParentNode(newParent);
+                removed = true;
+            }
+        }
+    }
+
+
+    StaticOperand* result;
+    if (nodeElement->getValue() != nullptr){
+        if (*op.getType() == OperatorType::Addition){
+            result = new StaticOperand(*nodeElement->getValue() + *operand.getValue(), "operand");
+        }else if (*op.getType() == OperatorType::Subtraction){
+            result = new StaticOperand(*nodeElement->getValue() - *operand.getValue(), "operand");
+        }else if (*op.getType() == OperatorType::Multiplication){
+            result = new StaticOperand(*nodeElement->getValue() * *operand.getValue(), "operand");
+        }else if (*op.getType() == OperatorType::Division){
+            result = new StaticOperand(*nodeElement->getValue() / *operand.getValue(), "operand");
+        }else{
+            // throw error
+        }
+        this->setElement(result);
+    }
+    
+
+    if (left != nullptr){
+        left->calculateResultantNode(op, operand);
+    }
+    if (right != nullptr){
+        right->calculateResultantNode(op, operand);
+    }
+    if (right == nullptr & left == nullptr){
         return;
     }
 }

@@ -1,15 +1,15 @@
-#include "Trees\binaryTree.h"
+#include "Trees\EqTrees\eqTree.h"
 #include "algabraicFunctions.h"
 
 bool testTreeStructure(){
     char eq1[] = "(509 + 4) / 2 - 3 = 12 + x";
     int size1 = sizeof(eq1) / sizeof(eq1[0]);
-    BinaryTree tree1 = createTreeFromEquation(eq1, size1);
+    EqTree tree1 = createTreeFromEquation(eq1, size1);
     std::string treeStr1 = tree1.toString();
 
     char eq2[] = "((5 + 3) / 6) = 10";
     int size2 = sizeof(eq2) / sizeof(eq2[0]);
-    BinaryTree tree2 = createTreeFromEquation(eq2, size2);
+    EqTree tree2 = createTreeFromEquation(eq2, size2);
     std::string treeStr2 = tree2.toString();
 
     std::string expected1 = "(509+4)/2-3=12+x";
@@ -52,5 +52,71 @@ bool testTreeStructure(){
         return false;
     }
 
+
+}
+
+bool testTreeInsertion(){
+    char eq1[] = "x / 3 + 6 = 5";
+    int size1 = sizeof(eq1) / sizeof(eq1[0]);
+    EqTree tree1 = createTreeFromEquation(eq1, size1);
+    std::string treeStr1 = tree1.toString();
+
+    char eq2[] = "x + 8 / 2 = 10";
+    int size2 = sizeof(eq2) / sizeof(eq2[0]);
+    EqTree tree2 = createTreeFromEquation(eq2, size2);
+    std::string treeStr2 = tree2.toString();
+
+    Operator* op1 = new Operator(OperatorType::Multiplication, false, "operator");
+    Operator* op2 = new Operator(OperatorType::Division, false, "operator");
+    StaticOperand* operand1 = new StaticOperand(3, "operand");
+    StaticOperand* operand2 = new StaticOperand(2, "operand");
+
+    tree1.insertFunctionRight(op1, operand1);
+    treeStr1 = tree1.toString();
+
+    tree2.insertFunctionRight(op2, operand2);
+    treeStr2 = tree2.toString();
+
+    std::string expected1 = "x/3+6=5*3";
+    std::string expected2 = "x+8/2=10/2";
+
+    if (treeStr1 == expected1 & treeStr2 == expected2){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+bool testTreeFunctionApplication(){
+    char eq1[] = "x / 3 + 6 = 5";
+    int size1 = sizeof(eq1) / sizeof(eq1[0]);
+    EqTree tree1 = createTreeFromEquation(eq1, size1);
+    std::string treeStr1 = tree1.toString();
+
+    char eq2[] = "x + 8 / 2 = 10";
+    int size2 = sizeof(eq2) / sizeof(eq2[0]);
+    EqTree tree2 = createTreeFromEquation(eq2, size2);
+    std::string treeStr2 = tree2.toString();
+
+    Operator* op1 = new Operator(OperatorType::Multiplication, false, "operator");
+    Operator* op2 = new Operator(OperatorType::Division, false, "operator");
+
+    StaticOperand* operand1 = new StaticOperand(3, "operand");
+    StaticOperand* operand2 = new StaticOperand(2, "operand");
+
+    tree1.applyFunctionLeft(*op1, *operand1);
+    treeStr1 = tree1.toString();
+
+    tree2.applyFunctionLeft(*op2, *operand2);
+    treeStr2 = tree2.toString();
+
+    std::string expected1 = "x+18=5";
+    std::string expected2 = "x+4/1=10";
+
+    if (treeStr1 == expected1 & treeStr2 == expected2){
+        return true;
+    }else{
+        return false;
+    }
 
 }

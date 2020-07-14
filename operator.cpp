@@ -1,4 +1,4 @@
-#include "Trees\operator.h"
+#include "Trees\EqTrees\operator.h"
 #include <string>
 
 Operator::Operator(){}
@@ -8,16 +8,20 @@ Operator::Operator(OperatorType inputType, bool paren, std::string inputElement)
     parenthesised = paren;
 }
 
-OperatorType Operator::getType(){
-    return type;
+int* Operator::getValue(){
+    return nullptr;
+}
+
+char* Operator::getVariable(){
+    return nullptr;
+}
+
+OperatorType* Operator::getType(){
+    return &type;
 }
 
 bool Operator::isParenthesised(){
     return parenthesised;
-}
-
-bool Operator::isVariable(){
-    return false;
 }
 
 std::string Operator::toString(){

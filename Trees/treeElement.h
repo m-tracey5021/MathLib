@@ -1,5 +1,7 @@
 #pragma once
 
+
+#include "EqTrees\operatorType.h"
 #include <string>
 
 class TreeElement {
@@ -9,8 +11,10 @@ class TreeElement {
         TreeElement();
         TreeElement(std::string inputElement);
         std::string getElementType();
+        virtual int* getValue();
+        virtual char* getVariable();
+        virtual OperatorType* getType();
         virtual bool isParenthesised();
-        virtual bool isVariable();
         virtual std::string toString();
         
 };

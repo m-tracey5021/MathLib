@@ -36,6 +36,10 @@ int main(){
 
     bool treeStructurePassed = testTreeStructure();
 
+    bool treeFunctionApplicationPassed = testTreeFunctionApplication();
+
+    bool treeInsertionPassed = testTreeInsertion();
+
     bool setDiffPassed = testSetDifference();
 
     bool setUnionPassed = testSetUnion();

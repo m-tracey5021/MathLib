@@ -10,11 +10,19 @@ std::string TreeElement::getElementType(){
      return elementType;
 }
 
-bool TreeElement::isParenthesised(){
-     return false;
+int* TreeElement::getValue(){
+    return nullptr;
 }
 
-bool TreeElement::isVariable(){
+char* TreeElement::getVariable(){
+    return nullptr;
+}
+
+OperatorType* TreeElement::getType(){
+    return nullptr;
+}
+
+bool TreeElement::isParenthesised(){
      return false;
 }
 

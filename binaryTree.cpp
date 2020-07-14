@@ -1,6 +1,4 @@
 #include "Trees\binaryTree.h"
-#include "Trees\operator.h"
-#include "Trees\staticOperand.h"
 #include <iostream>
 
 BinaryTree::BinaryTree(){}
@@ -11,48 +9,43 @@ BinaryNode* BinaryTree::getRoot(){
     return rootNode;
 }
 
-void BinaryTree::initVariableCount(){
-    variableCount = 0;
-    rootNode->countVariables(variableCount);
+void removeNode(BinaryNode* targetNode){
+    //make sure balance is maintained somehow
 }
 
-void BinaryTree::simplifyEquation(char term){
-    while (!variableIsIsolated()){
-
-    }
+void insertNode(BinaryNode* targetNode){
+   // traverse tree to find node without two children, and add it as a new child 
 }
 
-void BinaryTree::isolateNode(BinaryNode* targetNode, char side){
-    BinaryNode* targetParent = targetNode->getParentNode();
-    BinaryNode* targetCompanion;
-
-    if (targetParent->getLeftNode() == targetNode){
-        targetCompanion = targetParent->getRightNode();
-    }else if (targetParent->getRightNode() == targetNode){
-        targetCompanion = targetParent->getLeftNode();
-    }else{
-        // throw error
+char BinaryTree::findBranch(BinaryNode* targetNode){
+    BinaryNode* tmpNode = targetNode;
+    char side;
+    bool done = false;
+    while (done){
+        if (tmpNode->getParentNode() != rootNode){
+            tmpNode = tmpNode->getParentNode();
+        }else if (tmpNode->getParentNode() == rootNode){
+            if (rootNode->getLeftNode() == tmpNode){
+                side = 'l';
+                return side;
+            }else if (rootNode->getRightNode() == tmpNode){
+                side = 'r';
+                return side;
+            }else{
+                // throw error
+            }
+        }else if (tmpNode->getParentNode() == nullptr){
+            // will enter infinite loop here if node not part of a tree
+            side = 'n';
+            return side;
+        }else{
+            // throw error, something real fucked up happened
+        }
     }
-
-    BinaryNode* newTargetParent = targetParent->getParentNode();
-    BinaryNode* oldRoot;
-    if (side =='l'){
-        oldRoot = rootNode->getRightNode();
-    }else if (side == 'r'){
-        oldRoot = rootNode->getLeftNode();
-    }else{
-        // throw error
-    }
+    return 'n';
 }
 
-bool BinaryTree::variableIsIsolated(){
-    if (rootNode->getLeftNode()->isEmptyNode() & 
-        rootNode->getLeftNode()->getElement()->getElementType() == "operand"){
-        return true;
-    }else{
-        return false;
-    }
-}
+/*
 
 BinaryNode* BinaryTree::removeMainFunctionLeft(){
     BinaryNode* newMain = rootNode->getLeftNode()->getLeftNode();
@@ -92,6 +85,22 @@ void BinaryTree::insertMainFunctionLeft(Operator op, StaticOperand operand){
     rootNode->setLeftNode(newMain);
 }
 
+void BinaryTree::insertMainFunctionLeft(BinaryNode* targetOperation, BinaryNode* targetOperand){
+    BinaryNode* oldMain = rootNode->getLeftNode();
+    targetOperation->setParentNode(rootNode);
+    targetOperation->
+    
+    newMain->setElement(&op);
+    newMain->setLeftNode(newChild);
+    newMain->setRightNode(oldMain);
+    newMain->setParentNode(rootNode);
+
+    newChild->setElement(&operand);
+    newChild->setParentNode(newMain);
+
+    rootNode->setLeftNode(newMain);
+}
+
 void BinaryTree::insertMainFunctionRight(Operator op, StaticOperand operand){
     BinaryNode* oldMain = rootNode->getRightNode();
     BinaryNode* newMain = new BinaryNode();
@@ -108,6 +117,7 @@ void BinaryTree::insertMainFunctionRight(Operator op, StaticOperand operand){
     rootNode->setRightNode(newMain);
 
 }
+*/
 
 
 std::string BinaryTree::toString(){

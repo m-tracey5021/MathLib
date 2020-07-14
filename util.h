@@ -1,13 +1,15 @@
 #pragma once
 
 #include "Trees\treeElement.h"
-#include "Trees\operatorType.h"
+#include "Trees\EqTrees\operatorType.h"
 
 int stringLength(std::string str);
 
 bool stringIsEqual(std::string str1, std::string str2);
 
 OperatorType getOperatorType(char value);
+
+bool operatorTypeCancels(OperatorType op1, OperatorType op2);
 
 bool charIsNumeric(char c);
 

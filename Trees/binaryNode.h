@@ -1,6 +1,9 @@
 #pragma once
 
+
 #include "treeElement.h"
+#include "EqTrees\operator.h"
+#include "EqTrees\staticOperand.h"
 #include <vector>
 
 class BinaryNode {
@@ -26,6 +29,7 @@ class BinaryNode {
         void countVariables(int count);
         int buildString(std::string& str, int index);
         void splitEquation(char* eq, int start, int end);
+        void calculateResultantNode(Operator op, StaticOperand operand);
         void addNodeTypeToCollection(std::vector<BinaryNode*> collection, std::string condition);
 
 };

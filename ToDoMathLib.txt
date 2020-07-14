@@ -1,9 +1,10 @@
 ToDo Short-term:
 
-	
-	- write unit tests for fraction arithmetic
+	- reconfigure class structure for trees, so that eqTree has its own node type with relevant functions
+		- subclass treeElement to acheive this
 	- write function to convert to fraction from decimal, integer etc
-	- figure out how to restrict possible types for Set class
+	- sort out comparison functions for the set class
+	
 
 Goals Long-term:
 
@@ -12,7 +13,8 @@ Goals Long-term:
 	
 Done:
 
-	
+	- figure out how to restrict possible types for Set class
+	- write unit tests for fraction arithmetic
 	
 	
 	

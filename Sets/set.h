@@ -17,11 +17,13 @@ class Set : public HashSet<t>{
         HashNode<t>** getTable(){return this->table;}
 
         friend bool operator == (const Set<t>& set1, const Set<t>& set2){
-
+            return false;
+            // this is the wrong implementation
         }
 
         friend bool operator != (const Set<t>& set1, const Set<t>& set2){
-            
+            return false;
+            // this is the wrong implementation
         }
 
         Set setDifference(Set& other){

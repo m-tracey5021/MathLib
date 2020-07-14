@@ -1,9 +1,9 @@
 #include <cstring>
 #include <string>
 #include "Trees\treeElement.h"
-#include "Trees\operatorType.h"
-#include "Trees\staticOperand.h"
-#include "Trees\variableOperand.h"
+#include "Trees\EqTrees\operatorType.h"
+#include "Trees\EqTrees\staticOperand.h"
+#include "Trees\EqTrees\variableOperand.h"
 #include "basicArithmeticFunctions.h"
 
 using namespace std;
@@ -48,6 +48,17 @@ OperatorType getOperatorType(char value){
         return OperatorType::Subtraction;
     }else{
         throw "Char value does not correspond to operatorType";
+    }
+}
+
+bool operatorTypeCancels(OperatorType op1, OperatorType op2){
+    if ((op1 == OperatorType::Addition & op2 == OperatorType::Subtraction) | 
+        (op1 == OperatorType::Multiplication & op2 == OperatorType::Division) | 
+        (op2 == OperatorType::Addition & op1 == OperatorType::Subtraction) |
+        (op2 == OperatorType::Multiplication & op1 == OperatorType::Division)){
+        return true;
+    }else{
+        return false;
     }
 }
 

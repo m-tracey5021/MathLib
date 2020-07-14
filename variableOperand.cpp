@@ -1,4 +1,5 @@
-#include "Trees\variableOperand.h"
+#include "Trees\EqTrees\variableOperand.h"
+#include "Trees\EqTrees\operator.h"
 
 VariableOperand::VariableOperand(){}
 
@@ -6,16 +7,20 @@ VariableOperand::VariableOperand(char var, std::string elementType): TreeElement
     variable = var;
 }
 
-char VariableOperand::getVariable(){
-    return variable;
+int* VariableOperand::getValue(){
+    return nullptr;
+}
+
+char* VariableOperand::getVariable(){
+    return &variable;
+}
+
+OperatorType* VariableOperand::getType(){
+    return nullptr;
 }
 
 bool VariableOperand::isParenthesised(){
     return false;
-}
-
-bool VariableOperand::isVariable(){
-    return true;
 }
 
 std::string VariableOperand::toString(){
