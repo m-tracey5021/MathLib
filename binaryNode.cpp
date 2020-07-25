@@ -75,7 +75,7 @@ int BinaryNode::buildString(std::string& str, int index){
     }
     index += leftLength;
 
-    std::string s = typeid(element).name();
+
 
     str += element->toString();
     thisLength = stringLength(element->toString());
