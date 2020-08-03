@@ -7,5 +7,6 @@ class Graph {
     public:
         Graph(){}
         Graph(int noVertices, Point* vertices){}
-        Point* fastestPathAllVs(){}
+        Point findClosestVertex(Point* targetVertex){}
+        Point* fastestPathAllVs(Point* startingVertex){}
 };

@@ -9,4 +9,8 @@ class Point {
         double getX(){return x;}
         double getY(){return y;}
 
+        double distance(Point other){
+            
+        }
+
 };

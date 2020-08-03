@@ -1,5 +1,8 @@
 
+#include <string>
 #include <vector>
+
+using namespace std;
 
 double power(double num, int power){
     if (power == 0){
@@ -12,6 +15,31 @@ double power(double num, int power){
             total *= num;
         }
         return total;
+    }
+}
+
+double sqrt(double num){
+    string numStr = to_string(num);
+    vector<string> pairs;
+
+    char firstDigit;
+    char secondDigit;
+    for (int i = numStr.size() - 1; i >= 0; i --){
+        string pair = "";
+
+        if (i > 0){
+            firstDigit = numStr[i - 1];
+            pair.push_back(firstDigit);
+        }
+
+        secondDigit = numStr[i];
+        pair.push_back(secondDigit);
+
+        pairs.push_back(pair);
+        
+        
+        
+
     }
 }
 
@@ -88,8 +116,8 @@ int largestMultiple(int num){
     return largestMultiple;
 }
 
-std::vector<int> allMultiples(int num){
-    std::vector<int> allMultiples;
+vector<int> allMultiples(int num){
+    vector<int> allMultiples;
     int currentMultiple = 1;
     bool done = false;
     while(!done){
@@ -103,29 +131,6 @@ std::vector<int> allMultiples(int num){
     }
     return allMultiples;
 }
-
-/*
-int smallestCommonMultiple(int num, int comparedNum){ // this will always return 1, not very useful
-    std::vector<int> multiplesOfFirst = allMultiples(num);
-    for (int i = 0; i < multiplesOfFirst.size(); i ++){
-        if (comparedNum % multiplesOfFirst[i] == 0){
-            return multiplesOfFirst[i];
-        }
-    }
-    return -1;
-}
-
-int largestCommonMultiple(int num, int comparedNum){
-    std::vector<int> multiplesOfFirst = allMultiples(num);
-    for (int i = multiplesOfFirst.size() - 1; i >= 0; i --){
-        int divisor = multiplesOfFirst[i];
-        if (comparedNum % multiplesOfFirst[i] == 0){
-            return multiplesOfFirst[i];
-        }
-    }
-    return -1;
-}
-*/
 
 int largestCommonMultiple(int num, int comparedNum){
     int gcf = -1;

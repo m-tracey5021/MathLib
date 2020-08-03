@@ -5,6 +5,8 @@
 
 double power(double num, int power);
 
+double sqrt(double num);
+
 double abs(double num);
 
 bool isDivisibleBy(int num, int divisor);
