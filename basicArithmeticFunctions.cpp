@@ -38,9 +38,10 @@ double sqrt(double num){
         pairs.push_back(pair);
         
         
-        
+    // unfinished, see algo online
 
     }
+    return 0.0;
 }
 
 double abs(double num){

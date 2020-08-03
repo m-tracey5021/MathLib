@@ -1,4 +1,7 @@
+#pragma once
+
 #include "Geometry/point.h"
+#include "Trees/binaryTree.h"
 
 class Graph {
     private:
@@ -7,6 +10,7 @@ class Graph {
     public:
         Graph(){}
         Graph(int noVertices, Point* vertices){}
-        Point findClosestVertex(Point* targetVertex){}
-        Point* fastestPathAllVs(Point* startingVertex){}
+        BinaryTree convertToBinaryTree();
+        Point* findClosestVertex(Point targetVertex){}
+        Point* fastestPathAllVs(Point startingVertex){}
 };
