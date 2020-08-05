@@ -1,5 +1,6 @@
 #include "Trees\binaryNode.h"
 #include "..\util.h"
+#include <string>
 #include <iostream>
 
 
@@ -77,7 +78,6 @@ int BinaryNode::buildString(std::string& str, int index){
 
 
     str += infoTypeAndValue.second;
-    //thisLength = stringLength(infoTypeAndValue.second);
     thisLength = infoTypeAndValue.second.length();
     index += thisLength;
 
@@ -98,6 +98,41 @@ int BinaryNode::buildString(std::string& str, int index){
 
     return totalSize;
 }
+
+void BinaryNode::assignString(string& str, string instruction, int start, int end){
+    if (instruction == "splitEquation"){
+        int* operatorInfo = parseForMainOperator(str, start, end);
+        int operatorIndex = operatorInfo[0];
+        bool parenthesised = operatorInfo[1];
+
+        if (operatorIndex != -1){
+            //get operator here
+            infoTypeAndValue.first = "operator";
+            infoTypeAndValue.second = str[operatorIndex];
+            BinaryNode* newLeft = new BinaryNode();
+            BinaryNode* newRight = new BinaryNode();
+
+            left = newLeft;
+            right = newRight;
+            left->setParentNode(this);
+            right->setParentNode(this);
+
+            left->assignString(str, instruction, start, operatorIndex);
+            right->assignString(str, instruction, operatorIndex + 1, end);
+        }else{
+            // get value here
+            infoTypeAndValue.first = "operand";
+            infoTypeAndValue.second = ""; // call function here
+            return;
+        }
+    }else if (instruction == "exampleInstruction") {
+        // follow some other splitting rules
+    }else{
+        // throw error
+    }
+}
+
+/*
 
 void BinaryNode::splitEquation(char* eq, int start, int end){
     int* operatorInfo = parseForMainOperator(eq, start, end);
@@ -125,26 +160,6 @@ void BinaryNode::splitEquation(char* eq, int start, int end){
         return;
     }
 }
-
-/*
-void BinaryNode::addNodeTypeToCollection(std::vector<BinaryNode*> collection, std::string condition){
-    if (condition.compare("allNodes") == 0){
-        collection.push_back(this);
-        if (left == 0 & right == 0){
-            return;
-        }else{
-            left->addNodeTypeToCollection(collection, "allNodes");
-            right->addNodeTypeToCollection(collection, "allNodes");
-        }
-    }else if (condition.compare("emptyNodes") == 0){
-        if (left == 0 & right == 0){
-            collection.push_back(this);
-            return;
-        }else{
-            left->addNodeTypeToCollection(collection, "emptyNodes");
-            right->addNodeTypeToCollection(collection, "emptyNodes");
-        }
-    }
-}
 */
+
 
