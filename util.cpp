@@ -225,6 +225,7 @@ char parseForFirstChar(char* eq, int start, int end){
     return '0';
 }
 
+/*
 TreeElement* parseForFirstOperand(char* eq, int start, int end){
     for (int i = start; i < end; i ++){
         if (isdigit(eq[i])){
@@ -246,6 +247,7 @@ TreeElement* parseForFirstOperand(char* eq, int start, int end){
     }
     return nullptr;
 }
+*/
 
 
 

@@ -1,8 +1,5 @@
 #include "Trees\binaryNode.h"
-#include "Trees\operator.h"
-#include "Trees\staticOperand.h"
-#include "util.h"
-#include <cstring>
+#include "..\util.h"
 #include <iostream>
 
 
@@ -10,7 +7,6 @@ BinaryNode::BinaryNode(){
     left = 0;
     right = 0;
     parent = 0;
-    // this is a change
 }
 
 BinaryNode* BinaryNode::getLeftNode(){
@@ -25,8 +21,8 @@ BinaryNode* BinaryNode::getParentNode(){
     return parent;
 }
 
-TreeElement* BinaryNode::getElement(){
-    return element;
+pair<string, string> BinaryNode::getInfoTypeAndValue(){
+    return infoTypeAndValue;
 }
 
 void BinaryNode::setLeftNode(BinaryNode* node){
@@ -41,8 +37,8 @@ void BinaryNode::setParentNode(BinaryNode* node){
     parent = node;
 }
 
-void BinaryNode::setElement(TreeElement* inputElement){
-    element = inputElement;
+void BinaryNode::setInfoTypeAndValue(pair<string, string> info){
+    infoTypeAndValue = info;
 }
 
 bool BinaryNode::isEmptyNode(){
@@ -53,6 +49,7 @@ bool BinaryNode::isEmptyNode(){
     }
 }
 
+/*
 void BinaryNode::countVariables(int count){
     if (element->isVariable()){
         count ++;
@@ -65,6 +62,7 @@ void BinaryNode::countVariables(int count){
     }
     return;
 }
+*/
 
 int BinaryNode::buildString(std::string& str, int index){
     int thisLength = 0;
@@ -78,8 +76,9 @@ int BinaryNode::buildString(std::string& str, int index){
 
 
 
-    str += element->toString();
-    thisLength = stringLength(element->toString());
+    str += infoTypeAndValue.second;
+    //thisLength = stringLength(infoTypeAndValue.second);
+    thisLength = infoTypeAndValue.second.length();
     index += thisLength;
 
     if (right != 0){
@@ -89,7 +88,7 @@ int BinaryNode::buildString(std::string& str, int index){
 
     int totalSize = leftLength + thisLength + rightLength;
 
-    if (element->isParenthesised()){
+    if (infoTypeAndValue.first == "parenthesised"){
         str.insert(index - totalSize + 1, "(");
         index += 1;
         str.insert(index + 1, ")");
@@ -106,12 +105,12 @@ void BinaryNode::splitEquation(char* eq, int start, int end){
     bool parenthesised = operatorInfo[1];
     
     if (operatorIndex != -1){
-        //Operator* mainOperator = new Operator(getOperatorType(eq[operatorIndex]), parenthesised, "operator");
-        //element = mainOperator;
-        element = new Operator(getOperatorType(eq[operatorIndex]), parenthesised, "operator");
+        //get operator here
+        infoTypeAndValue.first = "operator";
+        infoTypeAndValue.second = eq[operatorIndex];
         BinaryNode* newLeft = new BinaryNode();
         BinaryNode* newRight = new BinaryNode();
-        //printNode(); 
+
         left = newLeft;
         right = newRight;
         left->setParentNode(this);
@@ -120,14 +119,14 @@ void BinaryNode::splitEquation(char* eq, int start, int end){
         left->splitEquation(eq, start, operatorIndex);
         right->splitEquation(eq, operatorIndex + 1, end);
     }else{
-        //int staticVal = parseForFirstInt(eq, start, end);
-        //StaticOperand* operand = new StaticOperand(parseForFirstInt(eq, start, end), "operand");
-        //element = operand;
-        element = parseForFirstOperand(eq, start, end);
+        // get value here
+        infoTypeAndValue.first = "operand";
+        infoTypeAndValue.second = ""; // call function here
         return;
     }
 }
 
+/*
 void BinaryNode::addNodeTypeToCollection(std::vector<BinaryNode*> collection, std::string condition){
     if (condition.compare("allNodes") == 0){
         collection.push_back(this);
@@ -147,4 +146,5 @@ void BinaryNode::addNodeTypeToCollection(std::vector<BinaryNode*> collection, st
         }
     }
 }
+*/
 

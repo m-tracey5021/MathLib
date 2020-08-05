@@ -1,8 +1,6 @@
 #pragma once
 
 #include "binaryNode.h"
-#include "operator.h"
-#include "staticOperand.h"
 #include <vector>
 
 class BinaryTree {

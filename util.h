@@ -1,13 +1,8 @@
 #pragma once
 
-#include "Trees\treeElement.h"
-#include "Trees\operatorType.h"
-
 int stringLength(std::string str);
 
 bool stringIsEqual(std::string str1, std::string str2);
-
-OperatorType getOperatorType(char value);
 
 bool charIsNumeric(char c);
 
@@ -29,5 +24,5 @@ int parseForFirstInt(char* eq, int start, int end);
 
 char parseForFirstChar(char* eq, int start, int end);
 
-TreeElement* parseForFirstOperand(char* eq, int start, int end);
+//TreeElement* parseForFirstOperand(char* eq, int start, int end);
 
