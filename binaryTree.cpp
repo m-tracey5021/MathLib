@@ -1,7 +1,9 @@
 #include "Trees\binaryTree.h"
-#include "Trees\operator.h"
-#include "Trees\staticOperand.h"
 #include <iostream>
+#include <string>
+#include <queue>
+
+using namespace std;
 
 BinaryTree::BinaryTree(){}
 
@@ -11,6 +13,7 @@ BinaryNode* BinaryTree::getRoot(){
     return rootNode;
 }
 
+/*
 void BinaryTree::initVariableCount(){
     variableCount = 0;
     rootNode->countVariables(variableCount);
@@ -30,6 +33,8 @@ bool BinaryTree::variableIsIsolated(){
         return false;
     }
 }
+
+*/
 
 BinaryNode* BinaryTree::removeMainFunctionLeft(){
     BinaryNode* newMain = rootNode->getLeftNode()->getLeftNode();
@@ -53,7 +58,36 @@ BinaryNode* BinaryTree::removeMainFunctionRight(){
     return 0;
 }
 
-void BinaryTree::insertMainFunctionLeft(Operator op, StaticOperand operand){
+void BinaryTree::insertNode(BinaryNode& newNode){
+    
+}
+
+void BinaryNode::insertNodeAtPosition(BinaryNode* newNode, BinaryNode* parent, string insertionSide, string shift){
+    BinaryNode* oldChild;
+    if (insertionSide == "left"){
+        oldChild = parent->getLeftNode();
+        parent->setLeftNode(newNode);
+    }else if (insertionSide == "right"){
+        oldChild == parent->getRightNode();
+        parent->setRightNode(newNode);
+    }else{
+        // throw error
+    }
+
+    if (shift == "left"){
+        newNode->setLeftNode(oldChild);
+    }else if (shift == "right"){
+        newNode->setRightNode(oldChild);
+    }else{
+        // throw error
+    }
+    
+}
+
+
+
+
+void BinaryTree::insertMainNodeLeft(BinaryNode& newNode){
     BinaryNode* oldMain = rootNode->getLeftNode();
     BinaryNode* newMain = new BinaryNode();
     BinaryNode* newChild = new BinaryNode();

@@ -17,17 +17,18 @@ class BinaryTree {
 
         BinaryNode* getRoot();
 
-        void initVariableCount();
-        void simplifyEquation(char term);
-        bool variableIsIsolated();
+        //void initVariableCount();
+        //void simplifyEquation(char term);
+        //bool variableIsIsolated();
     
         
 
         BinaryNode* removeMainFunctionLeft();
         BinaryNode* removeMainFunctionRight();
-        void insertMainFunctionLeft(Operator op, StaticOperand operand);
-        void insertMainFunctionRight(Operator op, StaticOperand operand);
-
+        //void insertMainNodeLeft(Operator op, StaticOperand operand);
+        //void insertMainNodeRight(Operator op, StaticOperand operand);
+        void insertNode(BinaryNode& newNode);
+        void insertNodeAtPosition(BinaryNode* newNode, BinaryNode* parent, string insertionSide, string shift);
         std::string toString();
 
 
