@@ -23,8 +23,11 @@ int main(){
     int toDec = convertToDecimal(bits);
     BitString bits1Reversed = reverseBits(bits);
 
+    /*
     Operator* op = new Operator(OperatorType::Addition, false, "operator");
     StaticOperand* operand = new StaticOperand(13, "operand");
+    */
+   
     //tree.insertMainFunctionLeft(op, operand);
     //BinaryNode* removed = tree2.removeMainFunctionLeft();
 

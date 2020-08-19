@@ -18,6 +18,8 @@ bool testTreeStructure(){
     bool tree1Passed;
     bool tree2Passed;
 
+    /*
+
     if (tree1.getRoot()->getElement()->toString() == "=" & 
         tree1.getRoot()->getLeftNode()->getElement()->toString() == "-" & 
         tree1.getRoot()->getLeftNode()->getLeftNode()->getElement()->toString() == "/" & 
@@ -51,6 +53,7 @@ bool testTreeStructure(){
     }else{
         return false;
     }
-
+    */
+   return false;
 
 }

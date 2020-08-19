@@ -1,9 +1,5 @@
 #include <cstring>
 #include <string>
-#include "Trees\treeElement.h"
-#include "Trees\operatorType.h"
-#include "Trees\staticOperand.h"
-#include "Trees\variableOperand.h"
 #include "basicArithmeticFunctions.h"
 
 using namespace std;
@@ -30,25 +26,6 @@ bool stringIsEqual(std::string str1, std::string str2){
         }
     }
     return true;
-}
-
-
-OperatorType getOperatorType(char value){
-    if (value == '='){
-        return OperatorType::Equals;
-    }else if (value == '^'){
-        return OperatorType::Exponent;
-    }else if (value == '/'){
-        return OperatorType::Division;
-    }else if (value == '*'){
-        return OperatorType::Multiplication;
-    }else if (value == '+'){
-        return OperatorType::Addition;
-    }else if (value == '-'){
-        return OperatorType::Subtraction;
-    }else{
-        throw "Char value does not correspond to operatorType";
-    }
 }
 
 bool charIsNumeric(char c){
@@ -164,56 +141,6 @@ int* findSurroundingBrackets(char* eq, int startPos){
 
     return new int[2]{openingPos, closingPos};
 
-}
-
-int* parseForMainOperator(char* eq, int start, int end){
-    int largestWidth = -1;
-    int pos = -1;
-    bool parenthesised = 0;
-
-    for (int i = start; i < end; i ++){
-        if (charIsOperator(eq[i])){
-            OperatorType type = getOperatorType(eq[i]);
-            if (type == OperatorType::Equals){
-                return new int[2]{i, 0};
-            }else{
-                int* brackets = findSurroundingBrackets(eq, i);
-                int widthHere = brackets[1] - brackets[0];
-                if (widthHere == 0){
-                    largestWidth = 0;
-                    pos = i;
-                    parenthesised = 0;
-                }
-
-                if (widthHere > largestWidth & largestWidth != 0){
-                    largestWidth = widthHere;
-                    pos = i;
-                    parenthesised = 1;
-                }
-            } 
-        }
-    }
-    return new int[2]{pos, parenthesised};
-}
-
-int parseForFirstInt(char* eq, int start, int end){
-    for (int i = start; i < end; i ++){
-        if (isdigit(eq[i])){
-            bool lastChar = false;
-            int j = i + 1;
-            while(lastChar == false){
-                if (isdigit(eq[j])){
-                    j ++;
-                }else{
-                    lastChar = true;
-                }
-            }
-            char* sub = substring(eq, i, j - i);
-            int convertedInt = convertToInt(sub, j - i);
-            return convertedInt;
-        }
-    }
-    return -1;
 }
 
 char parseForFirstChar(char* eq, int start, int end){

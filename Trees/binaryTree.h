@@ -1,35 +1,24 @@
 #pragma once
 
-#include "binaryNode.h"
+#include "binaryNodeBase.h"
+#include "shift.h"
 #include <vector>
 
+using namespace std;
+
 class BinaryTree {
-    private:
-        BinaryNode* rootNode;
-        BinaryNode* mainOperator;
-        std::vector<BinaryNode> allNodes;
-        std::vector<BinaryNode> emptyNodes;
-        int variableCount;
+    protected:
+        BinaryNodeBase* rootNode;
 
     public:
         BinaryTree();
-        BinaryTree(BinaryNode* rootNode);
+        BinaryTree(BinaryNodeBase* rootNode);
 
-        BinaryNode* getRoot();
+        BinaryNodeBase* getRoot();
 
-        //void initVariableCount();
-        //void simplifyEquation(char term);
-        //bool variableIsIsolated();
-    
-        
-
-        BinaryNode* removeMainFunctionLeft();
-        BinaryNode* removeMainFunctionRight();
-        //void insertMainNodeLeft(Operator op, StaticOperand operand);
-        //void insertMainNodeRight(Operator op, StaticOperand operand);
-        void insertNode(BinaryNode& newNode);
-        void insertNodeAtPosition(BinaryNode* newNode, BinaryNode* parent, string insertionSide, string shift);
-        std::string toString();
-
-
+        BinaryNodeBase* removeMainFunctionLeft();
+        BinaryNodeBase* removeMainFunctionRight();
+        void insertNode(BinaryNodeBase& newNode);
+        void insertNodeAtPosition(BinaryNodeBase* newNode, BinaryNodeBase* parent, Shift shift);
+        string toString();
 };
