@@ -6,6 +6,7 @@ class Term {
     public:
         Term(){}
         Term(int exponent): exponent(exponent){}
-        virtual Term compute(){}
+        int getExponent(){return exponent;}
+        virtual Term* compute(){return nullptr;} // either compute lowest term or real number
     
 };

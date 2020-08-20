@@ -10,4 +10,7 @@ class AtomicTerm : Term {
     public:
         AtomicTerm(){}
         AtomicTerm(int exponent, t value): Term(exponent), value(value){}
+        t getValue(){return t;}
+        void setValue(t val){value = val;}
+
 };
