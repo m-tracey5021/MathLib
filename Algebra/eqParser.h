@@ -1,6 +1,11 @@
 #include "equation.h"
+#include "expression.h"
 #include <string>
 
 using namespace std;
 
-Equation stringToEq(string eqStr);
+int* findSurroundingBrackets(string eq, int startPos);
+
+Equation* parseEquation(string eqStr);
+
+Expression* parseExpression(string expStr);
