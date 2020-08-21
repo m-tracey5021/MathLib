@@ -7,6 +7,6 @@ class ComplexTerm : Term {
         Term* terms;
     public:
         ComplexTerm(){}
-        ComplexTerm(int exponent, Term* terms): Term(exponent), terms(terms){}
+        ComplexTerm(bool sign, int exponent, Term* terms): Term(sign, exponent), terms(terms){}
         
 };

@@ -8,5 +8,5 @@ class RadicalExpression : Term {
         Term* term;
     public:
         RadicalExpression(){}
-        RadicalExpression(int root, Term* term): Term(0), root(root), term(term){}
+        RadicalExpression(bool sign, int root, Term* term): Term(sign, 0), root(root), term(term){}
 };

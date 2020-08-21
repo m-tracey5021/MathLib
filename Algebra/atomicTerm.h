@@ -9,7 +9,7 @@ class AtomicTerm : Term {
         t value;
     public:
         AtomicTerm(){}
-        AtomicTerm(int exponent, t value): Term(exponent), value(value){}
+        AtomicTerm(bool sign, int exponent, t value): Term(sign, exponent), value(value){}
         t getValue(){return t;}
         void setValue(t val){value = val;}
 
