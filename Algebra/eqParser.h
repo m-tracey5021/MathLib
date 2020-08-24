@@ -7,17 +7,13 @@
 
 using namespace std;
 
-int* findSurroundingBrackets(string eq, int startPos);
-
-Term* parseComplexTerm(string termStr);
-
-Term* parseRationalExpression(string termStr);
+int* findSurroundingBrackets(string eq, int startPos, char bracketType);
 
 bool parseForSign(string expStr, int index);
 
-pair<Term*, int> parseTerm(string expStr, int startIndex, bool currenSign);
+pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currenSign);
 
-Expression* parseExpression(string expStr);
+Polynomial* parsePolynomial(string expStr);
 
 Equation* parseEquation(string eqStr);
 

@@ -5,82 +5,106 @@
 
 using namespace std;
 
-class Term {
+class TermBase {
     protected:
         bool sign;
         int exponent;
     public:
-        Term(){}
-        Term(bool sign, int exponent): exponent(exponent){}
+        TermBase(){}
+        TermBase(bool sign, int exponent): exponent(exponent){}
         bool getSign(){return sign;}
         int getExponent(){return exponent;}
         void setSign(bool s){sign = s;}
         void setExponent(int e){exponent = e;}
-        virtual Term* compute(){return nullptr;} // either compute lowest term or real number
+        virtual void appendTerm(TermBase t){}
+        virtual TermBase* compute(){return nullptr;} // either compute lowest term or real number
+        virtual string toString(){return "";}
     
 };
 
 template<typename t>
 
-class AtomicTerm : public Term {
+class AtomicTerm : public TermBase {
     private:
         t value;
     public:
         AtomicTerm(){}
-        AtomicTerm(bool sign, int exponent, t value): Term(sign, exponent), value(value){}
-        t getValue(){return t;}
+        AtomicTerm(bool sign, int exponent, t value): TermBase(sign, exponent), value(value){}
+        t getValue(){return value;}
         void setValue(t v){value = v;}
+        void appendTerm(TermBase tb) override {}
+        TermBase* compute() override {return this;}
+        string toString() override {
+            char c = value;
+            string termStr = "";
+            termStr.push_back(value);
+            return termStr;
+        }
 
 };
 
-class ComplexTerm : public Term {
+class CompoundTerm : public TermBase {
     private:
-        vector<Term> terms;
+        vector<TermBase> terms;
     public:
-        ComplexTerm(){}
-        ComplexTerm(bool sign, int exponent, vector<Term> terms): Term(sign, exponent), terms(terms){}
-        vector<Term> getTerms(){return terms;}
-        void setTerms(vector<Term> t){terms = t;}
-        void appendTerm(Term t){terms.push_back(t);}
+        CompoundTerm(){}
+        CompoundTerm(bool sign, int exponent, vector<TermBase> terms): TermBase(sign, exponent), terms(terms){}
+        vector<TermBase> getTerms(){return terms;}
+        void setTerms(vector<TermBase> tb){terms = tb;}
+        void appendTerm(TermBase tb) override {terms.push_back(tb);}
+        TermBase* compute() override {return nullptr; /*return product*/}
+        string toString() override {
+            string termStr = "";
+            for (int i = 0; i < terms.size(); i ++){
+                termStr += terms[i].toString();
+            }
+            return termStr;
+        }
+
 };
 
-class Expression : public Term {
+class Polynomial : public TermBase {
     private:
-        vector<Term> terms;
-        string nomialType;
+        vector<TermBase> terms;
     public:
-        Expression(){}
-        Expression(bool sign, int exponent, vector<Term> terms): Term(sign, exponent), terms(terms){}
-        vector<Term> getTerms(){return terms;}
-        string getNomialType(){return nomialType;}
-        void setTerms(vector<Term> t){terms = t;}
-        void appendTerm(Term t){terms.push_back(t);}
-        void setNomialType(string n){nomialType = n;}
+        Polynomial(){}
+        Polynomial(bool sign, int exponent, vector<TermBase> terms): TermBase(sign, exponent), terms(terms){}
+        vector<TermBase> getTerms(){return terms;}
+        void setTerms(vector<TermBase> tb){terms = tb;}
+        void appendTerm(TermBase tb) override {terms.push_back(tb);}
+        TermBase* compute() override {return nullptr; /*return sum*/}
+        string toString() override {return "";}
 };
 
-class RationalExpression : public Term {
+class RationalExpression : public TermBase {
     private:
-        Term* num;
-        Term* denom;
+        TermBase* num;
+        TermBase* denom;
     public:
         RationalExpression(){}
-        RationalExpression(bool sign, int exponent, Term* num, Term* denom): Term(sign, exponent), num(num), denom(denom){}
-        Term* getNum(){return num;}
-        Term* getDenom(){return denom;}
-        void setNum(Term* n){num = n;}
-        void setDenom(Term* d){denom = d;}
+        RationalExpression(bool sign, int exponent, TermBase* num, TermBase* denom): TermBase(sign, exponent), num(num), denom(denom){}
+        TermBase* getNum(){return num;}
+        TermBase* getDenom(){return denom;}
+        void setNum(TermBase* n){num = n;}
+        void setDenom(TermBase* d){denom = d;}
+        void appendTerm(TermBase tb) override {}
+        TermBase* compute() override {return nullptr; /*return quotient*/}
+        string toString() override {return "";}
 };
 
-class RadicalExpression : public Term {
+class RadicalExpression : public TermBase {
     private:
         int root;
-        Term* term;
+        TermBase* term;
     public:
         RadicalExpression(){}
-        RadicalExpression(bool sign, int root, Term* term): Term(sign, 0), root(root), term(term){}
+        RadicalExpression(bool sign, int root, TermBase* term): TermBase(sign, 0), root(root), term(term){}
         int getRoot(){return root;}
-        Term* getTerm(){return term;}
+        TermBase* getTerm(){return term;}
         void setRoot(int r){root = r;}
-        void setTerm(Term* t){term = t;}
+        void setTerm(TermBase* tb){term = tb;}
+        void appendTerm(TermBase tb) override {}
+        TermBase* compute() override {return nullptr; /*return root*/}
+        string toString() override {return "";}
 };
 

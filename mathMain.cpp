@@ -7,10 +7,12 @@
 #include "UnitTests\fractionUnitTest.h"
 #include "UnitTests\treeUnitTest.h"
 #include "UnitTests\automataUnitTest.h"
+#include "UnitTests\eqParserUnitTest.h"
 #include "Sets\stdSetOperations.h"
 #include "HashTables\integerHashSet.h"
 #include "HashTables\hashSet.h"
 #include "Binary\binaryFunctions.h"
+
 #include "basicArithmeticFunctions.h"
 #include "algabraicFunctions.h"
 #include "util.h"
@@ -54,6 +56,8 @@ int main(){
     bool threeStateDFAPassed = testThreeState();
 
     bool fiveStateDFAPassed = testFiveState();
+
+    bool termParsePassed = testTermParse();
 
     int elements1[] = {3, 4, 5};
     char elements2[] = {'a', 'b', 'c'};

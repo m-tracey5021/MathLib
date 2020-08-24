@@ -1,13 +1,13 @@
 #pragma once
 
-#include "expression.h"
+#include "equationComponents.h"
 
 class Equation {
     private:
-        Expression* left;
-        Expression* right;
+        Polynomial* left;
+        Polynomial* right;
     public:
         Equation(){}
-        Equation(Expression* left, Expression* right): left(left), right(right){}
+        Equation(Polynomial* left, Polynomial* right): left(left), right(right){}
 
 };
