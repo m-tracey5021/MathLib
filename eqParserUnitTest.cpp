@@ -8,16 +8,19 @@
 using namespace std;
 
 bool testTermParse(){
-    string termStr = "2a";
-    pair<TermBase*, int> terminatingInfo = parseTerm(termStr, 0, 1);
-    TermBase* term1 = terminatingInfo.first;
-    TermBase term2 = *terminatingInfo.first;
-
+    string expected1 = "2a";
+    TermBase* term1 = parseTerm(expected1, 0, 1).first;
     string str1 = term1->toString();
-    string str2 = term2.toString();
-    cout << str1;
-    cout << str2;
-    return false;
+
+    string expected2 = "3x+2/xy";
+    TermBase* term2 = parsePolynomial(expected2);
+    string str2 = term2->toString();
+
+    if (expected1 == str1 & expected2 == str2){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 bool testPolynomialParse(){

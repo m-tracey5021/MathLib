@@ -82,9 +82,9 @@ int* findSurroundingBrackets(string eq, int startPos, char bracketType){
 
 bool parseForSign(string expStr, int index){
     if (expStr[index] == '-'){
-        return true;
-    }else{
         return false;
+    }else{
+        return true;
     }
 }
 
@@ -96,6 +96,7 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
     
     currentTerm = compound;
     currentTerm->setSign(currentSign);
+    currentTerm->setExponent(1);
 
     bool termIncomplete = true;
     int i = startIndex;
@@ -116,11 +117,11 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
             termIncomplete = false;
         }else if (isalpha(currentChar)){
             AtomicTerm<char>* atom = new AtomicTerm<char>(currentSign, 1, currentChar);
-            currentTerm->appendTerm(*atom);
+            currentTerm->appendTerm(atom);
         }else if (isdigit(currentChar)){
-            int i = (int)currentChar;
+            int i = currentChar - '0';
             AtomicTerm<int>* atom = new AtomicTerm<int>(currentSign, 1, i);
-            currentTerm->appendTerm(*atom);
+            currentTerm->appendTerm(atom);
         }else if (currentChar == '/'){
             RationalExpression* rational = new RationalExpression();
             
@@ -133,21 +134,24 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
                 denomSign = true;
             }
 
-            pair<TermBase*, int> denomTerminatingInfo = parseTerm(expStr, i + 2, denomSign);
+            pair<TermBase*, int> denomTerminatingInfo = parseTerm(expStr, i + 1, denomSign);
             rational->setNum(currentTerm);
             rational->setDenom(denomTerminatingInfo.first);
             currentTerm = rational;
+            i = denomTerminatingInfo.second;
         }else if (currentChar == '('){
             int* brackets = findSurroundingBrackets(expStr, i, '(');
             string subExpStr = expStr.substr(brackets[0], brackets[1] - brackets[0]);
             Polynomial* subExp = parsePolynomial(subExpStr);
-            currentTerm->appendTerm(*subExp);
+            currentTerm->appendTerm(subExp);
+            currentTerm = subExp;
+            i = brackets[1];
         }
         i ++;
     }
     
     terminatingInfo.first = currentTerm;
-    terminatingInfo.second = i;
+    terminatingInfo.second = i - 1;
     return terminatingInfo;
 }
 
@@ -173,8 +177,9 @@ Polynomial* parsePolynomial(string expStr){
             currentTerm = terminatingInfo.first;
             terminatingPos = terminatingInfo.second;
             terminatingChar = expStr[terminatingPos];
+            startIndex = terminatingPos;
 
-            polynomial->appendTerm(*currentTerm);
+            polynomial->appendTerm(currentTerm);
 
             if (terminatingChar == '+'){
                 currentSign = true;
@@ -188,11 +193,14 @@ Polynomial* parsePolynomial(string expStr){
                 termIncomplete = false;
                 startIndex = terminatingPos + 1;
             }
-        }
-        if (startIndex > expStr.length()){
-            polynomialIncomplete = false;
-        }
+
+            if (startIndex > expStr.length()){
+                termIncomplete = false;
+                polynomialIncomplete = false;
+            }
+        }     
     }
+    return polynomial;
 }
 
 Equation* parseEquation(string eqStr){

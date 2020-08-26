@@ -11,12 +11,12 @@ class TermBase {
         int exponent;
     public:
         TermBase(){}
-        TermBase(bool sign, int exponent): exponent(exponent){}
+        TermBase(bool sign, int exponent): sign(sign), exponent(exponent){}
         bool getSign(){return sign;}
         int getExponent(){return exponent;}
         void setSign(bool s){sign = s;}
         void setExponent(int e){exponent = e;}
-        virtual void appendTerm(TermBase t){}
+        virtual void appendTerm(TermBase* t){}
         virtual TermBase* compute(){return nullptr;} // either compute lowest term or real number
         virtual string toString(){return "";}
     
@@ -32,11 +32,14 @@ class AtomicTerm : public TermBase {
         AtomicTerm(bool sign, int exponent, t value): TermBase(sign, exponent), value(value){}
         t getValue(){return value;}
         void setValue(t v){value = v;}
-        void appendTerm(TermBase tb) override {}
+        void appendTerm(TermBase* tb) override {}
         TermBase* compute() override {return this;}
         string toString() override {
             char c = value;
             string termStr = "";
+            if (!sign){
+                termStr.push_back('-');
+            }
             termStr.push_back(value);
             return termStr;
         }
@@ -45,18 +48,22 @@ class AtomicTerm : public TermBase {
 
 class CompoundTerm : public TermBase {
     private:
-        vector<TermBase> terms;
+        vector<TermBase*> terms;
     public:
         CompoundTerm(){}
-        CompoundTerm(bool sign, int exponent, vector<TermBase> terms): TermBase(sign, exponent), terms(terms){}
-        vector<TermBase> getTerms(){return terms;}
-        void setTerms(vector<TermBase> tb){terms = tb;}
-        void appendTerm(TermBase tb) override {terms.push_back(tb);}
+        CompoundTerm(bool sign, int exponent, vector<TermBase*> terms): TermBase(sign, exponent), terms(terms){}
+        vector<TermBase*> getTerms(){return terms;}
+        void setTerms(vector<TermBase*> tb){terms = tb;}
+        void appendTerm(TermBase* tb) override {terms.push_back(tb);}
         TermBase* compute() override {return nullptr; /*return product*/}
         string toString() override {
             string termStr = "";
             for (int i = 0; i < terms.size(); i ++){
-                termStr += terms[i].toString();
+                if (!sign){
+                    termStr += '-' + terms[i]->toString();
+                }else{
+                    termStr += terms[i]->toString();
+                }
             }
             return termStr;
         }
@@ -65,15 +72,26 @@ class CompoundTerm : public TermBase {
 
 class Polynomial : public TermBase {
     private:
-        vector<TermBase> terms;
+        vector<TermBase*> terms;
     public:
         Polynomial(){}
-        Polynomial(bool sign, int exponent, vector<TermBase> terms): TermBase(sign, exponent), terms(terms){}
-        vector<TermBase> getTerms(){return terms;}
-        void setTerms(vector<TermBase> tb){terms = tb;}
-        void appendTerm(TermBase tb) override {terms.push_back(tb);}
+        Polynomial(bool sign, int exponent, vector<TermBase*> terms): TermBase(sign, exponent), terms(terms){}
+        vector<TermBase*> getTerms(){return terms;}
+        void setTerms(vector<TermBase*> tb){terms = tb;}
+        void appendTerm(TermBase* tb) override {terms.push_back(tb);}
         TermBase* compute() override {return nullptr; /*return sum*/}
-        string toString() override {return "";}
+        string toString() override {
+            string termStr = "";
+            for (int i = 0; i < terms.size(); i ++){
+                if (!sign){
+                    termStr += '-' + terms[i]->toString();
+                }else{
+                    termStr += terms[i]->toString();
+                }
+                
+            }
+            return termStr;
+        }
 };
 
 class RationalExpression : public TermBase {
@@ -87,7 +105,7 @@ class RationalExpression : public TermBase {
         TermBase* getDenom(){return denom;}
         void setNum(TermBase* n){num = n;}
         void setDenom(TermBase* d){denom = d;}
-        void appendTerm(TermBase tb) override {}
+        void appendTerm(TermBase* tb) override {}
         TermBase* compute() override {return nullptr; /*return quotient*/}
         string toString() override {return "";}
 };
@@ -103,7 +121,7 @@ class RadicalExpression : public TermBase {
         TermBase* getTerm(){return term;}
         void setRoot(int r){root = r;}
         void setTerm(TermBase* tb){term = tb;}
-        void appendTerm(TermBase tb) override {}
+        void appendTerm(TermBase* tb) override {}
         TermBase* compute() override {return nullptr; /*return root*/}
         string toString() override {return "";}
 };
