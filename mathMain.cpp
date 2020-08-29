@@ -57,7 +57,7 @@ int main(){
 
     bool fiveStateDFAPassed = testFiveState();
 
-    bool termParsePassed = testTermParse();
+    bool expressionParsePassed = testExpressionParse();
 
     int elements1[] = {3, 4, 5};
     char elements2[] = {'a', 'b', 'c'};

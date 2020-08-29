@@ -1,7 +1,5 @@
 #pragma once
 
-bool testTermParse();
-
-bool testPolynomialParse();
+bool testExpressionParse();
 
 bool testEquationParse();

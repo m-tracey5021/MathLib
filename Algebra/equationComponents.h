@@ -18,7 +18,7 @@ class TermBase {
         void setExponent(int e){exponent = e;}
         virtual void appendTerm(TermBase* t){}
         virtual TermBase* compute(){return nullptr;} // either compute lowest term or real number
-        virtual string toString(){return "";}
+        virtual string toString(){return "term base";}
     
 };
 
@@ -35,13 +35,7 @@ class AtomicTerm : public TermBase {
         void appendTerm(TermBase* tb) override {}
         TermBase* compute() override {return this;}
         string toString() override {
-            char c = value;
-            string termStr = "";
-            if (!sign){
-                termStr.push_back('-');
-            }
-            termStr.push_back(value);
-            return termStr;
+            return "unknown type";
         }
 
 };
@@ -59,11 +53,15 @@ class AtomicTerm<char> : public TermBase {
         void appendTerm(TermBase* tb) override {}
         TermBase* compute() override {return this;}
         string toString() override {
-            string termStr = "";
+            string termStr;
+            /*
             if (!sign){
-                termStr.push_back('-');
+                termStr = '-';
+            }else{
+                termStr = '+';
             }
-            termStr.push_back(value);
+            */
+            termStr += value;
             return termStr;
         }
 
@@ -83,10 +81,14 @@ class AtomicTerm<int> : public TermBase {
         TermBase* compute() override {return this;}
         string toString() override {
             char c = '0' + value;
-            string termStr = "";
+            string termStr;
+            /*
             if (!sign){
-                termStr += '-';
+                termStr = '-';
+            }else{
+                termStr = '+';
             }
+            */
             termStr += c;
             return termStr;
         }
@@ -105,12 +107,13 @@ class CompoundTerm : public TermBase {
         TermBase* compute() override {return nullptr; /*return product*/}
         string toString() override {
             string termStr = "";
+            if (!sign){
+                termStr += '-';
+            }else{
+                termStr += '+';
+            }
             for (int i = 0; i < terms.size(); i ++){
-                if (!sign){
-                    termStr += '-' + terms[i]->toString();
-                }else{
-                    termStr += terms[i]->toString();
-                }
+                termStr += terms[i]->toString();   
             }
             return termStr;
         }
@@ -129,15 +132,16 @@ class Polynomial : public TermBase {
         TermBase* compute() override {return nullptr; /*return sum*/}
         string toString() override {
             string termStr = "";
+            if (!sign){
+                termStr += "-(";
+            }else{
+                termStr += "+(";
+            }
             int n = terms.size();
             for (int i = 0; i < terms.size(); i ++){
-                if (!sign){
-                    termStr += '-' + terms[i]->toString();
-                }else{
-                    termStr += terms[i]->toString();
-                }
-                
+                termStr += terms[i]->toString();
             }
+            termStr += ')';
             return termStr;
         }
 };
@@ -158,9 +162,9 @@ class RationalExpression : public TermBase {
         string toString() override {
             string termStr;
             if (!sign){
-                termStr = "-(" + num->toString() + '/' + denom->toString() + ')';
+                termStr = "-{" + num->toString() + '/' + denom->toString() + '}';
             }else{
-                termStr = num->toString() + '/' + denom->toString();
+                termStr = "+{" + num->toString() + '/' + denom->toString() + '}';
             }
             return termStr;
         }

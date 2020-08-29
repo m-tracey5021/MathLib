@@ -13,7 +13,11 @@ bool parseForSign(string expStr, int index);
 
 pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currenSign);
 
-Polynomial* parsePolynomial(string expStr);
+pair<RationalExpression*, int> parseRational(string expStr, int startIndex, bool currentSign);
+
+pair<RadicalExpression*, int> parseRadical(string expStr, int startIndex, bool currentSign);
+
+pair<Polynomial*, int> parseExpression(string expStr, int startIndex, bool currentSign);
 
 Equation* parseEquation(string eqStr);
 
