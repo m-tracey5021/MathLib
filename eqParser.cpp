@@ -113,7 +113,8 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
 
         if (currentChar == '+' | 
             currentChar == '-' |  
-            currentChar == ')'){
+            currentChar == ')' | 
+            currentChar == '}'){
             termIncomplete = false;
         }else if (isalpha(currentChar)){
             AtomicTerm<char>* atom = new AtomicTerm<char>(currentSign, 1, currentChar);
@@ -137,8 +138,12 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
             pair<TermBase*, int> denomTerminatingInfo = parseTerm(expStr, i + 1, denomSign);
             rational->setNum(currentTerm);
             rational->setDenom(denomTerminatingInfo.first);
+            rational->setSign(currentSign); 
+            rational->setExponent(1);
             currentTerm = rational;
             i = denomTerminatingInfo.second;
+        }else if (currentChar == '{'){
+        
         }else if (currentChar == '('){
             int* brackets = findSurroundingBrackets(expStr, i, '(');
             string subExpStr = expStr.substr(brackets[0], brackets[1] - brackets[0]);
@@ -149,10 +154,16 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
         }
         i ++;
     }
+
+    
     
     terminatingInfo.first = currentTerm;
     terminatingInfo.second = i - 1;
     return terminatingInfo;
+}
+
+pair<TermBase*, int> parseRational(string exp, int startIndex, bool currentSign){
+    RationalExpression* rational = new RationalExpression();
 }
 
 Polynomial* parsePolynomial(string expStr){

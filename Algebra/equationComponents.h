@@ -46,6 +46,53 @@ class AtomicTerm : public TermBase {
 
 };
 
+template<>
+
+class AtomicTerm<char> : public TermBase {
+    private:
+        char value;
+    public:
+        AtomicTerm(){}
+        AtomicTerm(bool sign, int exponent, char value): TermBase(sign, exponent), value(value){}
+        char getValue(){return value;}
+        void setValue(char v){value = v;}
+        void appendTerm(TermBase* tb) override {}
+        TermBase* compute() override {return this;}
+        string toString() override {
+            string termStr = "";
+            if (!sign){
+                termStr.push_back('-');
+            }
+            termStr.push_back(value);
+            return termStr;
+        }
+
+};
+
+template<>
+
+class AtomicTerm<int> : public TermBase {
+    private:
+        int value;
+    public:
+        AtomicTerm(){}
+        AtomicTerm(bool sign, int exponent, int value): TermBase(sign, exponent), value(value){}
+        int getValue(){return value;}
+        void setValue(int v){value = v;}
+        void appendTerm(TermBase* tb) override {}
+        TermBase* compute() override {return this;}
+        string toString() override {
+            char c = '0' + value;
+            string termStr = "";
+            if (!sign){
+                termStr += '-';
+            }
+            termStr += c;
+            return termStr;
+        }
+
+};
+
 class CompoundTerm : public TermBase {
     private:
         vector<TermBase*> terms;
@@ -82,6 +129,7 @@ class Polynomial : public TermBase {
         TermBase* compute() override {return nullptr; /*return sum*/}
         string toString() override {
             string termStr = "";
+            int n = terms.size();
             for (int i = 0; i < terms.size(); i ++){
                 if (!sign){
                     termStr += '-' + terms[i]->toString();
@@ -107,7 +155,15 @@ class RationalExpression : public TermBase {
         void setDenom(TermBase* d){denom = d;}
         void appendTerm(TermBase* tb) override {}
         TermBase* compute() override {return nullptr; /*return quotient*/}
-        string toString() override {return "";}
+        string toString() override {
+            string termStr;
+            if (!sign){
+                termStr = "-(" + num->toString() + '/' + denom->toString() + ')';
+            }else{
+                termStr = num->toString() + '/' + denom->toString();
+            }
+            return termStr;
+        }
 };
 
 class RadicalExpression : public TermBase {
