@@ -7,6 +7,8 @@
 
 using namespace std;
 
+pair<int, int> parseCoefficient(string expStr, int startIndex);
+
 pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currenSign);
 
 pair<RationalExpression*, int> parseRational(string expStr, int startIndex, bool currentSign);
@@ -98,73 +100,113 @@ bool parseForSign(string expStr, int index){
     }
 }
 
+pair<int, int> parseCoefficient(string expStr, int startIndex){
+    pair<int, int> coefficientTerminatingInfo;
+    char currentChar = expStr[startIndex];
+    string digitStr = "";
+    while(isdigit(currentChar)){
+        digitStr += currentChar;
+        startIndex ++;
+        currentChar = expStr[startIndex];
+    }
+    int coefficient = stoi(digitStr);
+    coefficientTerminatingInfo.first = coefficient;
+    coefficientTerminatingInfo.second = startIndex;
+    return coefficientTerminatingInfo;
+}
+
 pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
     pair<TermBase*, int> terminatingInfo;
-    
-    TermBase* currentTerm;
-    CompoundTerm* compound = new CompoundTerm();
-    
-    currentTerm = compound;
-    currentTerm->setSign(currentSign);
-    currentTerm->setExponent(1);
+
+    //CompoundTerm* currentTerm = new CompoundTerm();
+    //currentTerm->setSign(currentSign);
+    //currentTerm->setExponent(1);
+
+    CompoundTerm* currentTerm = nullptr;
 
     bool termIncomplete = true;
     bool increment = true;
     int i = startIndex;
 
-    while (termIncomplete){ // second while loop to move from term to term
+    while (termIncomplete){ // while loop to determine beginning and end of term
 
-        if (i > expStr.length()){
-            terminatingInfo.first = currentTerm;
-            terminatingInfo.second = i;
-            return terminatingInfo;
-        }
+        
 
         char currentChar = expStr[i];
 
-        if (currentChar == '+' | 
-            currentChar == '-' |
-            currentChar == '/' |   
-            currentChar == ')' | 
-            currentChar == '}'){
+        if (currentChar == '\000'){
+            terminatingInfo.first = currentTerm;
+            terminatingInfo.second = i;
+            return terminatingInfo;
+        }else if (currentChar == '+' | 
+                  currentChar == '-' |
+                  currentChar == '/'){
             termIncomplete = false;
             increment = false;
+        }else if (currentChar == '}' | 
+                  currentChar == ')'){
+            termIncomplete = false;
+            increment = true;
         }else if (isalpha(currentChar)){
+            if (currentTerm == nullptr){
+                currentTerm = new CompoundTerm();
+            }
             AtomicTerm<char>* atom = new AtomicTerm<char>(currentSign, 1, currentChar);
             currentTerm->appendTerm(atom);
             increment = true;
+            
         }else if (isdigit(currentChar)){
-            int i = currentChar - '0';
-            AtomicTerm<int>* atom = new AtomicTerm<int>(currentSign, 1, i);
+            if (currentTerm == nullptr){
+                currentTerm = new CompoundTerm();
+            }
+            pair<int, int> coeffcientTerminatingInfo = parseCoefficient(expStr, i);
+            int coefficient = coeffcientTerminatingInfo.first;
+            int terminatingPos = coeffcientTerminatingInfo.second;
+            AtomicTerm<int>* atom = new AtomicTerm<int>(currentSign, 1, coefficient);
             currentTerm->appendTerm(atom);
-            increment = true;
+            i = terminatingPos;
+            increment = false;
         }else if (currentChar == '{'){
+            if (currentTerm == nullptr){
+                currentTerm = new CompoundTerm();
+            }
             pair<RationalExpression*, int> rationalTerminatingInfo = parseRational(expStr, i + 1, currentSign);
             RationalExpression* rational = rationalTerminatingInfo.first;
             int terminatingPos = rationalTerminatingInfo.second;
             currentTerm->appendTerm(rational);
-            currentTerm = rational;
+            //currentTerm = rational;
             i = terminatingPos;
-            increment = true;
+            increment = false;
         }else if (currentChar == '['){
+            if (currentTerm == nullptr){
+                currentTerm = new CompoundTerm();
+            }
             pair<RadicalExpression*, int> radicalTerminatingInfo = parseRadical(expStr, i + 1, currentSign);
             RadicalExpression* radical = radicalTerminatingInfo.first;
             int terminatingPos = radicalTerminatingInfo.second;
             currentTerm->appendTerm(radical);
-            currentTerm = radical;
+            //currentTerm = radical;
             i = terminatingPos;
-            increment = true;
+            increment = false;
         }else if (currentChar == '('){
+            if (currentTerm == nullptr){
+                currentTerm = new CompoundTerm();
+            }
             pair<Polynomial*, int> polynomialTerminatingInfo = parseExpression(expStr, i + 1, currentSign);
             Polynomial* polynomial = polynomialTerminatingInfo.first;
             int terminatingPos = polynomialTerminatingInfo.second;
             currentTerm->appendTerm(polynomial);
-            currentTerm = polynomial;
+            //currentTerm = polynomial;
             i = terminatingPos;
             increment = false;
         }
 
-        string termStr = currentTerm->toString();
+        // just for debugging
+        string termStr;
+        if (currentTerm != nullptr){
+            termStr = currentTerm->toString();
+        }
+        
         if (increment){
             i ++;
         }
@@ -206,8 +248,6 @@ pair<RationalExpression*, int> parseRational(string expStr, int startIndex, bool
 
     rational->setNum(num);
     rational->setDenom(denom);
-    rational->setSign(currentSign);
-    rational->setExponent(1);
 
     string termStr = rational->toString();
 
@@ -232,9 +272,6 @@ pair<Polynomial*, int> parseExpression(string expStr, int startIndex, bool curre
     pair<Polynomial*, int> polynomialTerminatingInfo;
     Polynomial* polynomial = new Polynomial();
 
-    polynomial->setSign(currentSign);
-    polynomial->setExponent(1);
-
     int polynomialTerminatingPos;
     bool polynomialIncomplete = true;
 
@@ -254,6 +291,10 @@ pair<Polynomial*, int> parseExpression(string expStr, int startIndex, bool curre
             termTerminatingChar = expStr[termTerminatingPos];
             startIndex = termTerminatingPos;
 
+            // need to add term to polynomial only under certain conditions, like when 
+            // the terminating char is '}' but it is not after another type of closing bracket          
+            // im thinking make the parseTerm funtion return null if no term, and then appendTerm doesnt do anything
+
             polynomial->appendTerm(currentTerm);
 
             if (termTerminatingChar == '+'){
@@ -264,22 +305,25 @@ pair<Polynomial*, int> parseExpression(string expStr, int startIndex, bool curre
                 termSign = false;
                 termIncomplete = false;
                 startIndex = termTerminatingPos + 1;
-            }else if (termTerminatingChar == ')'){
+            }else if (termTerminatingChar == ')'){ // polynomial is complete
                 termSign = false;
                 termIncomplete = false;
                 polynomialIncomplete = false;
                 polynomialTerminatingPos = termTerminatingPos + 1;
+            }else if (termTerminatingChar == '('){
+
             }
 
-            if (startIndex > expStr.length()){
+            if (expStr[startIndex] == '\000'){ // if polynomial is top level and doesnt have brackets
                 termIncomplete = false;
                 polynomialIncomplete = false;
-                polynomialTerminatingPos = expStr.length();
+                polynomialTerminatingPos = startIndex;
             }
             
         }     
     }
     string termStr = polynomial->toString();
+    Polynomial poly = *polynomial;
 
     polynomialTerminatingInfo.first = polynomial;
     polynomialTerminatingInfo.second = polynomialTerminatingPos; // returns one past the end of the brackets
