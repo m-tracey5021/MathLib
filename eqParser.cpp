@@ -140,13 +140,11 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
             return terminatingInfo;
         }else if (currentChar == '+' | 
                   currentChar == '-' |
-                  currentChar == '/'){
-            termIncomplete = false;
-            increment = false;
-        }else if (currentChar == '}' | 
+                  currentChar == '/' | 
+                  currentChar == '}' | 
                   currentChar == ')'){
             termIncomplete = false;
-            increment = true;
+            increment = false;
         }else if (isalpha(currentChar)){
             if (currentTerm == nullptr){
                 currentTerm = new CompoundTerm();
@@ -244,7 +242,7 @@ pair<RationalExpression*, int> parseRational(string expStr, int startIndex, bool
     }
     pair<TermBase*, int> denomTerminatingInfo = parseTerm(expStr, denumStartIndex, denomSign);
     denom = denomTerminatingInfo.first;
-    terminatingPos = denomTerminatingInfo.second;
+    terminatingPos = denomTerminatingInfo.second + 1;
 
     rational->setNum(num);
     rational->setDenom(denom);

@@ -39,6 +39,11 @@ bool testExpressionParse(){
     TermBase* term6 = parseExpression(expression6, 0, 1).first;
     string str6 = term6->toString();
 
+    string expression7 = "{(28x-42y)/(3x+7y)}";
+    string expected7 = "({(28x-42y)/(3x+7y)})";
+    TermBase* term7 = parseExpression(expression7, 0, 1).first;
+    string str7 = term7->toString();
+
     if (expected1 == str1 & expected2 == str2 & expected3 == str3){
         return true;
     }else{
