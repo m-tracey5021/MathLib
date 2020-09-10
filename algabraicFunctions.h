@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Trees\binaryTree.h"
+#include "Trees/binaryTree.h"
 #include <string>
 
 BinaryTree createTreeFromEquation(char* eq, int size);

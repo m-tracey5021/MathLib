@@ -1,4 +1,4 @@
-#include "Automata\automatonTransition.h"
+#include "Automata/automatonTransition.h"
 
 AutomatonTransition::AutomatonTransition(){}
 

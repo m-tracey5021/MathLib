@@ -1,4 +1,4 @@
-#include "HashTables\integerHashSet.h"
+#include "HashTables/integerHashSet.h"
 #include "util.h"
 #include <string>
 

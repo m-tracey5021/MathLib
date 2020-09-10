@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <vector>
-#include "Binary\bitString.h"
+#include "Binary/bitString.h"
 #include "basicArithmeticFunctions.h"
 using namespace std;
 

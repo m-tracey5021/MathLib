@@ -1,4 +1,4 @@
-#include "Trees\EqTrees\eqTree.h"
+#include "Trees/EqTrees/eqTree.h"
 
 bool EqTree::charIsOperator(char c){
     if (c == '=' | 

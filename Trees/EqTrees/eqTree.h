@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\binaryTree.h"
+#include "../binaryTree.h"
 #include <vector>
 #include <string>
 

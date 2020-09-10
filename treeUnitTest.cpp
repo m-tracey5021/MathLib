@@ -1,4 +1,4 @@
-#include "Trees\binaryTree.h"
+#include "Trees/binaryTree.h"
 #include "algabraicFunctions.h"
 
 bool testTreeStructure(){

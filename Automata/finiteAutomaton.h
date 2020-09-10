@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "..\Sets\set.h"
+#include "../Sets/set.h"
 #include "automatonState.h"
 #include "automatonTransition.h"
 

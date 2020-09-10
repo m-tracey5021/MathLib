@@ -1,4 +1,4 @@
-#include "Automata\automatonState.h"
+#include "Automata/automatonState.h"
 
 AutomatonState::AutomatonState(){}
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\Sets\set.h"
+#include "../Sets/set.h"
 
 class Language{
     private:

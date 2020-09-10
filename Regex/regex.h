@@ -1,7 +1,7 @@
 #pragma once
 
 #include "regexElement.h"
-#include "..\Automata\finiteAutomaton.h"
+#include "../Automata/finiteAutomaton.h"
 
 class Regex{
     private:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\HashTables\integerHashSet.h"
+#include "../HashTables/integerHashSet.h"
 
 class IntegerSet : public IntegerHashSet{
     private:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\HashTables\hashSet.h"
+#include "../HashTables/hashSet.h"
 
 template<class t>
 

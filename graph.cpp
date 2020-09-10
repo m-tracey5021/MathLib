@@ -1,4 +1,4 @@
-#include "Graphs\graph.h"
+#include "Graphs/graph.h"
 
 Point* Graph::findClosestVertex(Point targetVertex){
     Point* closestVertex = nullptr;

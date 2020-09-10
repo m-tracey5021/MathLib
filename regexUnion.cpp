@@ -1,4 +1,4 @@
-#include "Regex\regexUnion.h"
+#include "Regex/regexUnion.h"
 #include <string>
 
 RegexUnion::RegexUnion(){}

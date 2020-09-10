@@ -1,8 +1,8 @@
-#include "Regex\regex.h"
-#include "Regex\regexElement.h"
-#include "Regex\regexChar.h"
-#include "Regex\regexString.h"
-#include "Regex\regexUnion.h"
+#include "Regex/regex.h"
+#include "Regex/regexElement.h"
+#include "Regex/regexChar.h"
+#include "Regex/regexString.h"
+#include "Regex/regexUnion.h"
 #include "util.h"
 
 Regex::Regex(){}
