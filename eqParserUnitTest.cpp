@@ -10,7 +10,7 @@ using namespace std;
 bool testExpressionParse(){
     
     string expression1 = "2a";
-    string expected1 = "+2a";
+    string expected1 = "2a";
     TermBase* term1 = parseTerm(expression1, 0, 1).first;
     string str1 = term1->toString();
     
@@ -40,9 +40,39 @@ bool testExpressionParse(){
     string str6 = term6->toString();
 
     string expression7 = "{(28x-42y)/(3x+7y)}";
-    string expected7 = "({(28x-42y)/(3x+7y)})";
+    string expected7 = "{(28x-42y)/(3x+7y)}";
     TermBase* term7 = parseExpression(expression7, 0, 1).first;
     string str7 = term7->toString();
+
+    string expression8 = "x^(2)";
+    string expected8 = "x^(2)";
+    TermBase* term8 = parseExpression(expression8, 0, 1).first;
+    string str8 = term8->toString();
+
+    string expression9 = "(28x-42y)^(23y+8)";
+    string expected9 = "(28x-42y)^(23y+8)";
+    TermBase* term9 = parseExpression(expression9, 0, 1).first;
+    string str9 = term9->toString();
+
+    string expression10 = "[2](x)";
+    string expected10 = "[2](x)";
+    TermBase* term10 = parseExpression(expression10, 0, 1).first;
+    string str10 = term10->toString();
+
+    string expression11 = "[3](2x+5y)";
+    string expected11 = "[3](2x+5y)";
+    TermBase* term11 = parseExpression(expression11, 0, 1).first;
+    string str11 = term11->toString();
+
+    string expression12 = "(3xd+[4](2d+5y))";
+    string expected12 = "(3xd+[4](2d+5y))";
+    TermBase* term12 = parseExpression(expression12, 0, 1).first;
+    string str12 = term12->toString();
+
+    string expression13 = "{x/7y}^(4t+6)";
+    string expected13 = "{x/7y}^(4t+6)";
+    TermBase* term13 = parseExpression(expression13, 0, 1).first;
+    string str13 = term13->toString();
 
     if (expected1 == str1 & expected2 == str2 & expected3 == str3){
         return true;
