@@ -15,7 +15,7 @@ pair<RationalExpression*, int> parseRational(string expStr, int startIndex, bool
 
 pair<RadicalExpression*, int> parseRadical(string expStr, int startIndex, bool currentSign);
 
-pair<Polynomial*, int> parseExpression(string expStr, int startIndex, bool currentSign);
+pair<Expression*, int> parseExpression(string expStr, int startIndex, bool currentSign);
 
 Equation* parseEquation(string eqStr);
 
@@ -116,8 +116,8 @@ pair<int, int> parseCoefficient(string expStr, int startIndex){
 }
 
 pair<TermBase*, int> parseExponent(string expStr, int startIndex, bool currentSign){
-    pair<Polynomial*, int> exponentTerminatingInfo = parseExpression(expStr, startIndex, currentSign);
-    Polynomial* exponent = exponentTerminatingInfo.first;
+    pair<Expression*, int> exponentTerminatingInfo = parseExpression(expStr, startIndex, currentSign);
+    Expression* exponent = exponentTerminatingInfo.first;
     int exponentTerminatingPos = exponentTerminatingInfo.second;
 
 
@@ -130,7 +130,7 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
     //currentTerm->setSign(currentSign);
     //currentTerm->setExponent(1);
 
-    TermBase* currentTerm = nullptr;
+    CompoundTerm* currentTerm = nullptr;
     TermBase* previousTerm = nullptr;
 
     bool termIncomplete = true;
@@ -167,6 +167,9 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
             }
             AtomicTerm<char>* atom = new AtomicTerm<char>(currentSign, nullptr, currentChar);
             currentTerm->appendTerm(atom);
+            if (currentTerm->getCoefficient() == nullptr){
+                currentTerm->setCoefficient(new AtomicTerm<int>(1, nullptr, 1));
+            }
             increment = true;
             
         }else if (isdigit(currentChar)){
@@ -178,12 +181,13 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
             int coefficient = coeffcientTerminatingInfo.first;
             int terminatingPos = coeffcientTerminatingInfo.second;
             AtomicTerm<int>* atom = new AtomicTerm<int>(currentSign, nullptr, coefficient);
-            currentTerm->appendTerm(atom);
+            //currentTerm->appendTerm(atom);
+            currentTerm->setCoefficient(atom);
             i = terminatingPos;
             increment = false;
         }else if (currentChar == '^'){
-            pair<Polynomial*, int> exponentTerminatingInfo = parseExpression(expStr, i + 1, currentSign);
-            Polynomial* exponent = exponentTerminatingInfo.first;
+            pair<Expression*, int> exponentTerminatingInfo = parseExpression(expStr, i + 1, currentSign);
+            Expression* exponent = exponentTerminatingInfo.first;
             int terminatingPos = exponentTerminatingInfo.second;
             previousTerm->setExponent(exponent);
             i = terminatingPos;
@@ -198,6 +202,9 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
             RationalExpression* rational = rationalTerminatingInfo.first;
             int terminatingPos = rationalTerminatingInfo.second;
             currentTerm->appendTerm(rational);
+            if (currentTerm->getCoefficient() == nullptr){
+                currentTerm->setCoefficient(new AtomicTerm<int>());
+            }
             previousTerm = rational;
             i = terminatingPos;
             increment = false;
@@ -218,11 +225,11 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
                 currentTerm = new CompoundTerm();
                 previousTerm = currentTerm;
             }
-            pair<Polynomial*, int> polynomialTerminatingInfo = parseExpression(expStr, i + 1, currentSign);
-            Polynomial* polynomial = polynomialTerminatingInfo.first;
-            int terminatingPos = polynomialTerminatingInfo.second;
-            currentTerm->appendTerm(polynomial);
-            previousTerm = polynomial;
+            pair<Expression*, int> expressionTerminatingInfo = parseExpression(expStr, i + 1, currentSign);
+            Expression* expression = expressionTerminatingInfo.first;
+            int terminatingPos = expressionTerminatingInfo.second;
+            currentTerm->appendTerm(expression);
+            previousTerm = expression;
             i = terminatingPos;
             increment = false;
         }
@@ -264,7 +271,7 @@ pair<RationalExpression*, int> parseRational(string expStr, int startIndex, bool
     if (!numSign){
         numStartIndex ++;
     }
-    pair<Polynomial*, int> numTerminatingInfo = parseExpression(expStr, numStartIndex, currentSign);
+    pair<Expression*, int> numTerminatingInfo = parseExpression(expStr, numStartIndex, currentSign);
     num = numTerminatingInfo.first;
     denumStartIndex = numTerminatingInfo.second; // + 1 is added in parse expression to account for division symbol
 
@@ -272,7 +279,7 @@ pair<RationalExpression*, int> parseRational(string expStr, int startIndex, bool
     if (!denomSign){
         denumStartIndex ++;
     }
-    pair<Polynomial*, int> denomTerminatingInfo = parseExpression(expStr, denumStartIndex, denomSign);
+    pair<Expression*, int> denomTerminatingInfo = parseExpression(expStr, denumStartIndex, denomSign);
     denom = denomTerminatingInfo.first;
     terminatingPos = denomTerminatingInfo.second;
 
@@ -291,13 +298,13 @@ pair<RadicalExpression*, int> parseRadical(string expStr, int startIndex, bool c
     pair<RadicalExpression*, int> radicalTerminatingInfo;
     RadicalExpression* radical = new RadicalExpression();
 
-    pair<Polynomial*, int> rootTerminatingInfo = parseExpression(expStr, startIndex, currentSign);
-    Polynomial* root = rootTerminatingInfo.first;
+    pair<Expression*, int> rootTerminatingInfo = parseExpression(expStr, startIndex, currentSign);
+    Expression* root = rootTerminatingInfo.first;
     int rootTerminatingPos = rootTerminatingInfo.second;
     startIndex = rootTerminatingPos;
 
-    pair<Polynomial*, int> expressionTerminatingInfo = parseExpression(expStr, startIndex, currentSign);
-    Polynomial* expression = expressionTerminatingInfo.first;
+    pair<Expression*, int> expressionTerminatingInfo = parseExpression(expStr, startIndex, currentSign);
+    Expression* expression = expressionTerminatingInfo.first;
     int expressionTerminatingPos = expressionTerminatingInfo.second;
 
     radical->setRoot(root);
@@ -311,14 +318,14 @@ pair<RadicalExpression*, int> parseRadical(string expStr, int startIndex, bool c
     return radicalTerminatingInfo;
 }
 
-pair<Polynomial*, int> parseExpression(string expStr, int startIndex, bool currentSign){
-    pair<Polynomial*, int> polynomialTerminatingInfo;
-    Polynomial* polynomial = new Polynomial();
+pair<Expression*, int> parseExpression(string expStr, int startIndex, bool currentSign){
+    pair<Expression*, int> expressionTerminatingInfo;
+    Expression* expression = new Expression();
 
-    int polynomialTerminatingPos;
-    bool polynomialIncomplete = true;
+    int expressionTerminatingPos;
+    bool expressionIncomplete = true;
 
-    while (polynomialIncomplete){ // first while loop to move onto next term
+    while (expressionIncomplete){ // first while loop to move onto next term
         
         TermBase* currentTerm = nullptr; 
         bool termSign = parseForSign(expStr, startIndex); // get the sign of the first term
@@ -338,7 +345,7 @@ pair<Polynomial*, int> parseExpression(string expStr, int startIndex, bool curre
             // the terminating char is '}' but it is not after another type of closing bracket          
             // im thinking make the parseTerm funtion return null if no term, and then appendTerm doesnt do anything
 
-            polynomial->appendTerm(currentTerm);
+            expression->appendTerm(currentTerm);
 
             if (termTerminatingChar == '+'){
                 termSign = true;
@@ -351,22 +358,20 @@ pair<Polynomial*, int> parseExpression(string expStr, int startIndex, bool curre
             }else if (termTerminatingChar == '/' | termTerminatingChar == '}' | termTerminatingChar == ']' | termTerminatingChar == ')'){ // polynomial is complete
                 termSign = false;
                 termIncomplete = false;
-                polynomialIncomplete = false;
-                polynomialTerminatingPos = termTerminatingPos + 1;
+                expressionIncomplete = false;
+                expressionTerminatingPos = termTerminatingPos + 1;
             }else if (termTerminatingChar == '\000'){ // if polynomial is top level and doesnt have brackets
                 termIncomplete = false;
-                polynomialIncomplete = false;
-                polynomialTerminatingPos = startIndex;
+                expressionIncomplete = false;
+                expressionTerminatingPos = startIndex;
             }
             
         }     
     }
-    string termStr = polynomial->toString();
-    Polynomial poly = *polynomial;
 
-    polynomialTerminatingInfo.first = polynomial;
-    polynomialTerminatingInfo.second = polynomialTerminatingPos; // returns one past the end of the brackets
-    return polynomialTerminatingInfo;
+    expressionTerminatingInfo.first = expression;
+    expressionTerminatingInfo.second = expressionTerminatingPos; // returns one past the end of the brackets
+    return expressionTerminatingInfo;
 }
 
 Equation* parseEquation(string eqStr){
