@@ -7,15 +7,11 @@
 
 using namespace std;
 
-pair<int, int> parseCoefficient(string expStr, int startIndex);
+int parseCoefficient(string expStr, int& startIndex);
 
 pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currenSign);
 
-pair<RationalExpression*, int> parseRational(string expStr, int startIndex, bool currentSign);
-
-pair<RadicalExpression*, int> parseRadical(string expStr, int startIndex, bool currentSign);
-
-pair<Expression*, int> parseExpression(string expStr, int startIndex, bool currentSign);
+TermBase* parseExpression(string expStr, int startIndex, bool currentSign);
 
 Equation* parseEquation(string eqStr);
 
@@ -100,8 +96,7 @@ bool parseForSign(string expStr, int index){
     }
 }
 
-pair<int, int> parseCoefficient(string expStr, int startIndex){
-    pair<int, int> coefficientTerminatingInfo;
+int parseCoefficient(string expStr, int& startIndex){
     char currentChar = expStr[startIndex];
     string digitStr = "";
     while(isdigit(currentChar)){
@@ -110,9 +105,9 @@ pair<int, int> parseCoefficient(string expStr, int startIndex){
         currentChar = expStr[startIndex];
     }
     int coefficient = stoi(digitStr);
-    coefficientTerminatingInfo.first = coefficient;
-    coefficientTerminatingInfo.second = startIndex;
-    return coefficientTerminatingInfo;
+    startIndex --;
+
+    return coefficient;
 }
 
 pair<TermBase*, int> parseExponent(string expStr, int startIndex, bool currentSign){
@@ -256,84 +251,112 @@ pair<TermBase*, int> parseTerm(string expStr, int startIndex, bool currentSign){
     return terminatingInfo;
 }
 
-pair<RationalExpression*, int> parseRational(string expStr, int startIndex, bool currentSign){
-    pair<RationalExpression*, int> terminatingInfo;
-    RationalExpression* rational = new RationalExpression();
 
-    TermBase* num;
-    TermBase* denom;
 
-    int numStartIndex = startIndex;
-    int denumStartIndex;
-    int terminatingPos;
+TermBase* parseExpression(string expStr, int startIndex, bool currentSign){
+    TermContainer* expression = new TermContainer();
+    expression->setOperationType(OperationType::Summation);
 
-    bool numSign = parseForSign(expStr, numStartIndex);
-    if (!numSign){
-        numStartIndex ++;
-    }
-    pair<Expression*, int> numTerminatingInfo = parseExpression(expStr, numStartIndex, currentSign);
-    num = numTerminatingInfo.first;
-    denumStartIndex = numTerminatingInfo.second; // + 1 is added in parse expression to account for division symbol
-
-    bool denomSign = parseForSign(expStr, denumStartIndex);
-    if (!denomSign){
-        denumStartIndex ++;
-    }
-    pair<Expression*, int> denomTerminatingInfo = parseExpression(expStr, denumStartIndex, denomSign);
-    denom = denomTerminatingInfo.first;
-    terminatingPos = denomTerminatingInfo.second;
-
-    rational->setNum(num);
-    rational->setDenom(denom);
-
-    string termStr = rational->toString();
-
-    terminatingInfo.first = rational;
-    terminatingInfo.second = terminatingPos; // returns one past the end of the brackets
-    return terminatingInfo;
-    
-}
-
-pair<RadicalExpression*, int> parseRadical(string expStr, int startIndex, bool currentSign){
-    pair<RadicalExpression*, int> radicalTerminatingInfo;
-    RadicalExpression* radical = new RadicalExpression();
-
-    pair<Expression*, int> rootTerminatingInfo = parseExpression(expStr, startIndex, currentSign);
-    Expression* root = rootTerminatingInfo.first;
-    int rootTerminatingPos = rootTerminatingInfo.second;
-    startIndex = rootTerminatingPos;
-
-    pair<Expression*, int> expressionTerminatingInfo = parseExpression(expStr, startIndex, currentSign);
-    Expression* expression = expressionTerminatingInfo.first;
-    int expressionTerminatingPos = expressionTerminatingInfo.second;
-
-    radical->setRoot(root);
-    radical->setTerm(expression);
-
-    string termStr = radical->toString();
-
-    radicalTerminatingInfo.first = radical;
-    radicalTerminatingInfo.second = expressionTerminatingPos;
-
-    return radicalTerminatingInfo;
-}
-
-pair<Expression*, int> parseExpression(string expStr, int startIndex, bool currentSign){
-    pair<Expression*, int> expressionTerminatingInfo;
-    Expression* expression = new Expression();
-
-    int expressionTerminatingPos;
+    int i = startIndex;
     bool expressionIncomplete = true;
 
     while (expressionIncomplete){ // first while loop to move onto next term
         
-        TermBase* currentTerm = nullptr; 
+        TermContainer* currentTerm = nullptr;
+        currentTerm->setOperationType(OperationType::Multiplication); 
+
+        TermContainer* previousTerm = nullptr;
+
         bool termSign = parseForSign(expStr, startIndex); // get the sign of the first term
         bool termIncomplete = true;
-        int termTerminatingPos;
-        char termTerminatingChar;
+
+        int globalCoefficient = 0;
 
         while (termIncomplete){ // second while loop to move from term to term
+
+
+
+            char currentChar = expStr[i];
+
+            if (currentChar == '\000'){
+                return expression;
+            }else if (currentChar == '+' | 
+                    currentChar == '-' |
+                    currentChar == '/' | 
+                    currentChar == '}' |
+                    currentChar == ']' |  
+                    currentChar == ')'){
+                termIncomplete = false;
+            }else if (isalpha(currentChar)){
+                if (currentTerm == nullptr){
+                    currentTerm = new TermContainer();
+                    previousTerm = currentTerm;
+                }
+                Variable* variable = new Variable(currentSign, 1, nullptr, expStr[i]);
+                currentTerm->appendTerm(variable);
+                if (globalCoefficient == 0){
+                    currentTerm->setCoefficient(globalCoefficient);
+                }
+                
+            }else if (isdigit(currentChar)){
+                if (currentTerm == nullptr){
+                    currentTerm = new TermContainer();
+                    previousTerm = currentTerm;
+                }
+                globalCoefficient = parseCoefficient(expStr, i);
+            }else if (currentChar == '^'){
+                pair<Expression*, int> exponentTerminatingInfo = parseExpression(expStr, i + 1, currentSign);
+                Expression* exponent = exponentTerminatingInfo.first;
+                int terminatingPos = exponentTerminatingInfo.second;
+                previousTerm->setExponent(exponent);
+                i = terminatingPos;
+                exponentParsed = true;
+                increment = true;
+            }else if (currentChar == '{'){
+                if (currentTerm == nullptr){
+                    currentTerm = new CompoundTerm();
+                    previousTerm = currentTerm;
+                }
+                pair<RationalExpression*, int> rationalTerminatingInfo = parseRational(expStr, i + 1, currentSign);
+                RationalExpression* rational = rationalTerminatingInfo.first;
+                int terminatingPos = rationalTerminatingInfo.second;
+                currentTerm->appendTerm(rational);
+                if (currentTerm->getCoefficient() == nullptr){
+                    currentTerm->setCoefficient(new AtomicTerm<int>());
+                }
+                previousTerm = rational;
+                i = terminatingPos;
+                increment = false;
+            }else if (currentChar == '['){
+                if (currentTerm == nullptr){
+                    currentTerm = new CompoundTerm();
+                    previousTerm = currentTerm;
+                }
+                pair<RadicalExpression*, int> radicalTerminatingInfo = parseRadical(expStr, i + 1, currentSign);
+                RadicalExpression* radical = radicalTerminatingInfo.first;
+                int terminatingPos = radicalTerminatingInfo.second;
+                currentTerm->appendTerm(radical);
+                previousTerm = radical;
+                i = terminatingPos;
+                increment = false;
+            }else if (currentChar == '('){
+                if (currentTerm == nullptr){
+                    currentTerm = new CompoundTerm();
+                    previousTerm = currentTerm;
+                }
+                pair<Expression*, int> expressionTerminatingInfo = parseExpression(expStr, i + 1, currentSign);
+                Expression* expression = expressionTerminatingInfo.first;
+                int terminatingPos = expressionTerminatingInfo.second;
+                currentTerm->appendTerm(expression);
+                previousTerm = expression;
+                i = terminatingPos;
+                increment = false;
+            }
+
+
+
+
+
             
             pair<TermBase*, int> terminatingInfo = parseTerm(expStr, startIndex, termSign);
             currentTerm = terminatingInfo.first;
