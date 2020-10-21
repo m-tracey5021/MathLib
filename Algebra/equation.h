@@ -4,10 +4,10 @@
 
 class Equation {
     private:
-        Polynomial* left;
-        Polynomial* right;
+        TermContainer* left;
+        TermContainer* right;
     public:
         Equation(){}
-        Equation(Polynomial* left, Polynomial* right): left(left), right(right){}
+        Equation(TermContainer* left, TermContainer* right): left(left), right(right){}
 
 };
