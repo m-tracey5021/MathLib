@@ -46,6 +46,11 @@ class TermBase {
         virtual bool isOne(){return false;}
         virtual bool isAtomic(){return false;}
         virtual bool isLikeTerm(TermBase* other){return false;}
+
+        virtual TermBase* sum(TermBase* other){return nullptr;}
+        virtual TermBase* multiply(TermBase* other){return nullptr;}
+        virtual TermBase* divide(TermBase* other){return nullptr;}
+
         virtual vector<TermBase*> allFactors(){vector<TermBase*> dummy; return dummy;}
         virtual TermBase* factorTerm(bool high){return nullptr;}
 
@@ -83,6 +88,25 @@ class Constant : public TermBase {
                 if (variable){
                     return false;
                 }
+            }
+        }
+
+        TermBase* sum(TermBase* other) override {
+            Constant* otherConstant = dynamic_cast<Constant*> (other);
+
+            if (otherConstant){
+                int newConstant = constant + otherConstant->getConstant();
+                if (newConstant < 0){
+                    return new Constant(false, nullptr, nullptr, newConstant);
+                }else{
+                    return new Constant(true, nullptr, nullptr, newConstant);
+                }
+            }else{
+                TermContainer* newContainer = new TermContainer();
+                newContainer->setOperationType(OperationType::Summation);
+                newContainer->appendTerm(this);
+                newContainer->appendTerm(other);
+                return newContainer;
             }
         }
 
@@ -224,21 +248,35 @@ class TermContainer : public TermBase {
                             return false;
                         }else{
                             bool termsEqual = true;
-                            while (termsEqual){
+                            while (termsEqual){ // make sure loop doesnt continue past the end of terms
                                 if (!terms[indexThis]->isEqual(otherContainer->getTerms()[indexOther])){
                                     termsEqual = false;
                                 }
                                 indexThis ++;
                                 indexOther ++;
                             }
-                            return termsEqual; // return true if all components are the same, flase if else
+                            return termsEqual; // return true if all components are the same, false if else
                         }
                         
                         
                     }else if (operationType == OperationType::Division){
-
-                    }else{
-
+                        if (terms[1]->isLikeTerm(otherContainer->getTerms()[1])){ // if denom is the same, return true, they two numerators can be added
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    }else{ // you can always add one polynomial to another, just end up with a bigger polynomial, program this elsewhere
+                        if (terms.size() != otherContainer->getTerms().size()){
+                            return false;
+                        }else{
+                            bool termsEqual = true;
+                            for (int i = 0; i < terms.size(); i ++){
+                                if (!terms[i]->isLikeTerm(otherContainer->getTerms()[i])){
+                                    termsEqual = false;
+                                }
+                            }
+                            return termsEqual;
+                        }
                     }
                 }
             }else{
