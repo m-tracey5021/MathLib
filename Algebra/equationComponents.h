@@ -17,7 +17,7 @@ class TermBase {
         TermBase* root;
         TermBase* exponent;
         TermBase* parentExpression;
-        string representation;
+        string expressionString;
     public:
         TermBase(): sign(1), root(nullptr), exponent(nullptr), parentExpression(nullptr){}
         TermBase(bool sign, TermBase* root, TermBase* exponent): sign(sign), root(root), exponent(exponent), parentExpression(nullptr){}
@@ -26,26 +26,26 @@ class TermBase {
         TermBase* getRoot(){return root;}
         TermBase* getExponent(){return exponent;}
         TermBase* getParentExpression(){return parentExpression;}
-        string getRepresentation(){return representation;}
+        string getExpressionString(){return expressionString;}
 
-        void setSign(bool s){sign = s;}
-        void setRoot(TermBase* r){root = r;}
-        void setExponent(TermBase* e){exponent = e;}
+        void setSign(bool s){sign = s; updateExpressionString();}
+        void setRoot(TermBase* r){root = r; updateExpressionString();}
+        void setExponent(TermBase* e){exponent = e; updateExpressionString();}
         void setParentExpression(TermBase* p){parentExpression = p;}
-        void updateRepresentation(){representation = this->toString();}
-        bool isEqual(TermBase* other){if (representation == other->getRepresentation()){return true;}else{return false;}}
+        void updateExpressionString(){expressionString = this->toString();}
+        bool isEqual(TermBase* other){if (expressionString == other->getExpressionString()){return true;}else{return false;}}
 
         // methods to override
 
         virtual void appendTerm(TermBase* t){}
-        virtual void removeTerm(TermBase* t){}
         virtual void removeTerm(int index){}
 
-        virtual TermBase* getCoefficient(){return nullptr;}
-        virtual void setCoefficient(TermBase* c){}
+        //virtual TermBase* getCoefficient(){return nullptr;}
+        //virtual void setCoefficient(TermBase* c){}
 
         virtual bool isOne(){return false;}
-        virtual bool isSummable(TermBase* other){return false;}
+        virtual bool isAtomic(){return false;}
+        virtual bool isLikeTerm(TermBase* other){return false;}
         virtual vector<TermBase*> allFactors(){vector<TermBase*> dummy; return dummy;}
         virtual TermBase* factorTerm(bool high){return nullptr;}
 
@@ -58,10 +58,33 @@ class Constant : public TermBase {
         int constant;
     public:
         Constant(): TermBase(){}
-        Constant(bool sign, TermBase* root, TermBase* exponent, int constant): TermBase(sign, root, exponent), constant(constant){updateRepresentation();}
+        Constant(bool sign, TermBase* root, TermBase* exponent, int constant): TermBase(sign, root, exponent), constant(constant){updateExpressionString();}
 
         int getConstant(){return constant;}
-        void setConstant(int c){constant = c;}
+        void setConstant(int c){constant = c; updateExpressionString();}
+
+        bool isOne() override {
+            if (constant == 1){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        bool isAtomic() override {return true;}
+        bool isLikeTerm(TermBase* other) override {
+            if (!other->isAtomic()){
+                return false;
+            }else{
+                Constant* constant = dynamic_cast<Constant*> (other);
+                Variable* variable = dynamic_cast<Variable*> (other);
+                if (constant){
+                    return true;
+                }
+                if (variable){
+                    return false;
+                }
+            }
+        }
 
         string toString() override {
             string termStr = "";
@@ -73,12 +96,16 @@ class Constant : public TermBase {
 
             if (root != nullptr){
                 if (!root->isOne()){
-                    termStr = '(' + root->toString() + '|' + termStr + ')';
+                    termStr = '[' + root->toString() + '|' + termStr + ']';
                 }
             }
             if (exponent != nullptr){
                 if (!exponent->isOne()){
-                    termStr = termStr + "^(" + exponent->toString() + ')';
+                    if (exponent->getSign()){
+                        termStr = termStr + "^(" + exponent->toString() + ')';
+                    }else{
+                        termStr = termStr + "^" + exponent->toString();
+                    }
                 }
             }
 
@@ -91,10 +118,27 @@ class Variable : public TermBase {
         char variable;
     public:
         Variable(): TermBase(){}
-        Variable(bool sign, TermBase* root, TermBase* exponent, char variable): TermBase(sign, root, exponent), variable(variable){updateRepresentation();}
+        Variable(bool sign, TermBase* root, TermBase* exponent, char variable): TermBase(sign, root, exponent), variable(variable){updateExpressionString();}
 
         char getVariable(){return variable;}
-        void setVariable(char v){variable = v;}
+        void setVariable(char v){variable = v; updateExpressionString();}
+
+        bool isOne() override {return false;}
+        bool isAtomic() override {return true;}
+        bool isLikeTerm(TermBase* other) override {
+            if (!other->isAtomic()){
+                return false;
+            }else{
+                Constant* constant = dynamic_cast<Constant*> (other);
+                Variable* variable = dynamic_cast<Variable*> (other);
+                if (constant){
+                    return false;
+                }
+                if (variable){
+                    return true;
+                }
+            }
+        }
 
         string toString() override {
             string termStr = "";
@@ -106,12 +150,17 @@ class Variable : public TermBase {
 
             if (root != nullptr){
                 if (!root->isOne()){
-                    termStr = '(' + root->toString() + '|' + termStr + ')';
+                    termStr = '[' + root->toString() + '|' + termStr + ']';
                 }
             }
             if (exponent != nullptr){
                 if (!exponent->isOne()){
-                    termStr = termStr + "^(" + exponent->toString() + ')';
+                    if (exponent->getSign()){
+                        termStr = termStr + "^(" + exponent->toString() + ')';
+                    }else{
+                        termStr = termStr + "^" + exponent->toString();
+                    }
+                    
                 }
             }
 
@@ -124,19 +173,79 @@ class TermContainer : public TermBase {
     private:
         vector<TermBase*> terms;
         OperationType operationType;
+        Constant* coefficient;
     public:
-        TermContainer(): TermBase(){}
-        TermContainer(bool sign, TermBase* root, TermBase* exponent): TermBase(sign, root, exponent){updateRepresentation();}
+        TermContainer(): TermBase(){
+            coefficient = new Constant(true, nullptr, nullptr, 1);
+            updateExpressionString();
+        }
+        TermContainer(bool sign, TermBase* root, TermBase* exponent, Constant* coefficient): TermBase(sign, root, exponent), coefficient(coefficient){
+            updateExpressionString();
+        }
 
         vector<TermBase*> getTerms(){return terms;}
         OperationType getOperationType(){return operationType;}
-        void setTerms(vector<TermBase*> t){terms = t;}
-        void setOperationType(OperationType o){operationType = o;}
+        void setTerms(vector<TermBase*> t){terms = t; updateExpressionString();}
+        void setOperationType(OperationType o){operationType = o; updateExpressionString();}
 
-        void appendTerm(TermBase* t) override {terms.push_back(t); updateRepresentation();}
-        void removeTerm(int i) override {terms.erase(terms.begin() + i); updateRepresentation();}
-        TermBase* getCoefficient() override {return terms[0];}
-        void setCoefficient(TermBase* c) override {terms[0] = c;}
+        void appendTerm(TermBase* t) override {terms.push_back(t); t->setParentExpression(this); updateExpressionString();}
+        void removeTerm(int i) override {terms.erase(terms.begin() + i); updateExpressionString();}
+        Constant* getCoefficient(){return coefficient;}
+        void setCoefficient(Constant* c){coefficient = c; updateExpressionString();}
+        bool isOne() override {
+            if (terms.size() == 1 & terms[0]->isOne()){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        bool isAtomic() override {
+            if (terms.size() == 1 & terms[0]->isAtomic()){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        bool isLikeTerm(TermBase* other) override {
+            TermContainer* otherContainer = dynamic_cast<TermContainer*> (other);
+
+            if (otherContainer){
+                if (operationType != otherContainer->getOperationType()){
+                    return false;
+                }else{
+                    if (operationType == OperationType::Multiplication){ // only need to check one operationType because we know both are the same if this if-block is entered
+                        int indexThis;
+                        int indexOther;
+
+                        coefficient->isOne() ? indexThis = 0 : indexThis = 1;
+                        otherContainer->getCoefficient()->isOne() ? indexOther = 0: indexOther = 1;
+                        
+                        if (terms.size() - indexThis != otherContainer->getTerms().size() - indexOther){ // if the two terms are different sizes, they cant be added
+                            return false;
+                        }else{
+                            bool termsEqual = true;
+                            while (termsEqual){
+                                if (!terms[indexThis]->isEqual(otherContainer->getTerms()[indexOther])){
+                                    termsEqual = false;
+                                }
+                                indexThis ++;
+                                indexOther ++;
+                            }
+                            return termsEqual; // return true if all components are the same, flase if else
+                        }
+                        
+                        
+                    }else if (operationType == OperationType::Division){
+
+                    }else{
+
+                    }
+                }
+            }else{
+                return false;
+            }
+            
+        }
         string toString() override {
             string termStr = "";
             if (operationType == OperationType::Multiplication){
@@ -175,18 +284,25 @@ class TermContainer : public TermBase {
                 if (!sign){
                     termStr = "-(" + termStr + ')';
                 }else{
-                    termStr = '(' + termStr + ')';
+                    if (terms.size() != 1 & parentExpression != nullptr){
+                        termStr = '(' + termStr + ')';
+                    }
                 }
             }
 
             if (root != nullptr){
                 if (!root->isOne()){
-                    termStr = '(' + root->toString() + '|' + termStr + ')';
+                    termStr = '[' + root->toString() + '|' + termStr + ']';
                 }
             }
             if (exponent != nullptr){
                 if (!exponent->isOne()){
-                    termStr = termStr + "^(" + exponent->toString() + ')';
+                    if (exponent->getSign()){
+                        termStr = termStr + "^(" + exponent->toString() + ')';
+                    }else{
+                        termStr = termStr + '^' + exponent->toString();
+                        
+                    }
                 }
             }
 

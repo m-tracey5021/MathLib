@@ -5,13 +5,13 @@
 
 using namespace std;
 
-int* findSurroundingBrackets(string eq, int startPos, char bracketType);
+//int* findSurroundingBrackets(string eq, int startPos, char bracketType);
 
-bool parseForSign(string expStr, int i);
+//bool parseForSign(string expStr, int i);
 
-int parseForCoefficient(string expStr, int& i);
+//int parseForCoefficient(string expStr, int& i);
 
-TermContainer* parseExpression(string expStr, int& i, bool currentSign);
+TermContainer* parseExpression(string expStr, int& i);
 
 Equation* parseEquation(string eqStr);
 
