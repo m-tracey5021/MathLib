@@ -11,6 +11,16 @@ enum class OperationType{
     Division
 };
 
+vector<int> allFactors(int target){
+    vector<int> factors;
+    for (int i = 0; i <= target; i ++){
+        if (target % i == 0){
+            factors.push_back(i);
+        }
+    }
+    return factors;
+}
+
 class TermBase {
     protected:
         bool sign;
@@ -51,9 +61,9 @@ class TermBase {
         virtual TermBase* multiply(TermBase* other){return nullptr;}
         virtual TermBase* divide(TermBase* other){return nullptr;}
 
-        virtual vector<TermBase*> allFactors(){vector<TermBase*> dummy; return dummy;}
-        virtual TermBase* factorTerm(bool high){return nullptr;}
+        virtual TermBase* factor(){return nullptr;}
 
+        virtual TermBase* copy(){return nullptr;}
         virtual string toString(){return "term base";}
     
 };
@@ -110,6 +120,48 @@ class Constant : public TermBase {
             }
         }
 
+        TermBase* multiply(TermBase* other) override {
+            Constant* otherConstant = dynamic_cast<Constant*> (other);
+
+            if (otherConstant){
+                int newConstant = constant * otherConstant->getConstant();
+                if (newConstant < 0){
+                    return new Constant(false, nullptr, nullptr, newConstant);
+                }else{
+                    return new Constant(true, nullptr, nullptr, newConstant);
+                }
+            }else{
+                TermContainer* newContainer = new TermContainer();
+                newContainer->setOperationType(OperationType::Multiplication);
+                newContainer->appendTerm(this);
+                newContainer->appendTerm(other);
+                return newContainer;
+            }
+        }
+
+        TermBase* divide(TermBase* other) override {
+            Constant* otherConstant = dynamic_cast<Constant*> (other);
+
+            if (otherConstant){
+                int newConstant = constant / otherConstant->getConstant();
+                if (newConstant < 0){
+                    return new Constant(false, nullptr, nullptr, newConstant);
+                }else{
+                    return new Constant(true, nullptr, nullptr, newConstant);
+                }
+            }else{
+                TermContainer* newContainer = new TermContainer();
+                newContainer->setOperationType(OperationType::Division);
+                newContainer->appendTerm(this);
+                newContainer->appendTerm(other);
+                return newContainer;
+            }
+        }
+
+        TermBase* factor() override {
+            return 
+        }
+
         string toString() override {
             string termStr = "";
             if (!sign){
@@ -153,14 +205,97 @@ class Variable : public TermBase {
             if (!other->isAtomic()){
                 return false;
             }else{
-                Constant* constant = dynamic_cast<Constant*> (other);
-                Variable* variable = dynamic_cast<Variable*> (other);
-                if (constant){
+                Constant* otherConstant = dynamic_cast<Constant*> (other);
+                Variable* otherVariable = dynamic_cast<Variable*> (other);
+                if (otherConstant){
                     return false;
                 }
-                if (variable){
+                if (otherVariable){
                     return true;
                 }
+            }
+        }
+
+        TermBase* sum(TermBase* other){
+            Variable* otherVariable = dynamic_cast<Variable*> (other);
+
+            TermContainer* newContainer = new TermContainer();
+
+            if (otherVariable){
+                if (otherVariable->getVariable() == variable){
+                    Constant* newCoefficient = new Constant(true, nullptr, nullptr, 2);
+                    newContainer->setOperationType(OperationType::Multiplication);
+                    newContainer->appendTerm(newCoefficient);
+                    newContainer->appendTerm(otherVariable);
+                    return newContainer;
+                }else{
+                    newContainer->setOperationType(OperationType::Summation);
+                    newContainer->appendTerm(this);
+                    newContainer->appendTerm(otherVariable);
+                    return newContainer;
+                }
+            }else{
+                newContainer->setOperationType(OperationType::Summation);
+                newContainer->appendTerm(this);
+                newContainer->appendTerm(other);
+                return newContainer;
+            }
+        }
+
+        TermBase* multiply(TermBase* other){
+            Variable* otherVariable = dynamic_cast<Variable*> (other);
+
+            TermContainer* newContainer = new TermContainer();
+
+            if (otherVariable){
+                if (otherVariable->getVariable() == variable){
+                    Constant* exponent = new Constant(true, nullptr, nullptr, 2);
+                    Variable* newVariable;
+                    if (sign != otherVariable->getSign()){
+                        newVariable = new Variable(false, nullptr, exponent, variable);
+                    }else{
+                        newVariable = new Variable(true, nullptr, exponent, variable);
+                    }
+                    return newVariable;
+                }else{
+                    newContainer->setOperationType(OperationType::Multiplication);
+                    newContainer->appendTerm(this);
+                    newContainer->appendTerm(otherVariable);
+                    return newContainer;
+                }
+            }else{
+                newContainer->setOperationType(OperationType::Multiplication);
+                newContainer->appendTerm(this);
+                newContainer->appendTerm(other);
+                return newContainer;
+            }
+        }
+
+        TermBase* divide(TermBase* other){
+            Variable* otherVariable = dynamic_cast<Variable*> (other);
+
+            TermContainer* newContainer = new TermContainer();
+
+            if (otherVariable){
+                if (otherVariable->getVariable() == variable){
+                    Constant* one;
+                    if (sign != otherVariable->getSign()){
+                        one = new Constant(false, nullptr, nullptr, 1);
+                    }else{
+                        one = new Constant(true, nullptr, nullptr, 1);
+                    }
+                    return one;
+                }else{
+                    newContainer->setOperationType(OperationType::Division);
+                    newContainer->appendTerm(this);
+                    newContainer->appendTerm(otherVariable);
+                    return newContainer;
+                }
+            }else{
+                newContainer->setOperationType(OperationType::Division);
+                newContainer->appendTerm(this);
+                newContainer->appendTerm(other);
+                return newContainer;
             }
         }
 
