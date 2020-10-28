@@ -61,7 +61,8 @@ class TermBase {
         virtual TermBase* multiply(TermBase* other){return nullptr;}
         virtual TermBase* divide(TermBase* other){return nullptr;}
 
-        virtual TermBase* factor(){return nullptr;}
+        virtual TermBase* factor() = 0;
+        virtual vector<TermBase*> allFactors() = 0;
 
         virtual TermBase* copy(){return nullptr;}
         virtual string toString(){return "term base";}
@@ -159,7 +160,18 @@ class Constant : public TermBase {
         }
 
         TermBase* factor() override {
-            return 
+            return this;
+        }
+
+        vector<TermBase*> allFactors() override {
+            vector<TermBase*> factors;
+            for (int i = 0; i <= constant; i ++){
+                if (constant % i == 0){
+                    Constant* factor = new Constant(true, nullptr, nullptr, i);
+                    factors.push_back(factor);
+                }
+            }
+            return factors;
         }
 
         string toString() override {
@@ -299,6 +311,14 @@ class Variable : public TermBase {
             }
         }
 
+        TermBase* factor() override {
+            return this;
+        }
+
+        vector<TermBase*> allFactors() override {
+            if ()
+        }
+
         string toString() override {
             string termStr = "";
             if (!sign){
@@ -344,13 +364,14 @@ class TermContainer : public TermBase {
 
         vector<TermBase*> getTerms(){return terms;}
         OperationType getOperationType(){return operationType;}
+        Constant* getCoefficient(){return coefficient;}
         void setTerms(vector<TermBase*> t){terms = t; updateExpressionString();}
         void setOperationType(OperationType o){operationType = o; updateExpressionString();}
+        void setCoefficient(Constant* c){coefficient = c; updateExpressionString();}
 
         void appendTerm(TermBase* t) override {terms.push_back(t); t->setParentExpression(this); updateExpressionString();}
         void removeTerm(int i) override {terms.erase(terms.begin() + i); updateExpressionString();}
-        Constant* getCoefficient(){return coefficient;}
-        void setCoefficient(Constant* c){coefficient = c; updateExpressionString();}
+        
         bool isOne() override {
             if (terms.size() == 1 & terms[0]->isOne()){
                 return true;
@@ -417,8 +438,29 @@ class TermContainer : public TermBase {
             }else{
                 return false;
             }
-            
         }
+
+        TermBase* factor() override {
+            TermContainer* factoredContainer = new TermContainer();
+
+            if (operationType == OperationType::Multiplication){
+                factoredContainer->setOperationType(OperationType::Multiplication);
+                for (int i = 0; i < terms.size(); i ++){
+                    TermBase* factoredTerm = terms[i]->factor();
+                    factoredContainer->appendTerm(factoredTerm);
+                }
+            }else if (operationType == OperationType::Division){
+                factoredContainer->setOperationType(OperationType::Division);
+                for (int i = 0; i < terms.size(); i ++){
+                    TermBase* factoredTerm = terms[i]->factor();
+                    factoredContainer->appendTerm(factoredTerm);
+                }
+            }else{
+                factoredContainer->setOperationType(OperationType::Summation);
+
+            }
+        }
+
         string toString() override {
             string termStr = "";
             if (operationType == OperationType::Multiplication){
