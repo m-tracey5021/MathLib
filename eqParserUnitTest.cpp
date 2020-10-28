@@ -1,5 +1,3 @@
-#include "UnitTests/eqParserUnitTest.h"
-#include "Algebra/equationComponents.h"
 #include "Algebra/eqParser.h"
 #include <string>
 #include <utility>

@@ -1,7 +1,11 @@
+#pragma once
+
 #include "equation.h"
-#include "equationComponents.h"
-#include <ctype.h>
-#include <string>
+#include "EquationComponents/termBase.h"
+#include "EquationComponents/constant.h"
+#include "EquationComponents/variable.h"
+#include "EquationComponents/termContainer.h"
+
 
 using namespace std;
 
