@@ -1,8 +1,5 @@
 #include "Algebra/equation.h"
-#include "Algebra/EquationComponents/termBase.h"
-#include "Algebra/EquationComponents/constant.h"
-#include "Algebra/EquationComponents/variable.h"
-#include "Algebra/EquationComponents/termContainer.h"
+#include "Algebra/equationComponents.h"
 //#include <ctype.h>
 #include <string>
 

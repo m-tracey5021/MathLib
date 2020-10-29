@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EquationComponents/termContainer.h"
+#include "equationComponents.h"
 
 class Equation {
     private:
