@@ -1,4 +1,4 @@
-#include "Sets/integerSet.h"
+#include "integerSet.h"
 
 IntegerSet::IntegerSet(){}
 

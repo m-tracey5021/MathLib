@@ -1,5 +1,5 @@
-#include "Algebra/equation.h"
-#include "Algebra/equationComponents.h"
+#include "equation.h"
+#include "equationComponents.h"
 //#include <ctype.h>
 #include <string>
 

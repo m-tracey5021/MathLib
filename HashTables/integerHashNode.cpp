@@ -1,4 +1,4 @@
-#include "HashTables/integerHashNode.h"
+#include "integerHashNode.h"
 
 IntegerHashNode::IntegerHashNode(): next(nullptr){}
 

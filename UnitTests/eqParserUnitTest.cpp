@@ -1,4 +1,4 @@
-#include "Algebra/eqParser.h"
+#include "../Algebra/eqParser.h"
 #include <string>
 #include <utility>
 #include <iostream>

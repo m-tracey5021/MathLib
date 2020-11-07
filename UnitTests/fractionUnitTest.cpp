@@ -1,4 +1,4 @@
-#include "Fractions/fraction.h"
+#include "../Fractions/fraction.h"
 #include <string>
 
 bool testAdd(){

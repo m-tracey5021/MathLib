@@ -1,5 +1,5 @@
 #include "math.h"
-#include "Geometry/point.h"
+#include "point.h"
 
 double Point::distance(Point other){
     double deltaX = x - other.getX();

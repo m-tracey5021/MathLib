@@ -1,6 +1,6 @@
-#include "Automata/finiteAutomaton.h"
-#include "Automata/automatonState.h"
-#include "Automata/automatonTransition.h"
+#include "../Automata/finiteAutomaton.h"
+#include "../Automata/automatonState.h"
+#include "../Automata/automatonTransition.h"
 
 bool testThreeState(){
     //char* alpha = new char[2]{'0', '1'};

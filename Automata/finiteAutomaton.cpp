@@ -1,6 +1,6 @@
-#include "Automata/finiteAutomaton.h"
-#include "Automata/automatonTransition.h"
-#include "util.h"
+#include "finiteAutomaton.h"
+#include "automatonTransition.h"
+//#include "../util.h"
 
 FiniteAutomaton::FiniteAutomaton(){}
 

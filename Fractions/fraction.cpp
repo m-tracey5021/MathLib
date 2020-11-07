@@ -1,5 +1,5 @@
-#include "Fractions/fraction.h"
-#include "basicArithmeticFunctions.h"
+#include "fraction.h"
+#include "../basicArithmeticFunctions.h"
 #include <vector>
 #include <string>
 

@@ -67,6 +67,8 @@ class TermBase {
 
         virtual std::vector<TermBase*> allFactors() = 0;
 
+        virtual std::vector<TermBase*> allComponents() = 0;
+
         //virtual TermBase* copy() = 0;
 
         virtual std::string toString() = 0;
@@ -104,6 +106,8 @@ class Constant : public TermBase {
 
         std::vector<TermBase*> allFactors() override;
 
+        std::vector<TermBase*> allComponents() override;
+
         std::string toString() override;
 };
 
@@ -136,6 +140,8 @@ class Variable : public TermBase {
         TermBase* factor() override;
 
         std::vector<TermBase*> allFactors() override;
+
+        std::vector<TermBase*> allComponents() override;
 
         std::string toString() override;
 
@@ -184,6 +190,8 @@ class TermContainer : public TermBase {
         TermBase* factor() override;
 
         std::vector<TermBase*> allFactors() override;
+
+        std::vector<TermBase*> allComponents() override;
 
         std::string toString() override;
 };

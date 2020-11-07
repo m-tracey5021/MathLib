@@ -1,4 +1,4 @@
-#include "Regex/regexString.h"
+#include "regexString.h"
 
 RegexString::RegexString(){}
 

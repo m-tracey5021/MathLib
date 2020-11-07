@@ -1,8 +1,8 @@
 
 #include <vector>
 #include <string>
-#include "Binary/bitString.h"
-#include "basicArithmeticFunctions.h"
+#include "bitString.h"
+//#include "basicArithmeticFunctions.h"
 
 using namespace std;
 

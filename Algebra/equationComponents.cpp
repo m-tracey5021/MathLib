@@ -1,5 +1,5 @@
 
-#include "Algebra/equationComponents.h"
+#include "equationComponents.h"
 
 
 // ===== CONSTANT =====
@@ -258,12 +258,70 @@ TermBase* Variable::divide(TermBase* other){
 }
 
 TermBase* Variable::factor(){
-    return this;
+    if (exponent != nullptr){
+        if (!exponent->isOne()){
+            Constant* constantExponent = dynamic_cast<Constant*> (exponent);
+            Variable* variableExponent = dynamic_cast<Variable*> (exponent);
+            TermContainer* containerExponent = dynamic_cast<TermContainer*> (exponent);
+
+            if (constantExponent){
+                for (int i = 0; i < constantExponent->getConstant(); i ++){
+
+                }
+            }else if (variableExponent){
+
+            }else if (containerExponent){
+
+            }else{
+                // throw error
+            }
+            // find all things which add together to equal the target exponent, but they cannot be rationals
+        }else{
+            return this;
+        }
+    }
 }
 
 std::vector<TermBase*> Variable::allFactors(){
-    std::vector<TermBase*> dummy;
-    return dummy;
+    std::vector<TermBase*> factors;
+    if (exponent != nullptr){
+        if (!exponent->isOne()){
+            Constant* constantExponent = dynamic_cast<Constant*> (exponent);
+            Variable* variableExponent = dynamic_cast<Variable*> (exponent);
+            TermContainer* containerExponent = dynamic_cast<TermContainer*> (exponent);
+
+            if (constantExponent){
+                for (int i = 1; i <= constantExponent->getConstant(); i ++){
+                    Constant* componentExponent = new Constant(true, nullptr, nullptr, i);
+                    Variable* posVariableFactor = new Variable(true, nullptr, componentExponent, variable);
+                    factors.push_back(posVariableFactor);
+                    if (!sign){
+                        Variable* negVariableFactor = new Variable(false, nullptr, componentExponent, variable);
+                        factors.push_back(negVariableFactor);
+                    }
+
+                }
+            }else if (variableExponent){
+                factors.push_back(this);
+            }else if (containerExponent){
+                /*
+                find all possible ways to sum
+                to the target exponenet, only using
+                whole numbers
+                */
+
+            }else{
+                // throw error
+            }
+        }else{
+            factors.push_back(this);
+        } 
+    }
+    return factors;
+}
+
+std::vector<TermBase*> Variable::allComponents(){
+    
 }
 
 std::string Variable::toString(){
@@ -438,6 +496,17 @@ TermBase* TermContainer::factor(){
 std::vector<TermBase*> TermContainer::allFactors(){
     std::vector<TermBase*> dummy;
     return dummy;
+}
+
+std::vector<TermBase*> TermContainer::allComponents(){
+    std::vector<TermBase*> components;
+    for (int i = 0; i < terms.size(); i ++){
+        std::vector<TermBase*> subComponents = terms[i]->allComponents();
+        for(int j = 0; j < subComponents.size(); j ++){
+            components.push_back(subComponents[j]);
+        }
+    }
+    return components;
 }
 
 std::string TermContainer::toString(){

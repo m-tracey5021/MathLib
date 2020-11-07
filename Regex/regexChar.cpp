@@ -1,4 +1,4 @@
-#include "Regex/regexChar.h"
+#include "regexChar.h"
 #include <string>
 
 RegexChar::RegexChar(){}

@@ -14,7 +14,7 @@
 #include "Binary/binaryFunctions.h"
 
 #include "basicArithmeticFunctions.h"
-#include "algabraicFunctions.h"
+#include "Algebra/algabraicFunctions.h"
 #include "util.h"
 #include <set>
 
