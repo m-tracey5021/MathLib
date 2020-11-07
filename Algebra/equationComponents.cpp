@@ -114,6 +114,10 @@ std::vector<TermBase*> Constant::allFactors(){
     return factors;
 }
 
+std::vector<TermBase*> Constant::allComponents(){
+
+}
+
 std::string Constant::toString(){
     std::string termStr = "";
     if (!sign){
@@ -321,7 +325,9 @@ std::vector<TermBase*> Variable::allFactors(){
 }
 
 std::vector<TermBase*> Variable::allComponents(){
-    
+    std::vector<TermBase*> components;
+    components.push_back(this);
+    return components;
 }
 
 std::string Variable::toString(){
