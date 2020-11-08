@@ -151,7 +151,7 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
                 int coefficient = parseCoefficient(expStr, i);
                 Constant* constant = new Constant(currentSign, nullptr, nullptr, coefficient);
                 currentTerm->setCoefficient(constant);
-                currentTerm->appendTerm(constant);
+                //currentTerm->appendTerm(constant);
 
             }else if (isalpha(currentChar)){
                 initMultiplicativeTerms(currentTerm, previousTerm);

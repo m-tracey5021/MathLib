@@ -69,7 +69,7 @@ class TermBase {
 
         virtual std::vector<TermBase*> allComponents() = 0;
 
-        //virtual TermBase* copy() = 0;
+        virtual TermBase* copy() = 0;
 
         virtual std::string toString() = 0;
 
@@ -108,6 +108,8 @@ class Constant : public TermBase {
 
         std::vector<TermBase*> allComponents() override;
 
+        TermBase* copy() override;
+
         std::string toString() override;
 };
 
@@ -143,33 +145,39 @@ class Variable : public TermBase {
 
         std::vector<TermBase*> allComponents() override;
 
+        TermBase* copy() override;
+
         std::string toString() override;
 
 };
 
 class TermContainer : public TermBase {
     private:
-        std::vector<TermBase*> terms;
-        OperationType operationType;
         Constant* coefficient;
+        OperationType operationType;
+        std::vector<TermBase*> terms;
+        
+        
     public:
         TermContainer();
 
         TermContainer(bool sign, TermBase* root, TermBase* exponent, Constant* coefficient);
 
+        TermContainer(bool sign, TermBase* root, TermBase* exponent, Constant* coefficient, OperationType operationType, std::vector<TermBase*> terms);
+
         ~TermContainer();
-
-        std::vector<TermBase*> getTerms();
-
-        OperationType getOperationType();
 
         Constant* getCoefficient();
 
+        OperationType getOperationType();
+
+        std::vector<TermBase*> getTerms();   
+
+        void setCoefficient(Constant* c);  
+
+        void setOperationType(OperationType o);   
+
         void setTerms(std::vector<TermBase*> t);
-
-        void setOperationType(OperationType o);
-
-        void setCoefficient(Constant* c);
 
         void appendTerm(TermBase* t) override;
 
@@ -192,6 +200,8 @@ class TermContainer : public TermBase {
         std::vector<TermBase*> allFactors() override;
 
         std::vector<TermBase*> allComponents() override;
+
+        TermBase* copy() override;
 
         std::string toString() override;
 };

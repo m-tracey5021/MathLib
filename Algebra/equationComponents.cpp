@@ -1,5 +1,6 @@
 
 #include "equationComponents.h"
+#include <algorithm>
 
 
 // ===== CONSTANT =====
@@ -115,7 +116,18 @@ std::vector<TermBase*> Constant::allFactors(){
 }
 
 std::vector<TermBase*> Constant::allComponents(){
+    std::vector<TermBase*> components;
+    for (int i = 0; i < constant; i ++){
+        int a = constant - i;
+        Constant* component = new Constant(true, nullptr, nullptr, a);
+        if (!(std::find(components.begin(), components.end(), component) != components.end())){
+            components.push_back(component);
+        }
+    }
+}
 
+TermBase* Constant::copy(){
+    return new Constant(sign, root->copy(), exponent->copy(), constant);
 }
 
 std::string Constant::toString(){
@@ -306,6 +318,7 @@ std::vector<TermBase*> Variable::allFactors(){
 
                 }
             }else if (variableExponent){
+                factors.push_back(new Constant(true, nullptr, nullptr, 1));
                 factors.push_back(this);
             }else if (containerExponent){
                 /*
@@ -328,6 +341,10 @@ std::vector<TermBase*> Variable::allComponents(){
     std::vector<TermBase*> components;
     components.push_back(this);
     return components;
+}
+
+TermBase* Variable::copy(){
+    return new Variable(sign, root->copy(), exponent->copy(), variable);
 }
 
 std::string Variable::toString(){
@@ -371,23 +388,27 @@ TermContainer::TermContainer(bool sign, TermBase* root, TermBase* exponent, Cons
     updateExpressionString();
 }
 
+TermContainer::TermContainer(bool sign, TermBase* root, TermBase* exponent, Constant* coefficient, OperationType operationType, std::vector<TermBase*> terms): TermBase(sign, root, exponent), coefficient(coefficient), operationType(operationType), terms(terms){
+    updateExpressionString();
+}
+
 TermContainer::~TermContainer(){
     delete root;
     delete exponent;
     delete parentExpression;
 }
 
-std::vector<TermBase*> TermContainer::getTerms(){return terms;}
+Constant* TermContainer::getCoefficient(){return coefficient;}
 
 OperationType TermContainer::getOperationType(){return operationType;}
 
-Constant* TermContainer::getCoefficient(){return coefficient;}
+std::vector<TermBase*> TermContainer::getTerms(){return terms;}
 
-void TermContainer::setTerms(std::vector<TermBase*> t){terms = t; updateExpressionString();}
+void TermContainer::setCoefficient(Constant* c){coefficient = c; updateExpressionString();}
 
 void TermContainer::setOperationType(OperationType o){operationType = o; updateExpressionString();}
 
-void TermContainer::setCoefficient(Constant* c){coefficient = c; updateExpressionString();}
+void TermContainer::setTerms(std::vector<TermBase*> t){terms = t; updateExpressionString();}
 
 void TermContainer::appendTerm(TermBase* t){terms.push_back(t); t->setParentExpression(this); updateExpressionString();}
 
@@ -476,7 +497,6 @@ TermBase* TermContainer::divide(TermBase* other){
     return nullptr;
 }
 
-
 TermBase* TermContainer::factor(){
     TermContainer* factoredContainer = new TermContainer();
 
@@ -507,6 +527,34 @@ std::vector<TermBase*> TermContainer::allFactors(){
 std::vector<TermBase*> TermContainer::allComponents(){
     std::vector<TermBase*> components;
     for (int i = 0; i < terms.size(); i ++){
+
+        Constant* constantTerm = dynamic_cast<Constant*> (terms[i]);
+        Variable* variableTerm = dynamic_cast<Variable*> (terms[i]);
+        TermContainer* containerTerm = dynamic_cast<TermContainer*> (terms[i]);
+
+        std::vector<TermBase*> subComponents;
+
+        if (constantTerm){
+            subComponents = constantTerm->allComponents();
+        }else if (variableTerm){
+            subComponents = variableTerm->allComponents();
+        }else if (containerTerm){
+            if (containerTerm->getOperationType() == OperationType::Multiplication){
+                for (int i = 0; i < containerTerm->getCoefficient()->getConstant(); i ++){
+                    TermContainer* copiedMultiplicative = dynamic_cast<TermContainer*> (terms[i]->copy());
+                    copiedMultiplicative->setCoefficient(new Constant(true, nullptr, nullptr, 1));
+                    subComponents.push_back(copiedMultiplicative);
+                }
+            }else if (containerTerm->getOperationType() == OperationType::Division){
+                
+            }else{
+                // there is a sub-expression which needs to be recursed into
+                subComponents = terms[i]->allComponents();
+            }
+        }else{
+            // throw error
+        }
+
         std::vector<TermBase*> subComponents = terms[i]->allComponents();
         for(int j = 0; j < subComponents.size(); j ++){
             components.push_back(subComponents[j]);
@@ -515,9 +563,25 @@ std::vector<TermBase*> TermContainer::allComponents(){
     return components;
 }
 
+TermBase* TermContainer::copy(){
+    Constant* newCoefficient = dynamic_cast<Constant*> (coefficient->copy());
+    std::vector<TermBase*> newTerms;
+    for (int i = 0; i < terms.size(); i ++){
+        TermBase* newTerm = terms[i]->copy();
+        newTerms.push_back(newTerm);
+        
+    }
+
+    return new TermContainer(sign, root->copy(), exponent->copy(), newCoefficient, operationType, newTerms);
+}
+
 std::string TermContainer::toString(){
+    
     std::string termStr = "";
     if (operationType == OperationType::Multiplication){
+        if (coefficient->getConstant() != 1){
+            termStr += coefficient->toString();
+        }
         for (int i = 0; i < terms.size(); i ++){
             termStr += terms[i]->toString();
         }
