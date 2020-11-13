@@ -1,7 +1,9 @@
 #pragma once
 
+#include <utility>
 #include <string>
 #include <vector>
+
 
 enum class OperationType{
     Summation,
@@ -17,31 +19,31 @@ class TermBase {
         TermBase* parentExpression;
         std::string expressionString;
     public:
-        TermBase(): sign(1), root(nullptr), exponent(nullptr), parentExpression(nullptr){}
+        TermBase();
 
-        TermBase(bool sign, TermBase* root, TermBase* exponent): sign(sign), root(root), exponent(exponent), parentExpression(nullptr){}
+        TermBase(bool sign, TermBase* root, TermBase* exponent);
 
-        bool getSign(){return sign;}
+        bool getSign();
 
-        TermBase* getRoot(){return root;}
+        TermBase* getRoot();
 
-        TermBase* getExponent(){return exponent;}
+        TermBase* getExponent();
 
-        TermBase* getParentExpression(){return parentExpression;}
+        TermBase* getParentExpression();
 
-        std::string getExpressionString(){return expressionString;}
+        std::string getExpressionString();
 
-        void setSign(bool s){sign = s; updateExpressionString();}
+        void setSign(bool s);
 
-        void setRoot(TermBase* r){root = r; updateExpressionString();}
+        void setRoot(TermBase* r);
 
-        void setExponent(TermBase* e){exponent = e; updateExpressionString();}
+        void setExponent(TermBase* e);
 
-        void setParentExpression(TermBase* p){parentExpression = p;}
+        void setParentExpression(TermBase* p);
 
-        void updateExpressionString(){expressionString = this->toString();}
+        void updateExpressionString();
         
-        bool isEqual(TermBase* other){if (expressionString == other->getExpressionString()){return true;}else{return false;}}
+        bool isEqual(TermBase* other);
 
         // virtual
 
@@ -68,6 +70,8 @@ class TermBase {
         virtual std::vector<TermBase*> allFactors() = 0;
 
         virtual std::vector<TermBase*> allComponents() = 0;
+
+        virtual std::vector<std::pair<TermBase*, TermBase*>> splitSums() = 0;
 
         virtual TermBase* copy() = 0;
 
@@ -108,6 +112,8 @@ class Constant : public TermBase {
 
         std::vector<TermBase*> allComponents() override;
 
+        std::vector<std::pair<TermBase*, TermBase*>> splitSums() override;
+
         TermBase* copy() override;
 
         std::string toString() override;
@@ -144,6 +150,8 @@ class Variable : public TermBase {
         std::vector<TermBase*> allFactors() override;
 
         std::vector<TermBase*> allComponents() override;
+
+        std::vector<std::pair<TermBase*, TermBase*>> splitSums() override;
 
         TermBase* copy() override;
 
@@ -200,6 +208,8 @@ class TermContainer : public TermBase {
         std::vector<TermBase*> allFactors() override;
 
         std::vector<TermBase*> allComponents() override;
+
+        std::vector<std::pair<TermBase*, TermBase*>> splitSums() override;
 
         TermBase* copy() override;
 

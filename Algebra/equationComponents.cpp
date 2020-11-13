@@ -1,6 +1,43 @@
 
 #include "equationComponents.h"
 #include <algorithm>
+#include <cmath>
+
+// ===== TERMBASE =====
+
+TermBase::TermBase(): 
+                sign(true), 
+                root(new Constant(true, nullptr, nullptr, 1)), 
+                exponent(new Constant(true, nullptr, nullptr, 1)),
+                parentExpression(nullptr){}
+
+TermBase::TermBase(bool sign, TermBase* root, TermBase* exponent): 
+                sign(sign), 
+                root(root), 
+                exponent(exponent), 
+                parentExpression(nullptr){}
+
+bool TermBase::getSign(){return sign;}
+
+TermBase* TermBase::getRoot(){return root;}
+
+TermBase* TermBase::getExponent(){return exponent;}
+
+TermBase* TermBase::getParentExpression(){return parentExpression;}
+
+std::string TermBase::getExpressionString(){return expressionString;}
+
+void TermBase::setSign(bool s){sign = s; updateExpressionString();}
+
+void TermBase::setRoot(TermBase* r){root = r; updateExpressionString();}
+
+void TermBase::setExponent(TermBase* e){exponent = e; updateExpressionString();}
+
+void TermBase::setParentExpression(TermBase* p){parentExpression = p;}
+
+void TermBase::updateExpressionString(){expressionString = this->toString();}
+
+bool TermBase::isEqual(TermBase* other){if (expressionString == other->getExpressionString()){return true;}else{return false;}}
 
 
 // ===== CONSTANT =====
@@ -124,6 +161,35 @@ std::vector<TermBase*> Constant::allComponents(){
             components.push_back(component);
         }
     }
+}
+
+std::vector<std::pair<TermBase*, TermBase*>> Constant::splitSums(){
+    std::vector<std::pair<TermBase*, TermBase*>> splitSums;
+    Constant* constantExponent = dynamic_cast<Constant*> (exponent);
+    if (constantExponent){
+        int total = constant;
+        if (constantExponent->getConstant() != 1){
+            total = std::pow(constant, constantExponent->getConstant());
+        }
+        for (int i = 1; i <= total; i ++){ // put a cap on this so not added twice
+            int other = constant - i;
+            Constant* sumHalfA = new Constant(true, nullptr, nullptr, i);
+            Constant* sumHalfB = new Constant(true, nullptr, nullptr, other);
+            std::pair<TermBase*, TermBase*> splitSum;
+            splitSum.first = sumHalfA;
+            splitSum.second = sumHalfB;
+            splitSums.push_back(splitSum);
+        }
+        return splitSums;    
+    }else{
+        std::pair<TermBase*, TermBase*> zeroSum;
+        Constant* zero = new Constant(true, nullptr, nullptr, 0);
+        zeroSum.first = zero;
+        zeroSum.second = this;
+        splitSums.push_back(zeroSum);
+        return splitSums;
+    }
+    
 }
 
 TermBase* Constant::copy(){
@@ -295,6 +361,8 @@ TermBase* Variable::factor(){
         }else{
             return this;
         }
+    }else{
+        return this;
     }
 }
 
@@ -335,6 +403,16 @@ std::vector<TermBase*> Variable::allFactors(){
         } 
     }
     return factors;
+}
+
+std::vector<std::pair<TermBase*, TermBase*>> Variable::splitSums(){
+    std::vector<std::pair<TermBase*, TermBase*>> splitSums;
+    Constant* zero = new Constant(true, nullptr, nullptr, 0);
+    std::pair<TermBase*, TermBase*> zeroSplitSum;
+    zeroSplitSum.first = zero;
+    zeroSplitSum.second = this;
+    splitSums.push_back(zeroSplitSum);
+    return splitSums;
 }
 
 std::vector<TermBase*> Variable::allComponents(){
@@ -561,6 +639,41 @@ std::vector<TermBase*> TermContainer::allComponents(){
         }
     }
     return components;
+}
+
+std::vector<std::pair<TermBase*, TermBase*>> TermContainer::splitSums(){
+    std::vector<std::pair<TermBase*, TermBase*>> splitSums;
+    Constant* constantExponent = dynamic_cast<Constant*> (exponent);
+    Variable* variableExponent = dynamic_cast<Variable*> (exponent);
+    TermContainer* containerExponent = dynamic_cast<TermContainer*> (exponent);
+
+    if (variableExponent || containerExponent){
+        std::pair<TermBase*, TermBase*> zeroSum;
+        Constant* zero = new Constant(true, nullptr, nullptr, 0);
+        zeroSum.first = zero;
+        zeroSum.second = this;
+        splitSums.push_back(zeroSum);
+        return splitSums;
+    }else if (constantExponent){
+        if (constantExponent->getConstant() == 1){
+            if (operationType == OperationType::Multiplication){
+
+            }else if (operationType == OperationType::Division){
+
+            }else{
+                
+            }
+        }else{
+            std::pair<TermBase*, TermBase*> zeroSum;
+            Constant* zero = new Constant(true, nullptr, nullptr, 0);
+            zeroSum.first = zero;
+            zeroSum.second = this;
+            splitSums.push_back(zeroSum);
+            return splitSums;
+        }
+    }else{
+        // throw error
+    }
 }
 
 TermBase* TermContainer::copy(){
