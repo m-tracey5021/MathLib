@@ -638,7 +638,7 @@ std::vector<TermBase*> TermContainer::allComponents(){
             // throw error
         }
 
-        std::vector<TermBase*> subComponents = terms[i]->allComponents();
+        subComponents = terms[i]->allComponents();
         for(int j = 0; j < subComponents.size(); j ++){
             components.push_back(subComponents[j]);
         }
