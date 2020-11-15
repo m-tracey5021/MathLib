@@ -211,6 +211,8 @@ class TermContainer : public TermBase {
 
         std::vector<std::pair<TermBase*, TermBase*>> splitSums() override;
 
+        std::vector<std::pair<TermBase*, TermBase*>> getSumPairs();
+
         TermBase* copy() override;
 
         std::string toString() override;

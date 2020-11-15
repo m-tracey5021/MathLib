@@ -3,6 +3,17 @@
 #include <algorithm>
 #include <cmath>
 
+// ===== UTIL =====
+
+std::pair<TermBase*, TermBase*> getZeroSum(TermBase* sumTarget){
+    std::pair<TermBase*, TermBase*> zeroSum;
+    Constant* zero = new Constant(true, nullptr, nullptr, 0);
+    zeroSum.first = zero;
+    zeroSum.second = sumTarget;
+    return zeroSum;
+
+}
+
 // ===== TERMBASE =====
 
 TermBase::TermBase(): 
@@ -182,10 +193,7 @@ std::vector<std::pair<TermBase*, TermBase*>> Constant::splitSums(){
         }
         return splitSums;    
     }else{
-        std::pair<TermBase*, TermBase*> zeroSum;
-        Constant* zero = new Constant(true, nullptr, nullptr, 0);
-        zeroSum.first = zero;
-        zeroSum.second = this;
+        std::pair<TermBase*, TermBase*> zeroSum = getZeroSum(this);
         splitSums.push_back(zeroSum);
         return splitSums;
     }
@@ -405,20 +413,17 @@ std::vector<TermBase*> Variable::allFactors(){
     return factors;
 }
 
-std::vector<std::pair<TermBase*, TermBase*>> Variable::splitSums(){
-    std::vector<std::pair<TermBase*, TermBase*>> splitSums;
-    Constant* zero = new Constant(true, nullptr, nullptr, 0);
-    std::pair<TermBase*, TermBase*> zeroSplitSum;
-    zeroSplitSum.first = zero;
-    zeroSplitSum.second = this;
-    splitSums.push_back(zeroSplitSum);
-    return splitSums;
-}
-
 std::vector<TermBase*> Variable::allComponents(){
     std::vector<TermBase*> components;
     components.push_back(this);
     return components;
+}
+
+std::vector<std::pair<TermBase*, TermBase*>> Variable::splitSums(){
+    std::vector<std::pair<TermBase*, TermBase*>> splitSums;
+    std::pair<TermBase*, TermBase*> zeroSum = getZeroSum(this);
+    splitSums.push_back(zeroSum);
+    return splitSums;
 }
 
 TermBase* Variable::copy(){
@@ -648,10 +653,7 @@ std::vector<std::pair<TermBase*, TermBase*>> TermContainer::splitSums(){
     TermContainer* containerExponent = dynamic_cast<TermContainer*> (exponent);
 
     if (variableExponent || containerExponent){
-        std::pair<TermBase*, TermBase*> zeroSum;
-        Constant* zero = new Constant(true, nullptr, nullptr, 0);
-        zeroSum.first = zero;
-        zeroSum.second = this;
+        std::pair<TermBase*, TermBase*> zeroSum = getZeroSum(this);
         splitSums.push_back(zeroSum);
         return splitSums;
     }else if (constantExponent){
@@ -659,20 +661,48 @@ std::vector<std::pair<TermBase*, TermBase*>> TermContainer::splitSums(){
             if (operationType == OperationType::Multiplication){
 
             }else if (operationType == OperationType::Division){
+                TermBase* num = terms[0];
+                TermBase* denom = terms[1];
+                Constant* constantNum = dynamic_cast<Constant*> (num);
+                Constant* constantDenom = dynamic_cast<Constant*> (denom);
+                if (constantNum && !constantDenom){
+                    TermContainer* inverseDivision = new TermContainer();
+                    inverseDivision->setOperationType(OperationType::Division);
+                    inverseDivision->appendTerm(new Constant(true, nullptr, nullptr, 1));
+                    inverseDivision->appendTerm(denom);
 
+                    TermContainer* summationOfInverses = new TermContainer();
+                    summationOfInverses->setOperationType(OperationType::Summation);
+
+                    for (int i = 0; i < constantNum->getConstant(); i ++){
+                        summationOfInverses->appendTerm(inverseDivision->copy());
+                    }
+                }else if (!constantNum && constantDenom){
+
+                }else if (!constantNum && !constantDenom){
+
+                }else{
+                    // evaluate term and if its a whole number split the normal way
+                }
             }else{
                 
             }
         }else{
-            std::pair<TermBase*, TermBase*> zeroSum;
-            Constant* zero = new Constant(true, nullptr, nullptr, 0);
-            zeroSum.first = zero;
-            zeroSum.second = this;
+            std::pair<TermBase*, TermBase*> zeroSum = getZeroSum(this);
             splitSums.push_back(zeroSum);
             return splitSums;
         }
     }else{
         // throw error
+    }
+}
+
+std::vector<std::pair<TermBase*, TermBase*>> TermContainer::getSumPairs(){
+    std::vector<std::pair<TermBase*, TermBase*>> sumPairs;
+    if (operationType == OperationType::Summation){
+
+    }else{
+        return sumPairs;
     }
 }
 
