@@ -115,3 +115,20 @@ bool testExpressionParse(){
 bool testEquationParse(){
     return false;
 }
+
+bool testExpand(){
+    int zeroIndex;
+    
+    zeroIndex = 0;
+    string expression1 = "6^3";
+    string expected1 = "666";
+    TermContainer* term1 = parseExpression(expression1, zeroIndex);
+    term1->expandExponent();
+    string str1 = term1->toString();
+
+    if (str1 == expected1){
+        return true;
+    }else{
+        return false;
+    }
+}

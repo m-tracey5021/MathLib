@@ -18,8 +18,8 @@ std::pair<TermBase*, TermBase*> getZeroSum(TermBase* sumTarget){
 
 TermBase::TermBase(): 
                 sign(true), 
-                root(new Constant(true, nullptr, nullptr, 1)), 
-                exponent(new Constant(true, nullptr, nullptr, 1)),
+                root(nullptr), 
+                exponent(nullptr),
                 parentExpression(nullptr){}
 
 TermBase::TermBase(bool sign, TermBase* root, TermBase* exponent): 
@@ -28,27 +28,123 @@ TermBase::TermBase(bool sign, TermBase* root, TermBase* exponent):
                 exponent(exponent), 
                 parentExpression(nullptr){}
 
-bool TermBase::getSign(){return sign;}
+bool TermBase::getSign(){
+    return sign;
+}
 
-TermBase* TermBase::getRoot(){return root;}
+TermBase* TermBase::getRoot(){
+    return root;
+}
 
-TermBase* TermBase::getExponent(){return exponent;}
+TermBase* TermBase::getExponent(){
+    return exponent;
+}
 
-TermBase* TermBase::getParentExpression(){return parentExpression;}
+TermBase* TermBase::getParentExpression(){
+    return parentExpression;
+}
 
-std::string TermBase::getExpressionString(){return expressionString;}
+std::string TermBase::getExpressionString(){
+    return expressionString;
+}
 
-void TermBase::setSign(bool s){sign = s; updateExpressionString();}
+void TermBase::setSign(bool s){
+    sign = s; 
+    updateExpressionString();
+}
 
-void TermBase::setRoot(TermBase* r){root = r; updateExpressionString();}
+void TermBase::setRoot(TermBase* r){
+    root = r; 
+    updateExpressionString();
+}
 
-void TermBase::setExponent(TermBase* e){exponent = e; updateExpressionString();}
+void TermBase::setExponent(TermBase* e){
+    exponent = e; 
+    updateExpressionString();
+}
 
-void TermBase::setParentExpression(TermBase* p){parentExpression = p;}
+TermBase* TermBase::expandExponent(){
 
-void TermBase::updateExpressionString(){expressionString = this->toString();}
+    // while not in the smallest form, repeat the process below
 
-bool TermBase::isEqual(TermBase* other){if (expressionString == other->getExpressionString()){return true;}else{return false;}}
+    if (exponent != nullptr){
+
+        TermContainer* expandedTerm = new TermContainer();
+        expandedTerm->setOperationType(OperationType::Multiplication);
+
+        Constant* constantExponent = dynamic_cast<Constant*> (exponent);
+        Variable* variableExponent = dynamic_cast<Variable*> (exponent);
+        TermContainer* containerExponent = dynamic_cast<TermContainer*> (exponent);
+
+        if (constantExponent){
+            for (int i = 0; i < constantExponent->getConstant(); i ++){
+                expandedTerm->appendTerm(this->copy());
+            }
+        }else if (variableExponent){
+            // do nothing?
+        }else if (containerExponent){
+            OperationType containerType = containerExponent->getOperationType();
+            if (containerType == OperationType::Multiplication){
+
+                int coeff = containerExponent->getCoefficient()->getConstant();
+
+                if (coeff != 1){
+
+                    TermBase* newTerm = dynamic_cast<Constant*> (this->copy());
+                    TermContainer* newExponent = dynamic_cast<TermContainer*> (containerExponent->copy());
+                    newExponent->setCoefficient(new Constant(true, nullptr, nullptr, 1));
+                    newTerm->setExponent(newExponent);
+
+                    for (int i = 0; i < coeff; i ++){
+                        expandedTerm->appendTerm(newTerm->copy());
+                    }
+                }
+            }else if (containerType == OperationType::Division){
+                Constant* constantNum = dynamic_cast<Constant*> (containerExponent->getTerms()[0]);
+                if (constantNum){
+                    TermBase* newTerm = dynamic_cast<Constant*> (this->copy());
+                    TermContainer* newExponent = dynamic_cast<TermContainer*> (containerExponent->copy());
+                    newExponent->getTerms()[0] = new Constant(true, nullptr, nullptr, 1);
+                    newTerm->setExponent(newExponent);
+
+                    for (int i = 0; i < constantNum->getConstant(); i ++){
+                        expandedTerm->appendTerm(newTerm->copy());
+                    }
+                }
+            }else{
+                for (int i = 0; i < containerExponent->getTerms().size(); i ++){
+                    TermBase* newTerm = dynamic_cast<Constant*> (this->copy());
+                    TermBase* newExponent = containerExponent->getTerms()[i]->copy();
+                    newTerm->setExponent(newExponent);
+                    expandedTerm->appendTerm(newTerm);
+                }
+            }
+
+            return expandedTerm;
+        }else{
+            // throw error
+        }
+
+    }else{
+        return this;
+    }
+}
+
+void TermBase::setParentExpression(TermBase* p){
+    parentExpression = p;
+}
+
+void TermBase::updateExpressionString(){
+    expressionString = this->toString();
+}
+
+bool TermBase::isEqual(TermBase* other){
+    if (expressionString == other->getExpressionString()){
+        return true;
+    }else{
+        return false;
+    }
+}
 
 
 // ===== CONSTANT =====
@@ -89,6 +185,10 @@ bool Constant::isLikeTerm(TermBase* other){
             return false;
         }
     }
+}
+
+bool Constant::isExpanded(){
+    return true;
 }
 
 TermBase* Constant::sum(TermBase* other){
@@ -163,43 +263,6 @@ std::vector<TermBase*> Constant::allFactors(){
     return factors;
 }
 
-std::vector<TermBase*> Constant::allComponents(){
-    std::vector<TermBase*> components;
-    for (int i = 0; i < constant; i ++){
-        int a = constant - i;
-        Constant* component = new Constant(true, nullptr, nullptr, a);
-        if (!(std::find(components.begin(), components.end(), component) != components.end())){
-            components.push_back(component);
-        }
-    }
-}
-
-std::vector<std::pair<TermBase*, TermBase*>> Constant::splitSums(){
-    std::vector<std::pair<TermBase*, TermBase*>> splitSums;
-    Constant* constantExponent = dynamic_cast<Constant*> (exponent);
-    if (constantExponent){
-        int total = constant;
-        if (constantExponent->getConstant() != 1){
-            total = std::pow(constant, constantExponent->getConstant());
-        }
-        for (int i = 1; i <= total; i ++){ // put a cap on this so not added twice
-            int other = constant - i;
-            Constant* sumHalfA = new Constant(true, nullptr, nullptr, i);
-            Constant* sumHalfB = new Constant(true, nullptr, nullptr, other);
-            std::pair<TermBase*, TermBase*> splitSum;
-            splitSum.first = sumHalfA;
-            splitSum.second = sumHalfB;
-            splitSums.push_back(splitSum);
-        }
-        return splitSums;    
-    }else{
-        std::pair<TermBase*, TermBase*> zeroSum = getZeroSum(this);
-        splitSums.push_back(zeroSum);
-        return splitSums;
-    }
-    
-}
-
 TermBase* Constant::copy(){
     return new Constant(sign, root->copy(), exponent->copy(), constant);
 }
@@ -262,6 +325,10 @@ bool Variable::isLikeTerm(TermBase* other){
             return true;
         }
     }
+}
+
+bool Variable::isExpanded(){
+    return true;
 }
 
 TermBase* Variable::sum(TermBase* other){
@@ -376,54 +443,8 @@ TermBase* Variable::factor(){
 
 std::vector<TermBase*> Variable::allFactors(){
     std::vector<TermBase*> factors;
-    if (exponent != nullptr){
-        if (!exponent->isOne()){
-            Constant* constantExponent = dynamic_cast<Constant*> (exponent);
-            Variable* variableExponent = dynamic_cast<Variable*> (exponent);
-            TermContainer* containerExponent = dynamic_cast<TermContainer*> (exponent);
-
-            if (constantExponent){
-                for (int i = 1; i <= constantExponent->getConstant(); i ++){
-                    Constant* componentExponent = new Constant(true, nullptr, nullptr, i);
-                    Variable* posVariableFactor = new Variable(true, nullptr, componentExponent, variable);
-                    factors.push_back(posVariableFactor);
-                    if (!sign){
-                        Variable* negVariableFactor = new Variable(false, nullptr, componentExponent, variable);
-                        factors.push_back(negVariableFactor);
-                    }
-
-                }
-            }else if (variableExponent){
-                factors.push_back(new Constant(true, nullptr, nullptr, 1));
-                factors.push_back(this);
-            }else if (containerExponent){
-                /*
-                find all possible ways to sum
-                to the target exponenet, only using
-                whole numbers
-                */
-
-            }else{
-                // throw error
-            }
-        }else{
-            factors.push_back(this);
-        } 
-    }
+    
     return factors;
-}
-
-std::vector<TermBase*> Variable::allComponents(){
-    std::vector<TermBase*> components;
-    components.push_back(this);
-    return components;
-}
-
-std::vector<std::pair<TermBase*, TermBase*>> Variable::splitSums(){
-    std::vector<std::pair<TermBase*, TermBase*>> splitSums;
-    std::pair<TermBase*, TermBase*> zeroSum = getZeroSum(this);
-    splitSums.push_back(zeroSum);
-    return splitSums;
 }
 
 TermBase* Variable::copy(){
@@ -567,6 +588,10 @@ bool TermContainer::isLikeTerm(TermBase* other){
     }
 }
 
+bool TermContainer::isExpanded(){
+    return true;
+}
+
 TermBase* TermContainer::sum(TermBase* other){
     return nullptr;
 }
@@ -605,105 +630,6 @@ TermBase* TermContainer::factor(){
 std::vector<TermBase*> TermContainer::allFactors(){
     std::vector<TermBase*> dummy;
     return dummy;
-}
-
-std::vector<TermBase*> TermContainer::allComponents(){
-    std::vector<TermBase*> components;
-    for (int i = 0; i < terms.size(); i ++){
-
-        Constant* constantTerm = dynamic_cast<Constant*> (terms[i]);
-        Variable* variableTerm = dynamic_cast<Variable*> (terms[i]);
-        TermContainer* containerTerm = dynamic_cast<TermContainer*> (terms[i]);
-
-        std::vector<TermBase*> subComponents;
-
-        if (constantTerm){
-            subComponents = constantTerm->allComponents();
-        }else if (variableTerm){
-            subComponents = variableTerm->allComponents();
-        }else if (containerTerm){
-            if (containerTerm->getOperationType() == OperationType::Multiplication){
-                for (int i = 0; i < containerTerm->getCoefficient()->getConstant(); i ++){
-                    TermContainer* copiedMultiplicative = dynamic_cast<TermContainer*> (terms[i]->copy());
-                    copiedMultiplicative->setCoefficient(new Constant(true, nullptr, nullptr, 1));
-                    subComponents.push_back(copiedMultiplicative);
-                }
-            }else if (containerTerm->getOperationType() == OperationType::Division){
-                
-            }else{
-                // there is a sub-expression which needs to be recursed into
-                subComponents = terms[i]->allComponents();
-            }
-        }else{
-            // throw error
-        }
-
-        subComponents = terms[i]->allComponents();
-        for(int j = 0; j < subComponents.size(); j ++){
-            components.push_back(subComponents[j]);
-        }
-    }
-    return components;
-}
-
-std::vector<std::pair<TermBase*, TermBase*>> TermContainer::splitSums(){
-    std::vector<std::pair<TermBase*, TermBase*>> splitSums;
-    Constant* constantExponent = dynamic_cast<Constant*> (exponent);
-    Variable* variableExponent = dynamic_cast<Variable*> (exponent);
-    TermContainer* containerExponent = dynamic_cast<TermContainer*> (exponent);
-
-    if (variableExponent || containerExponent){
-        std::pair<TermBase*, TermBase*> zeroSum = getZeroSum(this);
-        splitSums.push_back(zeroSum);
-        return splitSums;
-    }else if (constantExponent){
-        if (constantExponent->getConstant() == 1){
-            if (operationType == OperationType::Multiplication){
-
-            }else if (operationType == OperationType::Division){
-                TermBase* num = terms[0];
-                TermBase* denom = terms[1];
-                Constant* constantNum = dynamic_cast<Constant*> (num);
-                Constant* constantDenom = dynamic_cast<Constant*> (denom);
-                if (constantNum && !constantDenom){
-                    TermContainer* inverseDivision = new TermContainer();
-                    inverseDivision->setOperationType(OperationType::Division);
-                    inverseDivision->appendTerm(new Constant(true, nullptr, nullptr, 1));
-                    inverseDivision->appendTerm(denom);
-
-                    TermContainer* summationOfInverses = new TermContainer();
-                    summationOfInverses->setOperationType(OperationType::Summation);
-
-                    for (int i = 0; i < constantNum->getConstant(); i ++){
-                        summationOfInverses->appendTerm(inverseDivision->copy());
-                    }
-                }else if (!constantNum && constantDenom){
-
-                }else if (!constantNum && !constantDenom){
-
-                }else{
-                    // evaluate term and if its a whole number split the normal way
-                }
-            }else{
-                
-            }
-        }else{
-            std::pair<TermBase*, TermBase*> zeroSum = getZeroSum(this);
-            splitSums.push_back(zeroSum);
-            return splitSums;
-        }
-    }else{
-        // throw error
-    }
-}
-
-std::vector<std::pair<TermBase*, TermBase*>> TermContainer::getSumPairs(){
-    std::vector<std::pair<TermBase*, TermBase*>> sumPairs;
-    if (operationType == OperationType::Summation){
-
-    }else{
-        return sumPairs;
-    }
 }
 
 TermBase* TermContainer::copy(){

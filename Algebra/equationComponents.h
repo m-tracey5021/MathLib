@@ -41,6 +41,8 @@ class TermBase {
 
         void setParentExpression(TermBase* p);
 
+        TermBase* expandExponent();
+
         void updateExpressionString();
         
         bool isEqual(TermBase* other);
@@ -59,21 +61,17 @@ class TermBase {
 
         virtual bool isLikeTerm(TermBase* other) = 0;
 
+        virtual bool isExpanded() = 0;
+
         virtual TermBase* sum(TermBase* other) = 0;
 
         virtual TermBase* multiply(TermBase* other) = 0;
 
         virtual TermBase* divide(TermBase* other) = 0;
-        
-        virtual TermBase* expandExponent() = 0;
 
         virtual TermBase* factor() = 0;
 
         virtual std::vector<TermBase*> allFactors() = 0;
-
-        virtual std::vector<TermBase*> allComponents() = 0;
-
-        virtual std::vector<std::pair<TermBase*, TermBase*>> splitSums() = 0;
 
         virtual TermBase* copy() = 0;
 
@@ -102,21 +100,17 @@ class Constant : public TermBase {
 
         bool isLikeTerm(TermBase* other) override;
 
+        bool isExpanded() override;
+
         TermBase* sum(TermBase* other) override;
 
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
 
-        TermBase* expandExponent() override;
-
         TermBase* factor() override;
 
         std::vector<TermBase*> allFactors() override;
-
-        std::vector<TermBase*> allComponents() override;
-
-        std::vector<std::pair<TermBase*, TermBase*>> splitSums() override;
 
         TermBase* copy() override;
 
@@ -143,21 +137,17 @@ class Variable : public TermBase {
 
         bool isLikeTerm(TermBase* other) override;
 
+        bool isExpanded() override;
+
         TermBase* sum(TermBase* other) override;
 
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
 
-        TermBase* expandExponent() override;
-
         TermBase* factor() override;
 
         std::vector<TermBase*> allFactors() override;
-
-        std::vector<TermBase*> allComponents() override;
-
-        std::vector<std::pair<TermBase*, TermBase*>> splitSums() override;
 
         TermBase* copy() override;
 
@@ -203,23 +193,17 @@ class TermContainer : public TermBase {
 
         bool isLikeTerm(TermBase* other) override;
 
+        bool isExpanded() override;
+
         TermBase* sum(TermBase* other) override;
 
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
 
-        TermBase* expandExponent() override;
-
         TermBase* factor() override;
 
         std::vector<TermBase*> allFactors() override;
-
-        std::vector<TermBase*> allComponents() override;
-
-        std::vector<std::pair<TermBase*, TermBase*>> splitSums() override;
-
-        std::vector<std::pair<TermBase*, TermBase*>> getSumPairs();
 
         TermBase* copy() override;
 

@@ -34,10 +34,10 @@ int main(){
     //BinaryNode* removed = tree2.removeMainFunctionLeft();
 
 
-    std::set<int> ints1 = {1, 2, 3, 3, 4, 5};
-    std::set<int> ints2 = {4, 5, 5, 9, 10};
+    //std::set<int> ints1 = {1, 2, 3, 3, 4, 5};
+    //std::set<int> ints2 = {4, 5, 5, 9, 10};
 
-    std::set<int> diff = stdSet::setDifference(ints1, ints2);
+    //std::set<int> diff = stdSet::setDifference(ints1, ints2);
 
     bool treeStructurePassed = testTreeStructure();
 
@@ -58,6 +58,8 @@ int main(){
     bool fiveStateDFAPassed = testFiveState();
 
     bool expressionParsePassed = testExpressionParse();
+
+    bool expandPassed = testExpand();
 
     int elements1[] = {3, 4, 5};
     char elements2[] = {'a', 'b', 'c'};
