@@ -64,6 +64,8 @@ class TermBase {
         virtual TermBase* multiply(TermBase* other) = 0;
 
         virtual TermBase* divide(TermBase* other) = 0;
+        
+        virtual TermBase* expandExponent() = 0;
 
         virtual TermBase* factor() = 0;
 
@@ -106,6 +108,8 @@ class Constant : public TermBase {
 
         TermBase* divide(TermBase* other) override;
 
+        TermBase* expandExponent() override;
+
         TermBase* factor() override;
 
         std::vector<TermBase*> allFactors() override;
@@ -144,6 +148,8 @@ class Variable : public TermBase {
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+
+        TermBase* expandExponent() override;
 
         TermBase* factor() override;
 
@@ -202,6 +208,8 @@ class TermContainer : public TermBase {
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+
+        TermBase* expandExponent() override;
 
         TermBase* factor() override;
 
