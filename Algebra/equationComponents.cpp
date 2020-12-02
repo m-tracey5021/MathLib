@@ -113,7 +113,7 @@ TermBase* TermBase::expandExponent(){
                 }
             }else{
                 for (int i = 0; i < containerExponent->getTerms().size(); i ++){
-                    TermBase* newTerm = dynamic_cast<Constant*> (this->copy());
+                    TermBase* newTerm = dynamic_cast<TermBase*> (this->copy());
                     TermBase* newExponent = containerExponent->getTerms()[i]->copy();
                     newTerm->setExponent(newExponent);
                     expandedTerm->appendTerm(newTerm);
@@ -264,7 +264,16 @@ std::vector<TermBase*> Constant::allFactors(){
 }
 
 TermBase* Constant::copy(){
-    return new Constant(sign, root->copy(), exponent->copy(), constant);
+    if (root != nullptr & exponent != nullptr){
+        return new Constant(sign, root->copy(), exponent->copy(), constant);
+    }else if (root == nullptr & exponent != nullptr){
+        return new Constant(sign, nullptr, exponent->copy(), constant);
+    }else if (root != nullptr & exponent == nullptr){
+        return new Constant(sign, root->copy(), nullptr, constant);
+    }else{
+        return new Constant(sign, nullptr, nullptr, constant);
+    }
+    
 }
 
 std::string Constant::toString(){
@@ -448,7 +457,15 @@ std::vector<TermBase*> Variable::allFactors(){
 }
 
 TermBase* Variable::copy(){
-    return new Variable(sign, root->copy(), exponent->copy(), variable);
+    if (root != nullptr & exponent != nullptr){
+        return new Variable(sign, root->copy(), exponent->copy(), variable);
+    }else if (root == nullptr & exponent != nullptr){
+        return new Variable(sign, nullptr, exponent->copy(), variable);
+    }else if (root != nullptr & exponent == nullptr){
+        return new Variable(sign, root->copy(), nullptr, variable);
+    }else{
+        return new Variable(sign, nullptr, nullptr, variable);
+    }
 }
 
 std::string Variable::toString(){
@@ -519,8 +536,11 @@ void TermContainer::appendTerm(TermBase* t){terms.push_back(t); t->setParentExpr
 void TermContainer::removeTerm(int i){terms.erase(terms.begin() + i); updateExpressionString();}
 
 bool TermContainer::isOne(){
-    if (terms.size() == 1 & terms[0]->isOne()){
-        return true;
+    if (terms.size() == 1){
+        if (terms[0]->isOne()){
+            return true;
+        }
+        return false;
     }else{
         return false;
     }
@@ -641,7 +661,16 @@ TermBase* TermContainer::copy(){
         
     }
 
-    return new TermContainer(sign, root->copy(), exponent->copy(), newCoefficient, operationType, newTerms);
+    if (root != nullptr & exponent != nullptr){
+        return new TermContainer(sign, root->copy(), exponent->copy(), newCoefficient, operationType, newTerms);
+    }else if (root == nullptr & exponent != nullptr){
+        return new TermContainer(sign, nullptr, exponent->copy(), newCoefficient, operationType, newTerms);
+    }else if (root != nullptr & exponent == nullptr){
+        return new TermContainer(sign, root->copy(), nullptr, newCoefficient, operationType, newTerms);
+    }else{
+        return new TermContainer(sign, nullptr, nullptr, newCoefficient, operationType, newTerms);
+    }
+    
 }
 
 std::string TermContainer::toString(){

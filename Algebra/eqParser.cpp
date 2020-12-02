@@ -220,8 +220,10 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
                 i ++;
             }         
         } 
-
-        expression->appendTerm(currentTerm);  
+        if (currentTerm != nullptr){
+            expression->appendTerm(currentTerm);
+        }
+          
     }
 
     return expression;
