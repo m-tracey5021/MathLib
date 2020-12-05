@@ -123,8 +123,8 @@ bool testExpand(){
     string expression1 = "6^(3)";
     string expected1 = "666";
     TermContainer* term1 = parseExpression(expression1, zeroIndex);
-    term1 = term1->getTerms()[0]->expandExponent();
-    string str1 = term1->toString();
+    TermBase* termBase = term1->getTerms()[0]->expandExponent();
+    string str1 = termBase->toString();
 
     if (str1 == expected1){
         return true;

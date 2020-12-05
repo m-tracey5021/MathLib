@@ -41,8 +41,6 @@ class TermBase {
 
         void setParentExpression(TermBase* p);
 
-        TermBase* expandExponent();
-
         void updateExpressionString();
         
         bool isEqual(TermBase* other);
@@ -59,15 +57,19 @@ class TermBase {
 
         virtual bool isAtomic() = 0;
 
-        virtual bool isLikeTerm(TermBase* other) = 0;
+        virtual bool isAtomicExponent() = 0;
 
-        virtual bool isExpanded() = 0;
+        virtual bool isAtomicNumerator() = 0;
+
+        virtual bool isLikeTerm(TermBase* other) = 0;
 
         virtual TermBase* sum(TermBase* other) = 0;
 
         virtual TermBase* multiply(TermBase* other) = 0;
 
         virtual TermBase* divide(TermBase* other) = 0;
+
+        virtual TermBase* expandExponent(TermBase* term) = 0;
 
         virtual TermBase* factor() = 0;
 
@@ -98,15 +100,19 @@ class Constant : public TermBase {
 
         bool isAtomic() override;
 
-        bool isLikeTerm(TermBase* other) override;
+        bool isAtomicExponent() override;
 
-        bool isExpanded() override;
+        bool isAtomicNumerator() override;
+
+        bool isLikeTerm(TermBase* other) override;
 
         TermBase* sum(TermBase* other) override;
 
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+
+        TermBase* expandExponent(TermBase* term) override;
 
         TermBase* factor() override;
 
@@ -135,15 +141,19 @@ class Variable : public TermBase {
 
         bool isAtomic() override;
 
-        bool isLikeTerm(TermBase* other) override;
+        bool isAtomicExponent() override;
 
-        bool isExpanded() override;
+        bool isAtomicNumerator() override;
+
+        bool isLikeTerm(TermBase* other) override;
 
         TermBase* sum(TermBase* other) override;
 
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+
+        TermBase* expandExponent(TermBase* term) override;
 
         TermBase* factor() override;
 
@@ -191,15 +201,19 @@ class TermContainer : public TermBase {
 
         bool isAtomic() override;
 
-        bool isLikeTerm(TermBase* other) override;
+        bool isAtomicExponent() override;
 
-        bool isExpanded() override;
+        bool isAtomicNumerator() override;
+
+        bool isLikeTerm(TermBase* other) override;
 
         TermBase* sum(TermBase* other) override;
 
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+
+        TermBase* expandExponent(TermBase* term) override;
 
         TermBase* factor() override;
 

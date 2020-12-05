@@ -63,73 +63,6 @@ void TermBase::setExponent(TermBase* e){
     updateExpressionString();
 }
 
-TermBase* TermBase::expandExponent(){
-
-    // while not in the smallest form, repeat the process below
-
-    if (exponent != nullptr){
-
-        TermContainer* expandedTerm = new TermContainer();
-        expandedTerm->setOperationType(OperationType::Multiplication);
-
-        Constant* constantExponent = dynamic_cast<Constant*> (exponent);
-        Variable* variableExponent = dynamic_cast<Variable*> (exponent);
-        TermContainer* containerExponent = dynamic_cast<TermContainer*> (exponent);
-
-        if (constantExponent){
-            for (int i = 0; i < constantExponent->getConstant(); i ++){
-                expandedTerm->appendTerm(this->copy());
-            }
-        }else if (variableExponent){
-            // do nothing?
-        }else if (containerExponent){
-            OperationType containerType = containerExponent->getOperationType();
-            if (containerType == OperationType::Multiplication){
-
-                int coeff = containerExponent->getCoefficient()->getConstant();
-
-                if (coeff != 1){
-
-                    TermBase* newTerm = dynamic_cast<Constant*> (this->copy());
-                    TermContainer* newExponent = dynamic_cast<TermContainer*> (containerExponent->copy());
-                    newExponent->setCoefficient(new Constant(true, nullptr, nullptr, 1));
-                    newTerm->setExponent(newExponent);
-
-                    for (int i = 0; i < coeff; i ++){
-                        expandedTerm->appendTerm(newTerm->copy());
-                    }
-                }
-            }else if (containerType == OperationType::Division){
-                Constant* constantNum = dynamic_cast<Constant*> (containerExponent->getTerms()[0]);
-                if (constantNum){
-                    TermBase* newTerm = dynamic_cast<Constant*> (this->copy());
-                    TermContainer* newExponent = dynamic_cast<TermContainer*> (containerExponent->copy());
-                    newExponent->getTerms()[0] = new Constant(true, nullptr, nullptr, 1);
-                    newTerm->setExponent(newExponent);
-
-                    for (int i = 0; i < constantNum->getConstant(); i ++){
-                        expandedTerm->appendTerm(newTerm->copy());
-                    }
-                }
-            }else{
-                for (int i = 0; i < containerExponent->getTerms().size(); i ++){
-                    TermBase* newTerm = dynamic_cast<TermBase*> (this->copy());
-                    TermBase* newExponent = containerExponent->getTerms()[i]->copy();
-                    newTerm->setExponent(newExponent);
-                    expandedTerm->appendTerm(newTerm);
-                }
-            }
-
-            return expandedTerm;
-        }else{
-            // throw error
-        }
-
-    }else{
-        return this;
-    }
-}
-
 void TermBase::setParentExpression(TermBase* p){
     parentExpression = p;
 }
@@ -187,8 +120,20 @@ bool Constant::isLikeTerm(TermBase* other){
     }
 }
 
-bool Constant::isExpanded(){
-    return true;
+bool Constant::isAtomicExponent(){
+    if (constant == 1){
+        return true;
+    }else{
+        return false;;
+    }
+}
+
+bool Constant::isAtomicNumerator(){
+    if (constant == 1){
+        return true;
+    }else{
+        return false;;
+    }
 }
 
 TermBase* Constant::sum(TermBase* other){
@@ -246,6 +191,21 @@ TermBase* Constant::divide(TermBase* other){
         newContainer->appendTerm(other);
         return newContainer;
     }
+}
+
+TermBase* Constant::expandExponent(TermBase* term){
+    TermContainer* expandedTerm = new TermContainer();
+    expandedTerm->setOperationType(OperationType::Multiplication);
+
+    if (constant > 1){
+        for (int i = 0; i < constant; i ++){
+            expandedTerm->appendTerm(term->copy());
+        }
+        return expandedTerm;
+    }else{
+        return this;
+    }
+    
 }
 
 TermBase* Constant::factor(){
@@ -321,6 +281,10 @@ bool Variable::isOne(){return false;}
 
 bool Variable::isAtomic(){return true;}
 
+bool Variable::isAtomicExponent(){return true;}
+
+bool TermContainer::isAtomicNumerator(){return true;}
+
 bool Variable::isLikeTerm(TermBase* other){
     if (!other->isAtomic()){
         return false;
@@ -334,10 +298,6 @@ bool Variable::isLikeTerm(TermBase* other){
             return true;
         }
     }
-}
-
-bool Variable::isExpanded(){
-    return true;
 }
 
 TermBase* Variable::sum(TermBase* other){
@@ -421,6 +381,10 @@ TermBase* Variable::divide(TermBase* other){
         newContainer->appendTerm(other);
         return newContainer;
     }
+}
+
+TermBase* Variable::expandExponent(TermBase* term){
+    return term;
 }
 
 TermBase* Variable::factor(){
@@ -554,6 +518,30 @@ bool TermContainer::isAtomic(){
     }
 }
 
+bool TermContainer::isAtomicExponent(){
+    if (terms.size() > 1){
+        if (operationType == OperationType::Summation){
+            return false;
+        }else if (operationType == OperationType::Multiplication){
+            return false;
+        }else{
+            if (terms[0]->isAtomicNumerator()){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }else{
+        if (terms[0]->isAtomicExponent()){
+            return true;
+        }else{
+            return false;
+        } 
+    }   
+}
+
+bool TermContainer::isAtomicNumerator(){return false;}
+
 bool TermContainer::isLikeTerm(TermBase* other){
     TermContainer* otherContainer = dynamic_cast<TermContainer*> (other);
 
@@ -608,10 +596,6 @@ bool TermContainer::isLikeTerm(TermBase* other){
     }
 }
 
-bool TermContainer::isExpanded(){
-    return true;
-}
-
 TermBase* TermContainer::sum(TermBase* other){
     return nullptr;
 }
@@ -623,6 +607,119 @@ TermBase* TermContainer::multiply(TermBase* other){
 
 TermBase* TermContainer::divide(TermBase* other){
     return nullptr;
+}
+
+/*
+
+TermBase* TermBase::expandExponent(){
+
+    // while not in the smallest form, repeat the process below
+
+    if (exponent != nullptr){
+
+        TermContainer* expandedTerm = new TermContainer();
+        expandedTerm->setOperationType(OperationType::Multiplication);
+
+        Constant* constantExponent = dynamic_cast<Constant*> (exponent);
+        Variable* variableExponent = dynamic_cast<Variable*> (exponent);
+        TermContainer* containerExponent = dynamic_cast<TermContainer*> (exponent);
+
+        if (constantExponent){
+            for (int i = 0; i < constantExponent->getConstant(); i ++){
+                expandedTerm->appendTerm(this->copy());
+            }
+        }else if (variableExponent){
+            // do nothing?
+        }else if (containerExponent){
+            OperationType containerType = containerExponent->getOperationType();
+            if (containerType == OperationType::Multiplication){
+
+                int coeff = containerExponent->getCoefficient()->getConstant();
+
+                if (coeff != 1){
+
+                    TermBase* newTerm = dynamic_cast<Constant*> (this->copy());
+                    TermContainer* newExponent = dynamic_cast<TermContainer*> (containerExponent->copy());
+                    newExponent->setCoefficient(new Constant(true, nullptr, nullptr, 1));
+                    newTerm->setExponent(newExponent);
+
+                    for (int i = 0; i < coeff; i ++){
+                        expandedTerm->appendTerm(newTerm->copy());
+                    }
+                }
+            }else if (containerType == OperationType::Division){
+                Constant* constantNum = dynamic_cast<Constant*> (containerExponent->getTerms()[0]);
+                if (constantNum){
+                    TermBase* newTerm = dynamic_cast<Constant*> (this->copy());
+                    TermContainer* newExponent = dynamic_cast<TermContainer*> (containerExponent->copy());
+                    newExponent->getTerms()[0] = new Constant(true, nullptr, nullptr, 1);
+                    newTerm->setExponent(newExponent);
+
+                    for (int i = 0; i < constantNum->getConstant(); i ++){
+                        expandedTerm->appendTerm(newTerm->copy());
+                    }
+                }
+            }else{
+                for (int i = 0; i < containerExponent->getTerms().size(); i ++){
+                    TermBase* newTerm = dynamic_cast<TermBase*> (this->copy());
+                    TermBase* newExponent = containerExponent->getTerms()[i]->copy();
+                    newTerm->setExponent(newExponent);
+                    expandedTerm->appendTerm(newTerm);
+                }
+            }
+
+            return expandedTerm;
+        }else{
+            // throw error
+        }
+
+    }else{
+        return this;
+    }
+}
+
+*/
+
+TermBase* TermContainer::expandExponent(TermBase* term){
+    
+    TermContainer* expandedTerm = new TermContainer();
+    expandedTerm->setOperationType(OperationType::Multiplication);
+
+    if (operationType == OperationType::Multiplication){
+
+        int coeff = coefficient->getConstant();
+
+        if (coeff != 1){
+
+            TermBase* newTerm = term->copy();
+            TermContainer* newExponent = static_cast<TermContainer*> (this->copy());
+            newExponent->setCoefficient(new Constant(true, nullptr, nullptr, 1));
+            newTerm->setExponent(newExponent);
+
+            for (int i = 0; i < coeff; i ++){
+                expandedTerm->appendTerm(newTerm->copy());
+            }
+        }
+    }else if (operationType == OperationType::Division){
+        Constant* constantNum = dynamic_cast<Constant*> (this->getTerms()[0]);
+        if (constantNum){
+            TermBase* newTerm = this->copy();
+            TermContainer* newExponent = static_cast<TermContainer*> (this->copy());
+            newExponent->getTerms()[0] = new Constant(true, nullptr, nullptr, 1);
+            newTerm->setExponent(newExponent);
+
+            for (int i = 0; i < constantNum->getConstant(); i ++){
+                expandedTerm->appendTerm(newTerm->copy());
+            }
+        }
+    }else{
+        for (int i = 0; i < terms.size(); i ++){
+            TermBase* newTerm = this->copy();
+            TermBase* newExponent = terms[i]->copy();
+            newTerm->setExponent(newExponent);
+            expandedTerm->appendTerm(newTerm);
+        }
+    }
 }
 
 TermBase* TermContainer::factor(){
