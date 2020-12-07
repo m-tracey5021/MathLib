@@ -4,6 +4,10 @@
 #include <string>
 #include <vector>
 
+class TermBase;
+class Constant;
+class Variable;
+class TermContainer;
 
 enum class OperationType{
     Summation,
@@ -45,13 +49,17 @@ class TermBase {
         
         bool isEqual(TermBase* other);
 
-        // virtual
+        // === Virtual ===
 
         virtual void appendTerm(TermBase* t){}
 
-        virtual void removeTerm(int index){}
+        virtual void removeTerm(int i){}
 
-        // pure virtual
+        virtual void replaceTerm(int i, TermBase* t){}
+
+        //  === Pure Virtual ===
+
+        // Test functions
 
         virtual bool isOne() = 0;
 
@@ -63,17 +71,37 @@ class TermBase {
 
         virtual bool isLikeTerm(TermBase* other) = 0;
 
+        // Manipulative functions
+
         virtual TermBase* sum(TermBase* other) = 0;
 
         virtual TermBase* multiply(TermBase* other) = 0;
 
         virtual TermBase* divide(TermBase* other) = 0;
 
-        virtual TermBase* expandExponent(TermBase* term) = 0;
+        virtual TermBase* expandForExponent() = 0;
+
+        virtual TermBase* expandAsExponent(TermBase* baseTerm) = 0;
+
+        virtual TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) = 0;
 
         virtual TermBase* factor() = 0;
 
         virtual std::vector<TermBase*> allFactors() = 0;
+
+        // Helper functions
+
+        /*
+
+        virtual void helpExpandForExponents() = 0;
+
+        virtual void helpExpandExponent() = 0;
+
+        virtual void helpExpandConstNum(TermContainer* copiedExponent, TermContainer* expandedTerm) = 0;
+
+        */
+
+        // Misc functions
 
         virtual TermBase* copy() = 0;
 
@@ -96,6 +124,8 @@ class Constant : public TermBase {
 
         void setConstant(int c){constant = c; updateExpressionString();}
 
+        // ===
+
         bool isOne() override;
 
         bool isAtomic() override;
@@ -112,7 +142,11 @@ class Constant : public TermBase {
 
         TermBase* divide(TermBase* other) override;
 
-        TermBase* expandExponent(TermBase* term) override;
+        TermBase* expandForExponent() override;
+
+        TermBase* expandAsExponent(TermBase* baseTerm) override;
+
+        TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
 
         TermBase* factor() override;
 
@@ -137,6 +171,8 @@ class Variable : public TermBase {
 
         void setVariable(char v){variable = v; updateExpressionString();}
 
+        // ===
+
         bool isOne() override;
 
         bool isAtomic() override;
@@ -153,7 +189,11 @@ class Variable : public TermBase {
 
         TermBase* divide(TermBase* other) override;
 
-        TermBase* expandExponent(TermBase* term) override;
+        TermBase* expandForExponent() override;
+
+        TermBase* expandAsExponent(TermBase* baseTerm) override;
+
+        TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
 
         TermBase* factor() override;
 
@@ -193,9 +233,13 @@ class TermContainer : public TermBase {
 
         void setTerms(std::vector<TermBase*> t);
 
+        // ===
+
         void appendTerm(TermBase* t) override;
 
         void removeTerm(int i) override;
+
+        void replaceTerm(int i, TermBase* t) override;
         
         bool isOne() override;
 
@@ -213,7 +257,11 @@ class TermContainer : public TermBase {
 
         TermBase* divide(TermBase* other) override;
 
-        TermBase* expandExponent(TermBase* term) override;
+        TermBase* expandForExponent() override;
+
+        TermBase* expandAsExponent(TermBase* baseTerm) override;
+
+        TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
 
         TermBase* factor() override;
 
