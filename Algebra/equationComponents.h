@@ -71,6 +71,10 @@ class TermBase {
 
         virtual bool isLikeTerm(TermBase* other) = 0;
 
+        // Get 
+
+        virtual TermBase* getAtom() = 0;
+
         // Manipulative functions
 
         virtual TermBase* sum(TermBase* other) = 0;
@@ -88,18 +92,6 @@ class TermBase {
         virtual TermBase* factor() = 0;
 
         virtual std::vector<TermBase*> allFactors() = 0;
-
-        // Helper functions
-
-        /*
-
-        virtual void helpExpandForExponents() = 0;
-
-        virtual void helpExpandExponent() = 0;
-
-        virtual void helpExpandConstNum(TermContainer* copiedExponent, TermContainer* expandedTerm) = 0;
-
-        */
 
         // Misc functions
 
@@ -135,6 +127,8 @@ class Constant : public TermBase {
         bool isAtomicNumerator() override;
 
         bool isLikeTerm(TermBase* other) override;
+
+        TermBase* getAtom() override;
 
         TermBase* sum(TermBase* other) override;
 
@@ -183,6 +177,8 @@ class Variable : public TermBase {
 
         bool isLikeTerm(TermBase* other) override;
 
+        TermBase* getAtom() override;
+
         TermBase* sum(TermBase* other) override;
 
         TermBase* multiply(TermBase* other) override;
@@ -225,7 +221,7 @@ class TermContainer : public TermBase {
 
         OperationType getOperationType();
 
-        std::vector<TermBase*> getTerms();   
+        std::vector<TermBase*> getTerms();  
 
         void setCoefficient(Constant* c);  
 
@@ -250,6 +246,8 @@ class TermContainer : public TermBase {
         bool isAtomicNumerator() override;
 
         bool isLikeTerm(TermBase* other) override;
+
+        TermBase* getAtom() override;
 
         TermBase* sum(TermBase* other) override;
 

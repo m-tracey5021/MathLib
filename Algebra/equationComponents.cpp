@@ -105,6 +105,22 @@ bool Constant::isOne(){
 
 bool Constant::isAtomic(){return true;}
 
+bool Constant::isAtomicExponent(){
+    if (constant == 1){
+        return true;
+    }else{
+        return false;;
+    }
+}
+
+bool Constant::isAtomicNumerator(){
+    if (constant == 1){
+        return true;
+    }else{
+        return false;;
+    }
+}
+
 bool Constant::isLikeTerm(TermBase* other){
     if (!other->isAtomic()){
         return false;
@@ -120,20 +136,8 @@ bool Constant::isLikeTerm(TermBase* other){
     }
 }
 
-bool Constant::isAtomicExponent(){
-    if (constant == 1){
-        return true;
-    }else{
-        return false;;
-    }
-}
-
-bool Constant::isAtomicNumerator(){
-    if (constant == 1){
-        return true;
-    }else{
-        return false;;
-    }
+TermBase* Constant::getAtom(){
+    return this;
 }
 
 TermBase* Constant::sum(TermBase* other){
@@ -204,7 +208,9 @@ TermBase* Constant::expandAsExponent(TermBase* baseTerm){
 
     if (constant > 1){
         for (int i = 0; i < constant; i ++){
-            expandedTerm->appendTerm(baseTerm->copy());
+            TermBase* copiedBase = baseTerm->copy();
+            copiedBase->setExponent(nullptr);
+            expandedTerm->appendTerm(copiedBase);
         }
         return expandedTerm;
     }else{
@@ -321,6 +327,10 @@ bool Variable::isLikeTerm(TermBase* other){
             return true;
         }
     }
+}
+
+TermBase* Variable::getAtom(){
+    return this;
 }
 
 TermBase* Variable::sum(TermBase* other){
@@ -521,7 +531,23 @@ OperationType TermContainer::getOperationType(){return operationType;}
 
 std::vector<TermBase*> TermContainer::getTerms(){return terms;}
 
-void TermContainer::setCoefficient(Constant* c){coefficient = c; updateExpressionString();}
+void TermContainer::setCoefficient(Constant* c){
+    if (c->getConstant() == 1){
+        if (coefficient->getConstant() != 1){
+            terms.erase(terms.begin());
+        }
+    }else{
+        if (coefficient->getConstant() == 1){
+            terms.insert(terms.begin(), c);
+        }else{
+            terms.insert(terms.begin(), c);
+            terms.erase(terms.begin() + 1);
+        }
+    }
+    
+    coefficient = c;
+    updateExpressionString();
+}
 
 void TermContainer::setOperationType(OperationType o){operationType = o; updateExpressionString();}
 
@@ -630,6 +656,15 @@ bool TermContainer::isLikeTerm(TermBase* other){
     }
 }
 
+TermBase* TermContainer::getAtom(){
+    if (isAtomic()){
+        return terms[0]->getAtom();
+    }else{
+        return nullptr;
+    }
+    
+}
+
 TermBase* TermContainer::sum(TermBase* other){
     return nullptr;
 }
@@ -650,8 +685,11 @@ TermBase* TermContainer::expandForExponent(){
 
 TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
     
+    TermBase* expandedAtomic = nullptr;
     TermContainer* expandedTerm = new TermContainer();
     expandedTerm->setOperationType(OperationType::Multiplication);
+
+    // expand all the inner exponents
 
     TermContainer* copiedExponent = static_cast<TermContainer*> (this->copy());
     std::vector<TermBase*> copiedTerms = copiedExponent->getTerms();
@@ -663,41 +701,65 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
                 copiedExponent->replaceTerm(i, expandedInnerTerm);
             }
         }
-        
     }
 
-    if (operationType == OperationType::Multiplication){
+    // expand the main exponent
 
-        int coeff = coefficient->getConstant();
+    if (isAtomic()){
+        expandedAtomic = getAtom()->expandAsExponent(baseTerm);
+    }else{
+        if (operationType == OperationType::Multiplication){
 
-        if (coeff != 1){
+            int coeff = coefficient->getConstant();
 
-            TermBase* newTerm = baseTerm->copy();
-            TermContainer* newExponent = static_cast<TermContainer*> (copiedExponent->copy());
-            newExponent->setCoefficient(new Constant(true, nullptr, nullptr, 1));
-            newTerm->setExponent(newExponent);
+            if (coeff != 1){
 
-            for (int i = 0; i < coeff; i ++){
-                expandedTerm->appendTerm(newTerm->copy());
+                TermBase* newTerm = baseTerm->copy();
+                TermContainer* newExponent = static_cast<TermContainer*> (copiedExponent->copy());
+                newExponent->setCoefficient(new Constant(true, nullptr, nullptr, 1));
+                newTerm->setExponent(newExponent);
+
+                for (int i = 0; i < coeff; i ++){
+                    expandedTerm->appendTerm(newTerm->copy());
+                }
+            }
+        }else if (operationType == OperationType::Division){
+            TermBase* numerator = copiedExponent->getTerms()[0];
+            expandedTerm = static_cast<TermContainer*> (numerator->expandAsConstNum(baseTerm, copiedExponent));
+
+        }else{
+            for (int i = 0; i < copiedTerms.size(); i ++){
+                /*
+                    need to make sure here that constants and subExpressions are 
+                    expanded aswell, currently only variables are
+                */
+                TermBase* newTerm = baseTerm->copy();
+                TermBase* newExponent = copiedTerms[i]->copy();
+                newTerm->setExponent(newExponent);
+                expandedTerm->appendTerm(newTerm);
             }
         }
-    }else if (operationType == OperationType::Division){
-        TermBase* numerator = copiedExponent->getTerms()[0];
-        expandedTerm = static_cast<TermContainer*> (numerator->expandAsConstNum(baseTerm, copiedExponent));
-
-    }else{
-        for (int i = 0; i < copiedTerms.size(); i ++){
-            /*
-                need to make sure here that constants and subExpressions are 
-                expanded aswell, currently only variables are
-            */
-            TermBase* newTerm = baseTerm->copy();
-            TermBase* newExponent = copiedTerms[i]->copy();
-            newTerm->setExponent(newExponent);
-            expandedTerm->appendTerm(newTerm);
-        }
     }
-    return expandedTerm;
+
+    
+
+    /* 
+        check that the resultant expandedTerm is fully expanded, i.e. all
+        of the exponents are in atomic form, either 1 or n or 1/n 
+    */
+
+    if (!expandedAtomic){
+        for (int i = 0; i < expandedTerm->getTerms().size(); i ++){
+            TermBase* ithExpandedTerm = expandedTerm->getTerms()[i];
+            TermBase* ithExponent = ithExpandedTerm->getExponent();
+            if (!ithExponent->isAtomicExponent()){
+                expandedTerm->replaceTerm(i, ithExpandedTerm->expandForExponent());
+            }
+        }
+        return expandedTerm;
+    }else{
+        return expandedAtomic;
+    }
 }
 
 TermBase* TermContainer::expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational){
@@ -756,9 +818,11 @@ std::string TermContainer::toString(){
     
     std::string termStr = "";
     if (operationType == OperationType::Multiplication){
+        /*
         if (coefficient->getConstant() != 1){
             termStr += coefficient->toString();
         }
+        */
         for (int i = 0; i < terms.size(); i ++){
             termStr += terms[i]->toString();
         }
