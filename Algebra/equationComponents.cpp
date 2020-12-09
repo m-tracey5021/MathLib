@@ -689,21 +689,31 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
     TermContainer* expandedTerm = new TermContainer();
     expandedTerm->setOperationType(OperationType::Multiplication);
 
-    // expand all the inner exponents
+    // expand the exponents of the innerTerms
 
-    TermContainer* copiedExponent = static_cast<TermContainer*> (this->copy());
-    std::vector<TermBase*> copiedTerms = copiedExponent->getTerms();
-    for (int i = 0; i < copiedTerms.size(); i ++){
-        TermBase* innerExponent = copiedTerms[i]->getExponent();
+    TermContainer* tmpExponent = static_cast<TermContainer*> (this->copy());
+    std::vector<TermBase*> tmpTerms = tmpExponent->getTerms();
+
+    for (int i = 0; i < tmpTerms.size(); i ++){
+        TermBase* innerTerm = tmpTerms[i];
+        TermBase* innerExponent = innerTerm->getExponent();
         if (innerExponent != nullptr){
             if (!innerExponent->isAtomicExponent()){
-                TermBase* expandedInnerTerm = innerExponent->expandForExponent();
-                copiedExponent->replaceTerm(i, expandedInnerTerm);
+                TermBase* expandedInnerTerm = innerTerm->expandForExponent();
+                tmpExponent->replaceTerm(i, expandedInnerTerm);
             }
         }
     }
+    
+    // expand the exponent of the main exponent
 
-    // expand the main exponent
+    if (tmpExponent->getExponent() != nullptr){
+        tmpExponent = static_cast<TermContainer*> (tmpExponent->expandForExponent());
+        
+    }
+    tmpTerms = tmpExponent->getTerms();
+
+    // expand the main exponent over the baseTerm passed in
 
     if (isAtomic()){
         expandedAtomic = getAtom()->expandAsExponent(baseTerm);
@@ -715,7 +725,7 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
             if (coeff != 1){
 
                 TermBase* newTerm = baseTerm->copy();
-                TermContainer* newExponent = static_cast<TermContainer*> (copiedExponent->copy());
+                TermContainer* newExponent = static_cast<TermContainer*> (tmpExponent->copy());
                 newExponent->setCoefficient(new Constant(true, nullptr, nullptr, 1));
                 newTerm->setExponent(newExponent);
 
@@ -724,17 +734,14 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
                 }
             }
         }else if (operationType == OperationType::Division){
-            TermBase* numerator = copiedExponent->getTerms()[0];
-            expandedTerm = static_cast<TermContainer*> (numerator->expandAsConstNum(baseTerm, copiedExponent));
+            TermBase* numerator = tmpExponent->getTerms()[0];
+            expandedTerm = static_cast<TermContainer*> (numerator->expandAsConstNum(baseTerm, tmpExponent));
 
         }else{
-            for (int i = 0; i < copiedTerms.size(); i ++){
-                /*
-                    need to make sure here that constants and subExpressions are 
-                    expanded aswell, currently only variables are
-                */
+            for (int i = 0; i < tmpTerms.size(); i ++){
+
                 TermBase* newTerm = baseTerm->copy();
-                TermBase* newExponent = copiedTerms[i]->copy();
+                TermBase* newExponent = tmpTerms[i]->copy();
                 newTerm->setExponent(newExponent);
                 expandedTerm->appendTerm(newTerm);
             }

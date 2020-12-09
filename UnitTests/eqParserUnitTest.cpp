@@ -133,6 +133,20 @@ bool testExpand(){
     TermBase* expanded2 = term2->getTerms()[0]->expandForExponent();
     string str2 = expanded2->toString();
 
+    zeroIndex = 0;
+    string expression3 = "x^(2z+3y)";
+    string expected3 = "x^(z)x^(z)x^(y)x^(y)x^(y)";
+    TermContainer* term3 = parseExpression(expression3, zeroIndex);
+    TermBase* expanded3 = term3->getTerms()[0]->expandForExponent();
+    string str3 = expanded3->toString();
+
+    zeroIndex = 0;
+    string expression4 = "x^(2z^(2)+3y)";
+    string expected4 = "x^(z)x^(z)x^(y)x^(y)x^(y)";
+    TermContainer* term4 = parseExpression(expression4, zeroIndex);
+    TermBase* expanded4 = term4->getTerms()[0]->expandForExponent();
+    string str4 = expanded4->toString();
+
     if (str1 == expected1){
         return true;
     }else{
