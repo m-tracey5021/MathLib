@@ -59,7 +59,11 @@ class TermBase {
 
         //  === Pure Virtual ===
 
-        // Test functions
+        // Clean
+
+        virtual void sanitise() = 0;
+
+        // Test
 
         virtual bool isOne() = 0;
 
@@ -73,9 +77,13 @@ class TermBase {
 
         // Get 
 
+        virtual int* getValue() = 0;
+
         virtual TermBase* getAtom() = 0;
 
-        // Manipulative functions
+        virtual std::vector<TermBase*> getContent() = 0;
+
+        // Manipulate
 
         virtual TermBase* sum(TermBase* other) = 0;
 
@@ -118,6 +126,8 @@ class Constant : public TermBase {
 
         // ===
 
+        void sanitise() override;
+
         bool isOne() override;
 
         bool isAtomic() override;
@@ -128,7 +138,11 @@ class Constant : public TermBase {
 
         bool isLikeTerm(TermBase* other) override;
 
+        int* getValue() override;
+
         TermBase* getAtom() override;
+
+        std::vector<TermBase*> getContent() override;
 
         TermBase* sum(TermBase* other) override;
 
@@ -167,6 +181,8 @@ class Variable : public TermBase {
 
         // ===
 
+        void sanitise() override;
+
         bool isOne() override;
 
         bool isAtomic() override;
@@ -177,7 +193,11 @@ class Variable : public TermBase {
 
         bool isLikeTerm(TermBase* other) override;
 
+        int* getValue() override;
+
         TermBase* getAtom() override;
+
+        std::vector<TermBase*> getContent() override;
 
         TermBase* sum(TermBase* other) override;
 
@@ -203,7 +223,7 @@ class Variable : public TermBase {
 
 class TermContainer : public TermBase {
     private:
-        Constant* coefficient;
+        //Constant* coefficient;
         OperationType operationType;
         std::vector<TermBase*> terms;
         
@@ -211,19 +231,21 @@ class TermContainer : public TermBase {
     public:
         TermContainer();
 
-        TermContainer(bool sign, TermBase* root, TermBase* exponent, Constant* coefficient);
+        TermContainer(bool sign, TermBase* root, TermBase* exponent);
 
-        TermContainer(bool sign, TermBase* root, TermBase* exponent, Constant* coefficient, OperationType operationType, std::vector<TermBase*> terms);
+        TermContainer(bool sign, TermBase* root, TermBase* exponent, OperationType operationType, std::vector<TermBase*> terms);
 
         ~TermContainer();
 
-        Constant* getCoefficient();
+        //Constant* getCoefficient();
 
         OperationType getOperationType();
 
         std::vector<TermBase*> getTerms();  
 
-        void setCoefficient(Constant* c);  
+        std::vector<TermBase*> duplicateTerms(int start, int end);
+
+        //void setCoefficient(Constant* c);  
 
         void setOperationType(OperationType o);   
 
@@ -236,6 +258,8 @@ class TermContainer : public TermBase {
         void removeTerm(int i) override;
 
         void replaceTerm(int i, TermBase* t) override;
+
+        void sanitise() override;
         
         bool isOne() override;
 
@@ -247,7 +271,11 @@ class TermContainer : public TermBase {
 
         bool isLikeTerm(TermBase* other) override;
 
+        int* getValue() override;
+
         TermBase* getAtom() override;
+
+        std::vector<TermBase*> getContent() override;
 
         TermBase* sum(TermBase* other) override;
 

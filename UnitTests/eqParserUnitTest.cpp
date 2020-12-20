@@ -119,6 +119,7 @@ bool testEquationParse(){
 bool testExpand(){
     int zeroIndex;
     
+    /*
     zeroIndex = 0;
     string expression1 = "6^(3)";
     string expected1 = "666";
@@ -139,6 +140,7 @@ bool testExpand(){
     TermContainer* term3 = parseExpression(expression3, zeroIndex);
     TermBase* expanded3 = term3->getTerms()[0]->expandForExponent();
     string str3 = expanded3->toString();
+    */
 
     zeroIndex = 0;
     string expression4 = "x^(2z^(2)+3y)";
@@ -147,9 +149,12 @@ bool testExpand(){
     TermBase* expanded4 = term4->getTerms()[0]->expandForExponent();
     string str4 = expanded4->toString();
 
+    /*
     if (str1 == expected1){
         return true;
     }else{
         return false;
     }
+    */
+   return false;
 }

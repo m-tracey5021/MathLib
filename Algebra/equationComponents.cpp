@@ -68,6 +68,9 @@ void TermBase::setParentExpression(TermBase* p){
 }
 
 void TermBase::updateExpressionString(){
+    if (parentExpression){
+        parentExpression->updateExpressionString();
+    }
     expressionString = this->toString();
 }
 
@@ -93,6 +96,10 @@ Constant::~Constant(){
     delete root;
     delete exponent;
     delete parentExpression;
+}
+
+void Constant::sanitise(){
+
 }
 
 bool Constant::isOne(){
@@ -136,8 +143,18 @@ bool Constant::isLikeTerm(TermBase* other){
     }
 }
 
+int* Constant::getValue(){
+    return &constant;
+}
+
 TermBase* Constant::getAtom(){
     return this;
+}
+
+std::vector<TermBase*> Constant::getContent(){
+    std::vector<TermBase*> content;
+    content.push_back(this);
+    return content;
 }
 
 TermBase* Constant::sum(TermBase* other){
@@ -306,6 +323,10 @@ Variable::~Variable(){
     delete parentExpression;
 }
 
+void Variable::sanitise(){
+
+}
+
 bool Variable::isOne(){return false;}
 
 bool Variable::isAtomic(){return true;}
@@ -329,8 +350,18 @@ bool Variable::isLikeTerm(TermBase* other){
     }
 }
 
+int* Variable::getValue(){
+    return nullptr;
+}
+
 TermBase* Variable::getAtom(){
     return this;
+}
+
+std::vector<TermBase*> Variable::getContent(){
+    std::vector<TermBase*> content;
+    content.push_back(this);
+    return content;
 }
 
 TermBase* Variable::sum(TermBase* other){
@@ -507,15 +538,15 @@ std::string Variable::toString(){
 
 
 TermContainer::TermContainer(): TermBase(){
-    coefficient = new Constant(true, nullptr, nullptr, 1);
+    //coefficient = new Constant(true, nullptr, nullptr, 1);
     updateExpressionString();
 }
 
-TermContainer::TermContainer(bool sign, TermBase* root, TermBase* exponent, Constant* coefficient): TermBase(sign, root, exponent), coefficient(coefficient){
+TermContainer::TermContainer(bool sign, TermBase* root, TermBase* exponent): TermBase(sign, root, exponent){
     updateExpressionString();
 }
 
-TermContainer::TermContainer(bool sign, TermBase* root, TermBase* exponent, Constant* coefficient, OperationType operationType, std::vector<TermBase*> terms): TermBase(sign, root, exponent), coefficient(coefficient), operationType(operationType), terms(terms){
+TermContainer::TermContainer(bool sign, TermBase* root, TermBase* exponent, OperationType operationType, std::vector<TermBase*> terms): TermBase(sign, root, exponent), operationType(operationType), terms(terms){
     updateExpressionString();
 }
 
@@ -525,12 +556,21 @@ TermContainer::~TermContainer(){
     delete parentExpression;
 }
 
-Constant* TermContainer::getCoefficient(){return coefficient;}
+// Constant* TermContainer::getCoefficient(){return coefficient;}
 
 OperationType TermContainer::getOperationType(){return operationType;}
 
 std::vector<TermBase*> TermContainer::getTerms(){return terms;}
 
+std::vector<TermBase*> TermContainer::duplicateTerms(int start, int end){
+    std::vector<TermBase*> duplicated;
+    for (int i = start; i <= end; i ++){
+        duplicated.push_back(terms[i]->copy());
+    }
+    return duplicated;
+}
+
+/*
 void TermContainer::setCoefficient(Constant* c){
     if (c->getConstant() == 1){
         if (coefficient->getConstant() != 1){
@@ -548,16 +588,61 @@ void TermContainer::setCoefficient(Constant* c){
     coefficient = c;
     updateExpressionString();
 }
+*/
 
 void TermContainer::setOperationType(OperationType o){operationType = o; updateExpressionString();}
 
 void TermContainer::setTerms(std::vector<TermBase*> t){terms = t; updateExpressionString();}
 
-void TermContainer::appendTerm(TermBase* t){terms.push_back(t); t->setParentExpression(this); updateExpressionString();}
+void TermContainer::appendTerm(TermBase* t){
+    terms.push_back(t);
+    t->setParentExpression(this);
+    updateExpressionString();
+}
 
 void TermContainer::removeTerm(int i){terms.erase(terms.begin() + i); updateExpressionString();}
 
 void TermContainer::replaceTerm(int i, TermBase* t){terms.insert(terms.begin() + i, t); removeTerm(i + 1);}
+
+void TermContainer::sanitise(){
+    std::vector<TermBase*> sanitised;
+
+    if (operationType == OperationType::Multiplication){
+        // make one term out of several multiplicative terms
+        for (int i = 0; i < terms.size(); i++){
+            TermBase* parent = terms[i];
+            for (int j = 0; j < parent->getContent().size(); j ++){
+                TermBase* child = parent->getContent()[j];
+                sanitised.push_back(child);
+            }
+        }
+        // update coefficient
+        int totalCoeff = 0;
+        for (int i = 0; i < sanitised.size(); i ++){
+            TermBase* current = sanitised[i];
+            int* valPtr = current->getValue();
+            if (valPtr){
+                int val = *valPtr;
+                if (!totalCoeff){
+                    totalCoeff += val;
+                }else{
+                    totalCoeff *= val;
+                }
+                sanitised.erase(sanitised.begin() + i);
+                i --;
+            }
+        }
+        if (totalCoeff){
+            Constant* coeff = new Constant(true, nullptr, nullptr, totalCoeff);
+            sanitised.insert(sanitised.begin(), coeff);
+        }
+        terms = sanitised;
+    }else if (operationType == OperationType::Division){
+
+    }else{
+
+    }
+}
 
 bool TermContainer::isOne(){
     if (terms.size() == 1){
@@ -603,6 +688,7 @@ bool TermContainer::isAtomicExponent(){
 bool TermContainer::isAtomicNumerator(){return false;}
 
 bool TermContainer::isLikeTerm(TermBase* other){
+    /*
     TermContainer* otherContainer = dynamic_cast<TermContainer*> (other);
 
     if (otherContainer){
@@ -612,6 +698,8 @@ bool TermContainer::isLikeTerm(TermBase* other){
             if (operationType == OperationType::Multiplication){ // only need to check one operationType because we know both are the same if this if-block is entered
                 int indexThis;
                 int indexOther;
+
+                // if (terms[0]->isOne())
 
                 coefficient->isOne() ? indexThis = 0 : indexThis = 1;
                 otherContainer->getCoefficient()->isOne() ? indexOther = 0: indexOther = 1;
@@ -654,6 +742,13 @@ bool TermContainer::isLikeTerm(TermBase* other){
     }else{
         return false;
     }
+    */
+   return false; // REMEMBER TO REMOVE THIS
+}
+
+int* TermContainer::getValue(){
+    return nullptr; 
+    // eventually update this to add or solve
 }
 
 TermBase* TermContainer::getAtom(){
@@ -663,6 +758,10 @@ TermBase* TermContainer::getAtom(){
         return nullptr;
     }
     
+}
+
+std::vector<TermBase*> TermContainer::getContent(){
+    return terms;
 }
 
 TermBase* TermContainer::sum(TermBase* other){
@@ -684,6 +783,8 @@ TermBase* TermContainer::expandForExponent(){
 }
 
 TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
+
+    sanitise();
     
     TermBase* expandedAtomic = nullptr;
     TermContainer* expandedTerm = new TermContainer();
@@ -720,13 +821,13 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
     }else{
         if (operationType == OperationType::Multiplication){
 
-            int coeff = coefficient->getConstant();
+            int* coeffPtr = terms[0]->getValue();
 
-            if (coeff != 1){
-
+            if (coeffPtr){
+                int coeff = *coeffPtr;
                 TermBase* newTerm = baseTerm->copy();
                 TermContainer* newExponent = static_cast<TermContainer*> (tmpExponent->copy());
-                newExponent->setCoefficient(new Constant(true, nullptr, nullptr, 1));
+                newExponent->removeTerm(0);
                 newTerm->setExponent(newExponent);
 
                 for (int i = 0; i < coeff; i ++){
@@ -756,14 +857,19 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
     */
 
     if (!expandedAtomic){
-        for (int i = 0; i < expandedTerm->getTerms().size(); i ++){
-            TermBase* ithExpandedTerm = expandedTerm->getTerms()[i];
-            TermBase* ithExponent = ithExpandedTerm->getExponent();
-            if (!ithExponent->isAtomicExponent()){
-                expandedTerm->replaceTerm(i, ithExpandedTerm->expandForExponent());
+        if (expandedTerm->getTerms().size() == 0){
+            return this;
+        }else{
+            for (int i = 0; i < expandedTerm->getTerms().size(); i ++){
+                TermBase* ithExpandedTerm = expandedTerm->getTerms()[i];
+                TermBase* ithExponent = ithExpandedTerm->getExponent();
+                if (!ithExponent->isAtomicExponent()){
+                    expandedTerm->replaceTerm(i, ithExpandedTerm->expandForExponent());
+                }
             }
+            return expandedTerm;
         }
-        return expandedTerm;
+        
     }else{
         return expandedAtomic;
     }
@@ -801,24 +907,22 @@ std::vector<TermBase*> TermContainer::allFactors(){
 }
 
 TermBase* TermContainer::copy(){
-    Constant* newCoefficient = dynamic_cast<Constant*> (coefficient->copy());
+    //Constant* newCoefficient = dynamic_cast<Constant*> (coefficient->copy());
     std::vector<TermBase*> newTerms;
     for (int i = 0; i < terms.size(); i ++){
         TermBase* newTerm = terms[i]->copy();
         newTerms.push_back(newTerm);
-        
     }
 
     if (root != nullptr & exponent != nullptr){
-        return new TermContainer(sign, root->copy(), exponent->copy(), newCoefficient, operationType, newTerms);
+        return new TermContainer(sign, root->copy(), exponent->copy(), operationType, newTerms);
     }else if (root == nullptr & exponent != nullptr){
-        return new TermContainer(sign, nullptr, exponent->copy(), newCoefficient, operationType, newTerms);
+        return new TermContainer(sign, nullptr, exponent->copy(), operationType, newTerms);
     }else if (root != nullptr & exponent == nullptr){
-        return new TermContainer(sign, root->copy(), nullptr, newCoefficient, operationType, newTerms);
+        return new TermContainer(sign, root->copy(), nullptr, operationType, newTerms);
     }else{
-        return new TermContainer(sign, nullptr, nullptr, newCoefficient, operationType, newTerms);
-    }
-    
+        return new TermContainer(sign, nullptr, nullptr, operationType, newTerms);
+    } 
 }
 
 std::string TermContainer::toString(){

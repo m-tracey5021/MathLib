@@ -100,11 +100,11 @@ int parseCoefficient(string expStr, int& i){
     return coefficient;
 }
 
-void initMultiplicativeTerms(TermContainer*& current, TermContainer*& previous){
+void initMultiplicativeTerms(TermContainer*& current){ //}, TermContainer*& previous){
     if (current == nullptr){
         current = new TermContainer();
         current->setOperationType(OperationType::Multiplication);
-        previous = current;
+        //previous = current;
     }
     
 }
@@ -123,7 +123,7 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
         char currentChar;
 
         TermContainer* currentTerm = nullptr; // init pointers
-        TermContainer* previousTerm = nullptr;
+        TermBase* previousTerm = nullptr;
 
         while (termIncomplete){ // second while loop to move from term to term
 
@@ -146,18 +146,19 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
                     termIncomplete = false;
                     expressionIncomplete = false;
             }else if (isdigit(currentChar)){
-                initMultiplicativeTerms(currentTerm, previousTerm);
+                initMultiplicativeTerms(currentTerm);
 
                 int coefficient = parseCoefficient(expStr, i);
                 Constant* constant = new Constant(currentSign, nullptr, nullptr, coefficient);
-                currentTerm->setCoefficient(constant);
-                //currentTerm->appendTerm(constant);
+                currentTerm->appendTerm(constant);
+                previousTerm = constant;
 
             }else if (isalpha(currentChar)){
-                initMultiplicativeTerms(currentTerm, previousTerm);
+                initMultiplicativeTerms(currentTerm);
 
                 Variable* variable = new Variable(currentSign, nullptr, nullptr, expStr[i]);
                 currentTerm->appendTerm(variable);
+                previousTerm = variable;
 
             }else if (currentChar == '^'){
 
@@ -177,7 +178,7 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
                 priorIncrement = true;
 
             }else if (currentChar == '{'){
-                initMultiplicativeTerms(currentTerm, previousTerm);
+                initMultiplicativeTerms(currentTerm);
 
                 TermContainer* rationalContainer = new TermContainer();
                 rationalContainer->setOperationType(OperationType::Division);
@@ -191,10 +192,11 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
                 rationalContainer->appendTerm(num);
                 rationalContainer->appendTerm(denom);
                 currentTerm->appendTerm(rationalContainer);
+                previousTerm = rationalContainer;
                 priorIncrement = true;
   
             }else if (currentChar == '['){
-                initMultiplicativeTerms(currentTerm, previousTerm);
+                initMultiplicativeTerms(currentTerm);
 
                 i ++;
 
@@ -203,15 +205,17 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
                 radicalContainer->setRoot(root);
                 radicalContainer->setSign(currentSign);
                 currentTerm->appendTerm(radicalContainer);
+                previousTerm = radicalContainer;
                 priorIncrement = true;
 
             }else if (currentChar == '('){
-                initMultiplicativeTerms(currentTerm, previousTerm);
+                initMultiplicativeTerms(currentTerm);
 
                 i ++;
 
                 TermContainer* subExpression = parseExpression(expStr, i);
                 currentTerm->appendTerm(subExpression);
+                previousTerm = subExpression;
                 priorIncrement = true;
                 
             }
