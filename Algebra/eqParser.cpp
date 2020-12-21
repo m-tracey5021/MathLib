@@ -1,80 +1,15 @@
 #include "equation.h"
 #include "equationComponents.h"
-//#include <ctype.h>
 #include <string>
+#include <map>
 
 using namespace std;
 
-int* findSurroundingBrackets(string eq, int startPos, char bracketType){
-    char bracketTypeOpen;
-    char bracketTypeClosed;
-
-    if (bracketType = '('){
-        bracketTypeOpen = '(';
-        bracketTypeClosed = ')';
-    }else if (bracketType = '['){
-        bracketTypeOpen = '[';
-        bracketTypeClosed = ']';
-    }else if (bracketType == '{'){
-        bracketTypeOpen = '{';
-        bracketTypeClosed = '}';
-    }else {
-        // throw error
-    }
-
-    int closingPos = -1;
-    int openingPos = -1;
-    bool closingFound = false;
-    bool openingFound = false;
-    int i = startPos;
-    int j = startPos;
-    int numberOfOpeningBrackets = 0;
-    int numberOfClosingBrackets = 0;
-    char currentChar;
-
-    while (closingFound == false){
-        currentChar = eq[i];
-        if (currentChar == bracketTypeClosed){
-            numberOfOpeningBrackets --;
-        }else if (currentChar == bracketTypeOpen){
-            numberOfOpeningBrackets ++;
-        }
-
-        if (numberOfOpeningBrackets == -1){
-            closingFound = true;
-            closingPos = i;
-        }else{
-            if (i != eq.length()){
-                i ++;
-            }else{
-                closingFound = true;
-            }
-        }  
-    }
-
-    while (openingFound == false){
-        currentChar = eq[j];
-        if (currentChar == bracketTypeClosed){
-            numberOfClosingBrackets ++;
-        }else if (currentChar == bracketTypeOpen){
-            numberOfClosingBrackets --;
-        }
-
-        if (numberOfClosingBrackets == -1){
-            openingFound = true;
-            openingPos = j;
-        }else{
-            if (j != 0){
-                j --;
-            }else{
-                openingFound = true;
-            }
-        }
-    }
-
-    return new int[2]{openingPos, closingPos};
-
-}
+enum class ParseState {
+    AdditionParsed,
+    SubtractionParsed,
+    ExpressionParsed,
+};
 
 bool parseForSign(string expStr, int i){
     if (expStr[i] == '-'){
@@ -109,20 +44,47 @@ void initMultiplicativeTerms(TermContainer*& current){ //}, TermContainer*& prev
     
 }
 
-TermContainer* parseExpression(string expStr, int& i){ // starts iterating from INSIDE te brackets
-    TermContainer* expression = new TermContainer();
-    expression->setOperationType(OperationType::Summation);
+TermBase* formTerm(bool currentSign, std::vector<TermBase*> atoms){
+    if (atoms.size() == 1){
+        atoms[0]->setSign(currentSign);
+        return atoms[0];
+    }else if (atoms.size() > 1){
+        TermContainer* newTerm = new TermContainer();
+        newTerm->setOperationType(OperationType::Multiplication);
+        newTerm->setSign(currentSign);
+        newTerm->setTerms(atoms);
+        return newTerm;
+    }else{
+        return nullptr;
+    }
+}
+
+
+
+TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterating from INSIDE te brackets
+
+    
+    ParseState state;
+    std::vector<TermBase*> currentTerms;
+
+    //TermContainer* expression = new TermContainer();
+    //expression->setOperationType(OperationType::Summation);
+
+    
+
+    bool currentSign = parseForSign(expStr, i); // get the sign of the first term in the expression
 
     bool expressionIncomplete = true;
 
     while (expressionIncomplete){ // first while loop to gauge completion of summed expression
 
-        bool currentSign = parseForSign(expStr, i); // get the sign of the first term in the expression
+        
         bool termIncomplete = true;
         bool priorIncrement;
         char currentChar;
 
-        TermContainer* currentTerm = nullptr; // init pointers
+        // TermContainer* currentTerm = nullptr; // init pointers
+        std::vector<TermBase*> currentAtoms;
         TermBase* previousTerm = nullptr;
 
         while (termIncomplete){ // second while loop to move from term to term
@@ -132,32 +94,41 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
             currentChar = expStr[i];
 
             if (currentChar == '+'){
+                state = ParseState::AdditionParsed;
                 termIncomplete = false;
-                currentSign = true;
+                //currentSign = true;
             }else if (currentChar == '-'){   
+                state = ParseState::SubtractionParsed;
                 termIncomplete = false;
-                currentSign = false;
+                //currentSign = false;
             }else if (currentChar == '/' | 
                         currentChar == '|' | 
                         currentChar == '}' | 
                         currentChar == ']' | 
                         currentChar == ')' | 
                         currentChar == '\000'){
+                    state = ParseState::ExpressionParsed;
                     termIncomplete = false;
                     expressionIncomplete = false;
             }else if (isdigit(currentChar)){
-                initMultiplicativeTerms(currentTerm);
+                //initMultiplicativeTerms(currentTerm);
 
                 int coefficient = parseCoefficient(expStr, i);
-                Constant* constant = new Constant(currentSign, nullptr, nullptr, coefficient);
-                currentTerm->appendTerm(constant);
+                Constant* constant = new Constant(true, nullptr, nullptr, coefficient);
+                //currentTerm->appendTerm(constant);
+                currentAtoms.push_back(constant);
                 previousTerm = constant;
 
-            }else if (isalpha(currentChar)){
-                initMultiplicativeTerms(currentTerm);
 
-                Variable* variable = new Variable(currentSign, nullptr, nullptr, expStr[i]);
-                currentTerm->appendTerm(variable);
+
+
+
+            }else if (isalpha(currentChar)){
+                //initMultiplicativeTerms(currentTerm);
+
+                Variable* variable = new Variable(true, nullptr, nullptr, expStr[i]);
+                //currentTerm->appendTerm(variable);
+                currentAtoms.push_back(variable);
                 previousTerm = variable;
 
             }else if (currentChar == '^'){
@@ -172,13 +143,13 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
                     i += 2;
                 }
 
-                TermContainer* exponent = parseExpression(expStr, i);
+                TermBase* exponent = parseExpression(expStr, currentSign, i);
                 exponent->setSign(currentSign);
                 previousTerm->setExponent(exponent);
                 priorIncrement = true;
 
             }else if (currentChar == '{'){
-                initMultiplicativeTerms(currentTerm);
+                //initMultiplicativeTerms(currentTerm);
 
                 TermContainer* rationalContainer = new TermContainer();
                 rationalContainer->setOperationType(OperationType::Division);
@@ -186,35 +157,38 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
                 
                 i ++;
 
-                TermContainer* num = parseExpression(expStr, i);
-                TermContainer* denom = parseExpression(expStr, i);    
+                TermBase* num = parseExpression(expStr, currentSign, i);
+                TermBase* denom = parseExpression(expStr, currentSign, i);    
                 
                 rationalContainer->appendTerm(num);
                 rationalContainer->appendTerm(denom);
-                currentTerm->appendTerm(rationalContainer);
+                currentTerms.push_back(rationalContainer);
+                //currentTerm->appendTerm(rationalContainer);
                 previousTerm = rationalContainer;
                 priorIncrement = true;
   
             }else if (currentChar == '['){
-                initMultiplicativeTerms(currentTerm);
+                //initMultiplicativeTerms(currentTerm);
 
                 i ++;
 
-                TermContainer* root = parseExpression(expStr, i);
-                TermContainer* radicalContainer = parseExpression(expStr, i);
+                TermBase* root = parseExpression(expStr, currentSign, i);
+                TermBase* radicalContainer = parseExpression(expStr, currentSign, i);
                 radicalContainer->setRoot(root);
                 radicalContainer->setSign(currentSign);
-                currentTerm->appendTerm(radicalContainer);
+                currentTerms.push_back(radicalContainer);
+                //currentTerm->appendTerm(radicalContainer);
                 previousTerm = radicalContainer;
                 priorIncrement = true;
 
             }else if (currentChar == '('){
-                initMultiplicativeTerms(currentTerm);
+                //initMultiplicativeTerms(currentTerm);
 
                 i ++;
 
-                TermContainer* subExpression = parseExpression(expStr, i);
-                currentTerm->appendTerm(subExpression);
+                TermBase* subExpression = parseExpression(expStr, currentSign, i);
+                currentTerms.push_back(subExpression);
+                //currentTerm->appendTerm(subExpression);
                 previousTerm = subExpression;
                 priorIncrement = true;
                 
@@ -224,13 +198,58 @@ TermContainer* parseExpression(string expStr, int& i){ // starts iterating from 
                 i ++;
             }         
         } 
+
+        // form a term from the currentAtoms vector here
+
+        TermBase* newTerm;
+
+        if (state == ParseState::AdditionParsed){
+
+            newTerm = formTerm(currentSign, currentAtoms);
+            currentTerms.push_back(newTerm);
+            currentSign = true;
+
+        }else if (state == ParseState::SubtractionParsed){
+
+            newTerm = formTerm(currentSign, currentAtoms);
+            currentTerms.push_back(newTerm);
+            currentSign = false;
+            
+        }else if (state == ParseState::ExpressionParsed){
+
+            newTerm = formTerm(currentSign, currentAtoms);
+
+            if (newTerm != nullptr){
+                currentTerms.push_back(newTerm);
+            }
+
+            if (currentTerms.size() == 0){
+                return nullptr;
+            }else if (currentTerms.size() == 1){
+                return currentTerms[0];
+            }else{
+                return new TermContainer(expSign, nullptr, nullptr, OperationType::Summation, currentTerms);
+            }
+            
+        }else{
+            return nullptr; // or throw error more likely
+        }
+
+        /*
         if (currentTerm != nullptr){
             expression->appendTerm(currentTerm);
         }
+        */
           
     }
 
-    return expression;
+    //return expression;
+}
+
+TermBase* parseExpression(string expStr){
+    bool expSign = true;
+    int startIndex = 0;
+    return parseExpression(expStr, expSign, startIndex);
 }
 
 Equation* parseEquation(string eqStr){

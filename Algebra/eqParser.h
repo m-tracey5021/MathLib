@@ -5,7 +5,9 @@
 
 using namespace std;
 
-TermContainer* parseExpression(string expStr, int& i);
+TermBase* parseExpression(string expStr, bool expSign, int& i);
+
+TermBase* parseExpression(string expStr);
 
 Equation* parseEquation(string eqStr);
 
