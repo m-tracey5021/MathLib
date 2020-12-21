@@ -668,7 +668,12 @@ bool TermContainer::isAtomicExponent(){
         if (operationType == OperationType::Summation){
             return false;
         }else if (operationType == OperationType::Multiplication){
-            return false;
+            // return true, only if all the terms in the multiplication are variables
+            if (terms[0]->getValue() != nullptr){
+                return false;
+            }else{
+                return true;
+            }
         }else{
             if (terms[0]->isAtomicNumerator()){
                 return true;
@@ -778,7 +783,21 @@ TermBase* TermContainer::divide(TermBase* other){
 }
 
 TermBase* TermContainer::expandForExponent(){
-    TermBase* expandedTerm = exponent->expandAsExponent(this);
+    // rewrite this when parsing function has een completed properly
+    TermBase* expandedTerm;
+    if (!exponent){
+        if (terms.size() == 1){
+            TermBase* atom = getAtom();
+            TermBase* atomExponent = atom->getExponent();
+            if (atomExponent){
+                expandedTerm = atomExponent->expandAsExponent(atom);
+            }
+            
+        }
+    }else{
+        expandedTerm = exponent->expandAsExponent(this);
+    }
+    
     return expandedTerm;
 }
 
