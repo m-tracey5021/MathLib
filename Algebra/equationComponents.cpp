@@ -219,8 +219,11 @@ TermBase* Constant::divide(TermBase* other){
 }
 
 TermBase* Constant::expandForExponent(){
-    TermBase* expandedTerm = exponent->expandAsExponent(this);
-    return expandedTerm;
+    if (!exponent){
+        return nullptr;
+    }else{
+        return exponent->expandAsExponent(this);
+    }
 }
 
 TermBase* Constant::expandAsExponent(TermBase* baseTerm){
@@ -452,8 +455,11 @@ TermBase* Variable::divide(TermBase* other){
 }
 
 TermBase* Variable::expandForExponent(){
-    TermBase* expandedTerm = exponent->expandAsExponent(this);
-    return expandedTerm;
+    if (!exponent){
+        return nullptr;
+    }else{
+        return exponent->expandAsExponent(this);
+    }
 }
 
 TermBase* Variable::expandAsExponent(TermBase* baseTerm){
@@ -797,6 +803,7 @@ TermBase* TermContainer::divide(TermBase* other){
 
 TermBase* TermContainer::expandForExponent(){
     // rewrite this when parsing function has een completed properly
+    /*
     TermBase* expandedTerm;
     if (!exponent){
         if (terms.size() == 1){
@@ -812,6 +819,12 @@ TermBase* TermContainer::expandForExponent(){
     }
     
     return expandedTerm;
+    */
+    if (!exponent){
+        return nullptr;
+    }else{
+        return exponent->expandAsExponent(this);
+    }
 }
 
 TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
