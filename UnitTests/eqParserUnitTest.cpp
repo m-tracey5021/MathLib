@@ -104,37 +104,33 @@ bool testEquationParse(){
 }
 
 bool testExpand(){
-    int zeroIndex;
     
     /*
-    zeroIndex = 0;
     string expression1 = "6^(3)";
     string expected1 = "666";
-    TermContainer* term1 = parseExpression(expression1, zeroIndex);
-    TermBase* expanded1 = term1->getTerms()[0]->expandForExponent();
+    TermContainer* term1 = parseExpression(expression1);
+    TermBase* expanded1 = term1->expandForExponent();
     string str1 = expanded1->toString();
 
-    zeroIndex = 0;
     string expression2 = "6^(x+y)";
     string expected2 = "6^(x)6^(y)";
-    TermContainer* term2 = parseExpression(expression2, zeroIndex);
-    TermBase* expanded2 = term2->getTerms()[0]->expandForExponent();
+    TermContainer* term2 = parseExpression(expression2);
+    TermBase* expanded2 = term2->expandForExponent();
     string str2 = expanded2->toString();
 
-    zeroIndex = 0;
     string expression3 = "x^(2z+3y)";
     string expected3 = "x^(z)x^(z)x^(y)x^(y)x^(y)";
-    TermContainer* term3 = parseExpression(expression3, zeroIndex);
-    TermBase* expanded3 = term3->getTerms()[0]->expandForExponent();
+    TermContainer* term3 = parseExpression(expression3);
+    TermBase* expanded3 = term3->expandForExponent();
     string str3 = expanded3->toString();
+    */
 
-    zeroIndex = 0;
     string expression4 = "x^(2z^(2)+3y)";
     string expected4 = "x^(z)x^(z)x^(y)x^(y)x^(y)";
-    TermBase* term4 = parseExpression(expression4, zeroIndex);
-    TermBase* expanded4 = term4->getTerms()[0]->expandForExponent();
+    TermBase* term4 = parseExpression(expression4);
+    TermBase* expanded4 = term4->expandForExponent();
     string str4 = expanded4->toString();
-    */
+    
 
     /*
     if (str1 == expected1){
