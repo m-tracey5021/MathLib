@@ -55,6 +55,7 @@ void TermBase::setSign(bool s){
 
 void TermBase::setRoot(TermBase* r){
     root = r; 
+    parentExpression = r;
     updateExpressionString();
 }
 
@@ -64,7 +65,10 @@ void TermBase::setExponent(TermBase* e){
 }
 
 void TermBase::setParentExpression(TermBase* p){
-    parentExpression = p;
+    if (p != nullptr){
+        parentExpression = p;
+    }
+    
 }
 
 void TermBase::updateExpressionString(){
@@ -284,7 +288,7 @@ TermBase* Constant::copy(){
 
 std::string Constant::toString(){
     std::string termStr = "";
-    if (!sign){
+    if (!sign & parentExpression == nullptr){
         termStr += '-';
     }
 
@@ -297,14 +301,14 @@ std::string Constant::toString(){
     }
     if (exponent != nullptr){
         if (!exponent->isOne()){
-            if (exponent->getSign()){
-                termStr = termStr + "^(" + exponent->toString() + ')';
-            }else{
-                termStr = termStr + "^" + exponent->toString();
-            }
+            termStr = termStr + exponent->exponentToString();
         }
     }
     return termStr;
+}
+
+std::string Constant::exponentToString(){
+    return "^(" + this->toString() + ')';
 }
 
 
@@ -507,7 +511,7 @@ TermBase* Variable::copy(){
 
 std::string Variable::toString(){
     std::string termStr = "";
-    if (!sign){
+    if (!sign & parentExpression == nullptr){
         termStr += '-';
     }
 
@@ -520,17 +524,18 @@ std::string Variable::toString(){
     }
     if (exponent != nullptr){
         if (!exponent->isOne()){
-            if (exponent->getSign()){
-                termStr = termStr + "^(" + exponent->toString() + ')';
-            }else{
-                termStr = termStr + "^" + exponent->toString();
-            }
+            termStr = termStr + exponent->exponentToString();
             
         }
     }
 
     return termStr;
 }
+
+std::string Variable::exponentToString(){
+    return "^(" + this->toString() + ')';
+}
+
 
 
 // ===== TERMCONTAINER =====
@@ -547,6 +552,9 @@ TermContainer::TermContainer(bool sign, TermBase* root, TermBase* exponent): Ter
 }
 
 TermContainer::TermContainer(bool sign, TermBase* root, TermBase* exponent, OperationType operationType, std::vector<TermBase*> terms): TermBase(sign, root, exponent), operationType(operationType), terms(terms){
+    for (TermBase* t : terms){
+        t->setParentExpression(this);
+    }
     updateExpressionString();
 }
 
@@ -592,7 +600,12 @@ void TermContainer::setCoefficient(Constant* c){
 
 void TermContainer::setOperationType(OperationType o){operationType = o; updateExpressionString();}
 
-void TermContainer::setTerms(std::vector<TermBase*> t){terms = t; updateExpressionString();}
+void TermContainer::setTerms(std::vector<TermBase*> t){
+    terms = t;
+    for (TermBase* term : terms){
+        term->setParentExpression(this);
+    }
+    updateExpressionString();}
 
 void TermContainer::appendTerm(TermBase* t){
     terms.push_back(t);
@@ -981,14 +994,14 @@ std::string TermContainer::toString(){
                 if (terms[i]->getSign()){
                     termStr += '+' + terms[i]->toString();
                 }else{
-                    termStr += '-' + terms[i]->toString();
+                    termStr += terms[i]->toString();
                 }
             }
         }
         if (!sign){
             termStr = "-(" + termStr + ')';
         }else{
-            if (terms.size() != 1 & parentExpression != nullptr){
+            if ((terms.size() != 1 & parentExpression != nullptr) | exponent != nullptr){
                 termStr = '(' + termStr + ')';
             }
         }
@@ -1001,13 +1014,18 @@ std::string TermContainer::toString(){
     }
     if (exponent != nullptr){
         if (!exponent->isOne()){
-            if (exponent->getSign()){
-                termStr = termStr + "^(" + exponent->toString() + ')';
-            }else{
-                termStr = termStr + '^' + exponent->toString();
-                
-            }
+            termStr = termStr + exponent->exponentToString();
         }
     }
     return termStr;
+}
+
+std::string TermContainer::exponentToString(){
+    std::string termStr = this->toString();
+    if (sign){
+        return "^(" + termStr + ')';
+    }else{
+        return '^' + termStr;
+    }
+    return this->toString();
 }

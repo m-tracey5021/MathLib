@@ -107,6 +107,8 @@ class TermBase {
 
         virtual std::string toString() = 0;
 
+        virtual std::string exponentToString() = 0;
+
     
 };
 
@@ -163,6 +165,8 @@ class Constant : public TermBase {
         TermBase* copy() override;
 
         std::string toString() override;
+
+        std::string exponentToString() override;
 };
 
 class Variable : public TermBase {
@@ -218,6 +222,8 @@ class Variable : public TermBase {
         TermBase* copy() override;
 
         std::string toString() override;
+
+        std::string exponentToString() override;
 
 };
 
@@ -296,4 +302,6 @@ class TermContainer : public TermBase {
         TermBase* copy() override;
 
         std::string toString() override;
+
+        std::string exponentToString() override;
 };

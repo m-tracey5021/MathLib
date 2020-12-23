@@ -44,27 +44,23 @@ void initMultiplicativeTerms(TermContainer*& current){ //}, TermContainer*& prev
     
 }
 
-TermBase* formTerm(bool currentSign, std::vector<TermBase*> atoms){
-    if (atoms.size() == 1){
-        atoms[0]->setSign(currentSign);
-        return atoms[0];
-    }else if (atoms.size() > 1){
-        TermContainer* newTerm = new TermContainer();
-        newTerm->setOperationType(OperationType::Multiplication);
-        newTerm->setSign(currentSign);
-        newTerm->setTerms(atoms);
-        return newTerm;
-    }else{
-        return nullptr;
+void formTerm(bool currentSign, std::vector<TermBase*>& currentTerms, std::vector<TermBase*>& atomsToAdd){
+    TermContainer* newTerm;
+    if (atomsToAdd.size() == 1){
+        atomsToAdd[0]->setSign(currentSign);
+        currentTerms.push_back(atomsToAdd[0]);
+    }else if (atomsToAdd.size() > 1){
+        newTerm = new TermContainer(currentSign, nullptr, nullptr, OperationType::Multiplication, atomsToAdd);
+        currentTerms.push_back(newTerm);
     }
 }
-
 
 
 TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterating from INSIDE te brackets
 
     
     ParseState state;
+    OperationType opType = OperationType::Multiplication;
     std::vector<TermBase*> currentTerms;
 
     //TermContainer* expression = new TermContainer();
@@ -95,10 +91,12 @@ TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterat
 
             if (currentChar == '+'){
                 state = ParseState::AdditionParsed;
+                opType = OperationType::Summation;
                 termIncomplete = false;
                 //currentSign = true;
             }else if (currentChar == '-'){   
                 state = ParseState::SubtractionParsed;
+                opType = OperationType::Summation;
                 termIncomplete = false;
                 //currentSign = false;
             }else if (currentChar == '/' | 
@@ -201,34 +199,24 @@ TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterat
 
         // form a term from the currentAtoms vector here
 
-        TermBase* newTerm;
+        formTerm(currentSign, currentTerms, currentAtoms);
 
         if (state == ParseState::AdditionParsed){
 
-            newTerm = formTerm(currentSign, currentAtoms);
-            currentTerms.push_back(newTerm);
             currentSign = true;
 
         }else if (state == ParseState::SubtractionParsed){
 
-            newTerm = formTerm(currentSign, currentAtoms);
-            currentTerms.push_back(newTerm);
             currentSign = false;
             
         }else if (state == ParseState::ExpressionParsed){
-
-            newTerm = formTerm(currentSign, currentAtoms);
-
-            if (newTerm != nullptr){
-                currentTerms.push_back(newTerm);
-            }
 
             if (currentTerms.size() == 0){
                 return nullptr;
             }else if (currentTerms.size() == 1){
                 return currentTerms[0];
             }else{
-                return new TermContainer(expSign, nullptr, nullptr, OperationType::Summation, currentTerms);
+                return new TermContainer(expSign, nullptr, nullptr, opType, currentTerms);
             }
             
         }else{

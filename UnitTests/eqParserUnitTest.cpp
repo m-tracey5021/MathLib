@@ -6,6 +6,11 @@
 using namespace std;
 
 bool testExpressionParse(){
+
+    string expression0 = "2";
+    string expected0 = "2";
+    TermBase* term0 = parseExpression(expression0);
+    string str0 = term0->toString();
   
     string expression1 = "2a";
     string expected1 = "2a";
