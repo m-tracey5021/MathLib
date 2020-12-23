@@ -220,7 +220,7 @@ TermBase* Constant::divide(TermBase* other){
 
 TermBase* Constant::expandForExponent(){
     if (!exponent){
-        return nullptr;
+        return this;
     }else{
         return exponent->expandAsExponent(this);
     }
@@ -265,7 +265,24 @@ TermBase* Constant::factor(){
     return this;
 }
 
-std::vector<TermBase*> Constant::allFactors(){
+std::vector<TermBase*> Constant::getConstantFactors(){
+    std::vector<TermBase*> constantFactors;
+    for (int i = 0; i <= constant; i ++){
+        if (constant % i == 0){
+            Constant* factor = new Constant(true, nullptr, nullptr, i);
+            constantFactors.push_back(factor);
+        }
+    }
+    return constantFactors;
+}
+
+std::vector<TermBase*> Constant::getAllFactors(){
+    TermBase* expanded = expandForExponent();
+    // call getAllFactors on expandedTerm? what if it didnt get expanded, then
+    // we enter an infinite loop
+
+
+    /*
     std::vector<TermBase*> factors;
     for (int i = 0; i <= constant; i ++){
         if (constant % i == 0){
@@ -274,6 +291,7 @@ std::vector<TermBase*> Constant::allFactors(){
         }
     }
     return factors;
+    */
 }
 
 TermBase* Constant::copy(){
@@ -456,7 +474,7 @@ TermBase* Variable::divide(TermBase* other){
 
 TermBase* Variable::expandForExponent(){
     if (!exponent){
-        return nullptr;
+        return this;
     }else{
         return exponent->expandAsExponent(this);
     }
@@ -497,8 +515,14 @@ TermBase* Variable::factor(){
     }
 }
 
-std::vector<TermBase*> Variable::allFactors(){
+std::vector<TermBase*> Variable::getConstantFactors(){
+    std::vector<TermBase*> constantFactors;
+    return constantFactors;
+}
+
+std::vector<TermBase*> Variable::getAllFactors(){
     std::vector<TermBase*> factors;
+    std::vector<TermBase*> initialComponents = expandForExponent()->getContent();
     
     return factors;
 }
@@ -802,26 +826,8 @@ TermBase* TermContainer::divide(TermBase* other){
 }
 
 TermBase* TermContainer::expandForExponent(){
-    // rewrite this when parsing function has een completed properly
-    /*
-    TermBase* expandedTerm;
     if (!exponent){
-        if (terms.size() == 1){
-            TermBase* atom = getAtom();
-            TermBase* atomExponent = atom->getExponent();
-            if (atomExponent){
-                expandedTerm = atomExponent->expandAsExponent(atom);
-            }
-            
-        }
-    }else{
-        expandedTerm = exponent->expandAsExponent(this);
-    }
-    
-    return expandedTerm;
-    */
-    if (!exponent){
-        return nullptr;
+        return this;
     }else{
         return exponent->expandAsExponent(this);
     }
@@ -946,7 +952,23 @@ TermBase* TermContainer::factor(){
     return this;
 }
 
-std::vector<TermBase*> TermContainer::allFactors(){
+std::vector<TermBase*> TermContainer::getConstantFactors(){
+    std::vector<TermBase*> constantFactors;
+    if (operationType == OperationType::Multiplication){
+        constantFactors = terms[0]->getConstantFactors();
+    }else if (operationType == OperationType::Division){
+
+    }else{
+        for (TermBase* t : terms){
+            std::vector<TermBase*> tConstantFactors = t->getConstantFactors();
+            constantFactors.insert(constantFactors.end(), tConstantFactors.begin(), tConstantFactors.end());
+        }
+    }
+    
+    return constantFactors;
+}
+
+std::vector<TermBase*> TermContainer::getAllFactors(){
     std::vector<TermBase*> dummy;
     return dummy;
 }

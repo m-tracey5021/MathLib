@@ -99,7 +99,9 @@ class TermBase {
 
         virtual TermBase* factor() = 0;
 
-        virtual std::vector<TermBase*> allFactors() = 0;
+        virtual std::vector<TermBase*> getConstantFactors() = 0;
+
+        virtual std::vector<TermBase*> getAllFactors() = 0;
 
         // Misc functions
 
@@ -160,7 +162,9 @@ class Constant : public TermBase {
 
         TermBase* factor() override;
 
-        std::vector<TermBase*> allFactors() override;
+        std::vector<TermBase*> getConstantFactors() override;
+
+        std::vector<TermBase*> getAllFactors() override;
 
         TermBase* copy() override;
 
@@ -217,7 +221,9 @@ class Variable : public TermBase {
 
         TermBase* factor() override;
 
-        std::vector<TermBase*> allFactors() override;
+        std::vector<TermBase*> getConstantFactors() override;
+
+        std::vector<TermBase*> getAllFactors() override;
 
         TermBase* copy() override;
 
@@ -297,7 +303,9 @@ class TermContainer : public TermBase {
 
         TermBase* factor() override;
 
-        std::vector<TermBase*> allFactors() override;
+        std::vector<TermBase*> getConstantFactors() override;
+
+        std::vector<TermBase*> getAllFactors() override;
 
         TermBase* copy() override;
 
