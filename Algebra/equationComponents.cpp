@@ -243,10 +243,6 @@ TermBase* Constant::divide(TermBase* other){
     }
 }
 
-TermBase* Constant::expandConstant(){
-    return new TermContainer(true, nullptr, nullptr, OperationType::Multiplication, getConstantFactors());
-}
-
 TermBase* Constant::expandForExponent(){
     if (!exponent){
         return this;
@@ -546,10 +542,13 @@ std::vector<TermBase*> Variable::getConstantFactors(){
 }
 
 std::vector<TermBase*> Variable::getAllFactors(){
+
     std::vector<TermBase*> factors;
-    std::vector<TermBase*> initialComponents = expandForExponent()->getContent();
-    
+    std::vector<TermBase*> expandedTerms = expandForExponent()->getContent();
+    getAllSubTerms(expandedTerms, factors, 0, 0);
+
     return factors;
+
 }
 
 TermBase* Variable::copy(){

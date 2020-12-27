@@ -130,6 +130,8 @@ bool testExpand(){
     TermBase* term4 = parseExpression(expression4);
     TermBase* expanded4 = term4->expandForExponent();
     string str4 = expanded4->toString();
+
+    std::vector<TermBase*> factors4 = term4->getAllFactors();
     
 
     /*

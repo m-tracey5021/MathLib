@@ -96,7 +96,7 @@ class TermBase {
 
         virtual TermBase* divide(TermBase* other) = 0;
 
-        virtual TermBase* expandConstant() = 0;
+        //virtual TermBase* expandConstant() = 0;
 
         virtual TermBase* expandForExponent() = 0;
 
@@ -161,7 +161,7 @@ class Constant : public TermBase {
 
         TermBase* divide(TermBase* other) override;
         
-        TermBase* expandConstant() override;
+        //TermBase* expandConstant() override;
 
         TermBase* expandForExponent() override;
 
@@ -222,7 +222,7 @@ class Variable : public TermBase {
 
         TermBase* divide(TermBase* other) override;
         
-        TermBase* expandConstant() override;
+        //TermBase* expandConstant() override;
 
         TermBase* expandForExponent() override;
 
@@ -306,7 +306,7 @@ class TermContainer : public TermBase {
 
         TermBase* divide(TermBase* other) override;
 
-        TermBase* expandConstant() override;
+        //TermBase* expandConstant() override;
 
         TermBase* expandForExponent() override;
 
