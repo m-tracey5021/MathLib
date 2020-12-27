@@ -86,6 +86,31 @@ bool TermBase::isEqual(TermBase* other){
     }
 }
 
+void TermBase::getAllSubTerms(std::vector<TermBase*> terms,
+                                std::vector<TermBase*> subTerms,
+                                int start,
+                                int end){
+    if (end == terms.size()){
+        return;
+    }else if (start > end){
+        getAllSubTerms(terms, subTerms, 0, end + 1);
+    }else{
+        if (end - start == 1){
+            subTerms.push_back(terms[start]);
+        }else{
+            std::vector<TermBase*> newSubTerms;
+            for (int i = start; i < end; i ++){
+                newSubTerms.push_back(terms[i]);
+            }
+            subTerms.push_back(new TermContainer(true, nullptr, nullptr, OperationType::Multiplication, newSubTerms));
+        }
+        
+        getAllSubTerms(terms, subTerms, start + 1, end);
+    }   
+    return;
+
+}
+
 
 // ===== CONSTANT =====
 
@@ -218,6 +243,10 @@ TermBase* Constant::divide(TermBase* other){
     }
 }
 
+TermBase* Constant::expandConstant(){
+    return new TermContainer(true, nullptr, nullptr, OperationType::Multiplication, getConstantFactors());
+}
+
 TermBase* Constant::expandForExponent(){
     if (!exponent){
         return this;
@@ -277,21 +306,17 @@ std::vector<TermBase*> Constant::getConstantFactors(){
 }
 
 std::vector<TermBase*> Constant::getAllFactors(){
-    TermBase* expanded = expandForExponent();
-    // call getAllFactors on expandedTerm? what if it didnt get expanded, then
-    // we enter an infinite loop
 
-
-    /*
     std::vector<TermBase*> factors;
-    for (int i = 0; i <= constant; i ++){
-        if (constant % i == 0){
-            Constant* factor = new Constant(true, nullptr, nullptr, i);
-            factors.push_back(factor);
-        }
+    std::vector<TermBase*> constantFactors = getConstantFactors();
+
+    TermBase* expanded = expandForExponent();
+    getAllSubTerms(expanded->getContent(), factors, 0, 0);
+
+    for (TermBase* cf : constantFactors){
+        factors.push_back(cf);
     }
     return factors;
-    */
 }
 
 TermBase* Constant::copy(){

@@ -49,6 +49,11 @@ class TermBase {
         
         bool isEqual(TermBase* other);
 
+        void getAllSubTerms(std::vector<TermBase*> terms,
+                                std::vector<TermBase*> subTerms,
+                                int start,
+                                int end);
+
         // === Virtual ===
 
         virtual void appendTerm(TermBase* t){}
@@ -90,6 +95,8 @@ class TermBase {
         virtual TermBase* multiply(TermBase* other) = 0;
 
         virtual TermBase* divide(TermBase* other) = 0;
+
+        virtual TermBase* expandConstant() = 0;
 
         virtual TermBase* expandForExponent() = 0;
 
@@ -153,6 +160,8 @@ class Constant : public TermBase {
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+        
+        TermBase* expandConstant() override;
 
         TermBase* expandForExponent() override;
 
@@ -212,6 +221,8 @@ class Variable : public TermBase {
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+        
+        TermBase* expandConstant() override;
 
         TermBase* expandForExponent() override;
 
@@ -294,6 +305,8 @@ class TermContainer : public TermBase {
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+
+        TermBase* expandConstant() override;
 
         TermBase* expandForExponent() override;
 
