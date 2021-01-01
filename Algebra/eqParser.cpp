@@ -6,8 +6,12 @@
 using namespace std;
 
 enum class ParseState {
+    Default,
     AdditionParsed,
+    NegativeParsed,
     SubtractionParsed,
+    AtomicParsed,
+    TermParsed,
     ExpressionParsed,
 };
 
@@ -59,7 +63,7 @@ void formTerm(bool currentSign, std::vector<TermBase*>& currentTerms, std::vecto
 TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterating from INSIDE te brackets
 
     
-    ParseState state;
+    ParseState state = ParseState::Default;
     OperationType opType = OperationType::Multiplication;
     std::vector<TermBase*> currentTerms;
 
@@ -68,7 +72,7 @@ TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterat
 
     
 
-    bool currentSign = parseForSign(expStr, i); // get the sign of the first term in the expression
+    bool currentSign = true; // = parseForSign(expStr, i); // get the sign of the first term in the expression
 
     bool expressionIncomplete = true;
 
@@ -95,9 +99,13 @@ TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterat
                 termIncomplete = false;
                 //currentSign = true;
             }else if (currentChar == '-'){   
-                state = ParseState::SubtractionParsed;
-                opType = OperationType::Summation;
-                termIncomplete = false;
+                if (state == ParseState::Default){
+                    state = ParseState::NegativeParsed;
+                }else{
+                    state = ParseState::SubtractionParsed;
+                    opType = OperationType::Summation;
+                    termIncomplete = false;
+                }
                 //currentSign = false;
             }else if (currentChar == '/' | 
                         currentChar == '|' | 
@@ -105,29 +113,38 @@ TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterat
                         currentChar == ']' | 
                         currentChar == ')' | 
                         currentChar == '\000'){
+                    if (state == ParseState::AdditionParsed | state == ParseState::SubtractionParsed){
+                        
+                    }
                     state = ParseState::ExpressionParsed;
                     termIncomplete = false;
                     expressionIncomplete = false;
             }else if (isdigit(currentChar)){
-                //initMultiplicativeTerms(currentTerm);
 
                 int coefficient = parseCoefficient(expStr, i);
                 Constant* constant = new Constant(true, nullptr, nullptr, coefficient);
-                //currentTerm->appendTerm(constant);
                 currentAtoms.push_back(constant);
                 previousTerm = constant;
 
-
+                if (state == ParseState::Default | state == ParseState::NegativeParsed){
+                    state = ParseState::AtomicParsed;
+                }else if (state == ParseState::AtomicParsed){
+                    state = ParseState::TermParsed;
+                }
 
 
 
             }else if (isalpha(currentChar)){
-                //initMultiplicativeTerms(currentTerm);
 
                 Variable* variable = new Variable(true, nullptr, nullptr, expStr[i]);
-                //currentTerm->appendTerm(variable);
                 currentAtoms.push_back(variable);
                 previousTerm = variable;
+
+                if (state == ParseState::Default | state == ParseState::NegativeParsed){
+                    state = ParseState::AtomicParsed;
+                }else if (state == ParseState::AtomicParsed){
+                    state = ParseState::TermParsed;
+                }
 
             }else if (currentChar == '^'){
 
@@ -142,12 +159,11 @@ TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterat
                 }
 
                 TermBase* exponent = parseExpression(expStr, currentSign, i);
-                exponent->setSign(currentSign);
+                //exponent->setSign(currentSign);
                 previousTerm->setExponent(exponent);
                 priorIncrement = true;
 
             }else if (currentChar == '{'){
-                //initMultiplicativeTerms(currentTerm);
 
                 TermContainer* rationalContainer = new TermContainer();
                 rationalContainer->setOperationType(OperationType::Division);
@@ -161,12 +177,10 @@ TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterat
                 rationalContainer->appendTerm(num);
                 rationalContainer->appendTerm(denom);
                 currentTerms.push_back(rationalContainer);
-                //currentTerm->appendTerm(rationalContainer);
                 previousTerm = rationalContainer;
                 priorIncrement = true;
   
             }else if (currentChar == '['){
-                //initMultiplicativeTerms(currentTerm);
 
                 i ++;
 
@@ -175,18 +189,15 @@ TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterat
                 radicalContainer->setRoot(root);
                 radicalContainer->setSign(currentSign);
                 currentTerms.push_back(radicalContainer);
-                //currentTerm->appendTerm(radicalContainer);
                 previousTerm = radicalContainer;
                 priorIncrement = true;
 
             }else if (currentChar == '('){
-                //initMultiplicativeTerms(currentTerm);
 
                 i ++;
 
                 TermBase* subExpression = parseExpression(expStr, currentSign, i);
                 currentTerms.push_back(subExpression);
-                //currentTerm->appendTerm(subExpression);
                 previousTerm = subExpression;
                 priorIncrement = true;
                 
@@ -204,11 +215,21 @@ TermBase* parseExpression(string expStr, bool expSign, int& i){ // starts iterat
         if (state == ParseState::AdditionParsed){
 
             currentSign = true;
+            opType = OperationType::Summation;
 
-        }else if (state == ParseState::SubtractionParsed){
+        }else if (state == ParseState::NegativeParsed){
 
             currentSign = false;
             
+        }else if (state == ParseState::SubtractionParsed){
+
+            currentSign = false;
+            opType = OperationType::Summation;
+            
+        }else if (state == ParseState::AtomicParsed) {
+        
+        }else if (state == ParseState::TermParsed){
+        
         }else if (state == ParseState::ExpressionParsed){
 
             if (currentTerms.size() == 0){

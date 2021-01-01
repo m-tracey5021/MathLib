@@ -297,7 +297,7 @@ TermBase* Constant::factor(){
 
 std::vector<TermBase*> Constant::getConstantFactors(){
     std::vector<TermBase*> constantFactors;
-    for (int i = 0; i <= constant; i ++){
+    for (int i = 1; i <= constant; i ++){
         if (constant % i == 0){
             Constant* factor = new Constant(true, nullptr, nullptr, i);
             constantFactors.push_back(factor);
@@ -336,7 +336,7 @@ TermBase* Constant::copy(){
 
 std::string Constant::toString(){
     std::string termStr = "";
-    if (!sign & parentExpression == nullptr){
+    if (!sign){
         termStr += '-';
     }
 
@@ -573,7 +573,7 @@ TermBase* Variable::copy(){
 
 std::string Variable::toString(){
     std::string termStr = "";
-    if (!sign & parentExpression == nullptr){
+    if (!sign){
         termStr += '-';
     }
 

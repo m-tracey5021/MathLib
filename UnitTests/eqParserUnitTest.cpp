@@ -82,15 +82,25 @@ bool testExpressionParse(){
     TermBase* term14 = parseExpression(expression14);
     string str14 = term14->toString();
 
-    string expression15 = "4+2t^-(4)";
-    string expected15 = "4+2t^-(4)";
+    string expression15 = "4+2t^(-4)";
+    string expected15 = "4+2t^(-4)";
     TermBase* term15 = parseExpression(expression15);
     string str15 = term15->toString();
 
-    string expression16 = "(4+2t)^-(4)";
-    string expected16 = "(4+2t)^-(4)";
+    string expression16 = "(4+2t)^(-4)";
+    string expected16 = "(4+2t)^(-4)";
     TermBase* term16 = parseExpression(expression16);
     string str16 = term16->toString();
+
+    string expression17 = "(4+2t)^-(4+8y)";
+    string expected17 = "(4+2t)^-(4+8y)";
+    TermBase* term17 = parseExpression(expression17);
+    string str17 = term17->toString();
+
+    string expression18 = "(4+2t)^(-4+8y)";
+    string expected18 = "(4+2t)^(-4+8y)";
+    TermBase* term18 = parseExpression(expression18);
+    string str18 = term18->toString();
 
     if (expected1 == str1 & expected2 == str2 & expected3 == str3){
         return true;
@@ -105,33 +115,41 @@ bool testEquationParse(){
 
 bool testExpand(){
     
-    /*
+    
     string expression1 = "6^(3)";
     string expected1 = "666";
-    TermContainer* term1 = parseExpression(expression1);
+    TermBase* term1 = parseExpression(expression1);
     TermBase* expanded1 = term1->expandForExponent();
     string str1 = expanded1->toString();
 
     string expression2 = "6^(x+y)";
     string expected2 = "6^(x)6^(y)";
-    TermContainer* term2 = parseExpression(expression2);
+    TermBase* term2 = parseExpression(expression2);
     TermBase* expanded2 = term2->expandForExponent();
     string str2 = expanded2->toString();
 
     string expression3 = "x^(2z+3y)";
     string expected3 = "x^(z)x^(z)x^(y)x^(y)x^(y)";
-    TermContainer* term3 = parseExpression(expression3);
+    TermBase* term3 = parseExpression(expression3);
     TermBase* expanded3 = term3->expandForExponent();
     string str3 = expanded3->toString();
-    */
+    
 
     string expression4 = "x^(2z^(2)+3y)";
-    string expected4 = "x^(z)x^(z)x^(y)x^(y)x^(y)";
+    string expected4 = "x^(zz)x^(zz)x^(y)x^(y)x^(y)";
     TermBase* term4 = parseExpression(expression4);
     TermBase* expanded4 = term4->expandForExponent();
     string str4 = expanded4->toString();
 
     std::vector<TermBase*> factors4 = term4->getAllFactors();
+
+    string expression5 = "12^(4xy-3)";
+    string expected5 = "12^(zz)x^(zz)x^(y)x^(y)x^(y)";
+    TermBase* term5 = parseExpression(expression5);
+    TermBase* expanded5 = term5->expandForExponent();
+    string str5 = expanded5->toString();
+
+    std::vector<TermBase*> factors5 = term5->getAllFactors();
     
 
     /*
