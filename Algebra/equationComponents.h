@@ -49,8 +49,8 @@ class TermBase {
         
         bool isEqual(TermBase* other);
 
-        void getAllSubTerms(std::vector<TermBase*> terms,
-                                std::vector<TermBase*> subTerms,
+        void getAllSubTerms(std::vector<TermBase*>& terms,
+                                std::vector<TermBase*>& subTerms,
                                 int start,
                                 int end);
 

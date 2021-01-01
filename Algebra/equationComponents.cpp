@@ -86,8 +86,8 @@ bool TermBase::isEqual(TermBase* other){
     }
 }
 
-void TermBase::getAllSubTerms(std::vector<TermBase*> terms,
-                                std::vector<TermBase*> subTerms,
+void TermBase::getAllSubTerms(std::vector<TermBase*>& terms,
+                                std::vector<TermBase*>& subTerms,
                                 int start,
                                 int end){
     if (end == terms.size()){
@@ -102,7 +102,10 @@ void TermBase::getAllSubTerms(std::vector<TermBase*> terms,
             for (int i = start; i < end; i ++){
                 newSubTerms.push_back(terms[i]);
             }
-            subTerms.push_back(new TermContainer(true, nullptr, nullptr, OperationType::Multiplication, newSubTerms));
+            if (newSubTerms.size() != 0){
+                subTerms.push_back(new TermContainer(true, nullptr, nullptr, OperationType::Multiplication, newSubTerms));
+            }
+            
         }
         
         getAllSubTerms(terms, subTerms, start + 1, end);
@@ -247,7 +250,9 @@ TermBase* Constant::expandForExponent(){
     if (!exponent){
         return this;
     }else{
-        return exponent->expandAsExponent(this);
+        TermBase* expanded = exponent->expandAsExponent(this);
+        expanded->sanitise();
+        return expanded;
     }
 }
 
@@ -307,7 +312,8 @@ std::vector<TermBase*> Constant::getAllFactors(){
     std::vector<TermBase*> constantFactors = getConstantFactors();
 
     TermBase* expanded = expandForExponent();
-    getAllSubTerms(expanded->getContent(), factors, 0, 0);
+    std::vector<TermBase*> expandedTerms = expanded->getContent();
+    getAllSubTerms(expandedTerms, factors, 0, 0);
 
     for (TermBase* cf : constantFactors){
         factors.push_back(cf);
@@ -497,7 +503,9 @@ TermBase* Variable::expandForExponent(){
     if (!exponent){
         return this;
     }else{
-        return exponent->expandAsExponent(this);
+        TermBase* expanded = exponent->expandAsExponent(this);
+        expanded->sanitise();
+        return expanded;
     }
 }
 
@@ -853,7 +861,9 @@ TermBase* TermContainer::expandForExponent(){
     if (!exponent){
         return this;
     }else{
-        return exponent->expandAsExponent(this);
+        TermBase* expanded = exponent->expandAsExponent(this);
+        expanded->sanitise();
+        return expanded;
     }
 }
 
