@@ -5,7 +5,9 @@
 
 using namespace std;
 
-TermBase* parseExpression(string expStr, bool expSign, int& i);
+enum class ParseState;
+
+TermBase* parseExpression(string expStr, ParseState state, int& i);
 
 TermBase* parseExpression(string expStr);
 
