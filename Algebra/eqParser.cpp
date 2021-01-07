@@ -161,10 +161,6 @@ TermBase* parseExpression(string expStr, ParseState state, int& i){ // starts it
                 TermBase* exponent = parseExpression(expStr, subState, i);
                 //exponent->setSign(currentSign);
                 previousTerm->setExponent(exponent);
-
-                if (state == ParseState::Default | state == ParseState::AtomicParsed){
-                    state = ParseState::MultiplicationParsed;
-                }
                 priorIncrement = true;
 
             }else if (currentChar == '{'){

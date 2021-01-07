@@ -144,7 +144,7 @@ bool testExpand(){
     std::vector<TermBase*> factors4 = term4->getAllFactors();
 
     string expression5 = "12^(4xy-3)";
-    string expected5 = "12^(zz)x^(zz)x^(y)x^(y)x^(y)";
+    string expected5 = "12^(xy)12^(xy)12^(xy)12^(xy)12^(-3)";
     TermBase* term5 = parseExpression(expression5);
     TermBase* expanded5 = term5->expandForExponent();
     string str5 = expanded5->toString();

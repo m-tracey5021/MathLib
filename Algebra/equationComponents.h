@@ -66,7 +66,7 @@ class TermBase {
 
         // Clean
 
-        virtual void sanitise() = 0;
+        virtual void sanitiseForFactoring() = 0;
 
         // Test
 
@@ -104,6 +104,8 @@ class TermBase {
 
         virtual TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) = 0;
 
+        virtual TermBase* expandAsNegativeExponent(TermBase* baseTerm) = 0;
+
         virtual TermBase* factor() = 0;
 
         virtual std::vector<TermBase*> getConstantFactors() = 0;
@@ -137,7 +139,7 @@ class Constant : public TermBase {
 
         // ===
 
-        void sanitise() override;
+        void sanitiseForFactoring() override;
 
         bool isOne() override;
 
@@ -168,6 +170,8 @@ class Constant : public TermBase {
         TermBase* expandAsExponent(TermBase* baseTerm) override;
 
         TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
+
+        TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;
 
         TermBase* factor() override;
 
@@ -198,7 +202,7 @@ class Variable : public TermBase {
 
         // ===
 
-        void sanitise() override;
+        void sanitiseForFactoring() override;
 
         bool isOne() override;
 
@@ -229,6 +233,8 @@ class Variable : public TermBase {
         TermBase* expandAsExponent(TermBase* baseTerm) override;
 
         TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
+
+        TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;
 
         TermBase* factor() override;
 
@@ -282,7 +288,7 @@ class TermContainer : public TermBase {
 
         void replaceTerm(int i, TermBase* t) override;
 
-        void sanitise() override;
+        void sanitiseForFactoring() override;
         
         bool isOne() override;
 
@@ -313,6 +319,8 @@ class TermContainer : public TermBase {
         TermBase* expandAsExponent(TermBase* baseTerm) override;
 
         TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
+
+        TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;
 
         TermBase* factor() override;
 
