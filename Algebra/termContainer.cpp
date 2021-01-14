@@ -80,13 +80,27 @@ void TermContainer::sanitiseForFactoring(){
 
     if (operationType == OperationType::Multiplication){
         // make one term out of several multiplicative terms
-        for (int i = 0; i < terms.size(); i++){
-            TermBase* parent = terms[i];
-            for (int j = 0; j < parent->getContent().size(); j ++){
-                TermBase* child = parent->getContent()[j];
-                sanitised.push_back(child);
+        TermBase* merged = nullptr;
+        for (int i = 1; i < terms.size(); i++){
+            if (!merged){
+                merged = terms[0]->mergeMultiplications(terms[i]);
+            }else{
+                merged = merged->mergeMultiplications(terms[i]);
             }
+
+            // TermBase* parent = terms[i];
+            // for (int j = 0; j < parent->getContent().size(); j ++){
+            //     TermBase* child = parent->getContent()[j];
+            //     sanitised.push_back(child);
+            // }
         }
+
+        if (!merged){
+            sanitised = terms;
+        }else{
+            sanitised = merged->getContent();
+        }
+        
         // update coefficient
         int totalCoeff = 0;
         for (int i = 0; i < sanitised.size(); i ++){
@@ -222,6 +236,14 @@ bool TermContainer::isLikeTerm(TermBase* other){
    return false; // REMEMBER TO REMOVE THIS
 }
 
+bool TermContainer::isMergeable(){
+    if (operationType == OperationType::Multiplication){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 int* TermContainer::getValue(){
     return nullptr; 
     // eventually update this to add or solve
@@ -251,6 +273,23 @@ TermBase* TermContainer::multiply(TermBase* other){
 
 TermBase* TermContainer::divide(TermBase* other){
     return nullptr;
+}
+
+TermBase* TermContainer::mergeMultiplications(TermBase* other){
+    if (operationType == OperationType::Multiplication & other->isMergeable()){
+        std::vector<TermBase*> tmpTerms;
+        for (int i = 0; i < terms.size(); i ++){
+            tmpTerms.push_back(terms[i]);
+        }
+        std::vector<TermBase*> otherTerms = other->getContent();
+        for (int j = 0; j < otherTerms.size(); j ++){
+            tmpTerms.push_back(otherTerms[j]);
+        }
+        return new TermContainer(true, nullptr, nullptr, OperationType::Multiplication, tmpTerms);
+    }else{
+        return nullptr;
+    }
+    
 }
 
 TermBase* TermContainer::expandForExponent(){
@@ -299,7 +338,7 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
     if (!sign){
         expandedTerm = static_cast<TermContainer*> (expandAsNegativeExponent(baseTerm));
     }else{
-        if (isAtomic() & isAtomicExponent()){
+        if (isAtomicExponent()){
             return baseTerm;
         }else if (isAtomic() & !isAtomicExponent()){
             expandedTerm = static_cast<TermContainer*> (expandAsExponent(baseTerm));
@@ -349,7 +388,7 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
     }else{
         for (int i = 0; i < expandedTerm->getTerms().size(); i ++){
             TermBase* ithExpandedTerm = expandedTerm->getTerms()[i];
-            expandedTerm->replaceTerm(i, ithExpandedTerm->expandForExponent());
+            expandedTerm->replaceTerm(i, ithExpandedTerm->expandForExponent()); // this is very inefficient
         }
         return expandedTerm;
     }

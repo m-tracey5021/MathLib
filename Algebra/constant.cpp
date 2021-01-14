@@ -57,6 +57,10 @@ bool Constant::isLikeTerm(TermBase* other){
     }
 }
 
+bool Constant::isMergeable(){
+    return true;
+}
+
 int* Constant::getValue(){
     return &constant;
 }
@@ -128,6 +132,22 @@ TermBase* Constant::divide(TermBase* other){
     }
 }
 
+TermBase* Constant::mergeMultiplications(TermBase* other){
+    if (other->isMergeable()){
+
+        std::vector<TermBase*> tmpTerms;
+        tmpTerms.push_back(this);
+
+        std::vector<TermBase*> otherTerms = other->getContent();
+        for (int j = 0; j < otherTerms.size(); j ++){
+            tmpTerms.push_back(otherTerms[j]);
+        }
+        return new TermContainer(true, nullptr, nullptr, OperationType::Multiplication, tmpTerms);
+    }else{
+        return this;
+    }
+}
+
 TermBase* Constant::expandForExponent(){
     if (!exponent){
         return this;
@@ -142,17 +162,21 @@ TermBase* Constant::expandAsExponent(TermBase* baseTerm){
     TermContainer* expandedTerm = new TermContainer();
     expandedTerm->setOperationType(OperationType::Multiplication);
 
-    if (constant > 1){
-        for (int i = 0; i < constant; i ++){
-            TermBase* copiedBase = baseTerm->copy();
-            copiedBase->setExponent(nullptr);
-            expandedTerm->appendTerm(copiedBase);
-        }
+    if (!sign){
+        expandedTerm = static_cast<TermContainer*> (expandAsNegativeExponent(baseTerm));
         return expandedTerm;
     }else{
-        return this;
+        if (constant > 1){
+            for (int i = 0; i < constant; i ++){
+                TermBase* copiedBase = baseTerm->copy();
+                copiedBase->setExponent(nullptr);
+                expandedTerm->appendTerm(copiedBase);
+            }
+            return expandedTerm;
+        }else{
+            return this;
+        }
     }
-    
 }
 
 TermBase* Constant::expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational){
@@ -160,10 +184,16 @@ TermBase* Constant::expandAsConstNum(TermBase* baseTerm, TermContainer* baseRati
     TermContainer* expandedTerm = new TermContainer();
     expandedTerm->setOperationType(OperationType::Multiplication);
 
+    // TermBase* newTerm = baseTerm->copy();
+    // TermContainer* newExponent = static_cast<TermContainer*> (baseRational->copy());
+    // newExponent->getTerms()[0] = new Constant(true, nullptr, nullptr, 1);
+    // newTerm->setExponent(newExponent);
+
+    std::vector<TermBase*> newExponentTerms = {new Constant(true, nullptr, nullptr, 1), baseRational->getTerms()[1]->copy()};
+    TermContainer* newExponent = new TermContainer(true, nullptr, nullptr, OperationType::Division, newExponentTerms);
     TermBase* newTerm = baseTerm->copy();
-    TermContainer* newExponent = static_cast<TermContainer*> (baseRational->copy());
-    newExponent->getTerms()[0] = new Constant(true, nullptr, nullptr, 1);
     newTerm->setExponent(newExponent);
+
 
     for (int i = 0; i < constant; i ++){
         expandedTerm->appendTerm(newTerm->copy());
@@ -179,8 +209,11 @@ TermBase* Constant::expandAsNegativeExponent(TermBase* baseTerm){
     for (int i = 0; i < constant; i ++){
         TermContainer* newRational = new TermContainer();
         newRational->setOperationType(OperationType::Division);
+
+        TermBase* newDenom = baseTerm->copy();
+        newDenom->setExponent(nullptr);
         newRational->appendTerm(new Constant(true, nullptr, nullptr, 1));
-        newRational->appendTerm(baseTerm->copy());
+        newRational->appendTerm(newDenom);
         expandedTerm->appendTerm(newRational);
     }
     return expandedTerm;

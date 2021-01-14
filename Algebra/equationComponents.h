@@ -80,6 +80,8 @@ class TermBase {
 
         virtual bool isLikeTerm(TermBase* other) = 0;
 
+        virtual bool isMergeable() = 0;
+
         // Get 
 
         virtual int* getValue() = 0;
@@ -95,6 +97,8 @@ class TermBase {
         virtual TermBase* multiply(TermBase* other) = 0;
 
         virtual TermBase* divide(TermBase* other) = 0;
+
+        virtual TermBase* mergeMultiplications(TermBase* other) = 0;
 
         //virtual TermBase* expandConstant() = 0;
 
@@ -151,6 +155,8 @@ class Constant : public TermBase {
 
         bool isLikeTerm(TermBase* other) override;
 
+        bool isMergeable() override;
+
         int* getValue() override;
 
         TermBase* getAtom() override;
@@ -162,6 +168,8 @@ class Constant : public TermBase {
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+
+        TermBase* mergeMultiplications(TermBase* other) override;
         
         //TermBase* expandConstant() override;
 
@@ -214,6 +222,8 @@ class Variable : public TermBase {
 
         bool isLikeTerm(TermBase* other) override;
 
+        bool isMergeable() override;
+
         int* getValue() override;
 
         TermBase* getAtom() override;
@@ -225,6 +235,8 @@ class Variable : public TermBase {
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+
+        TermBase* mergeMultiplications(TermBase* other) override;
         
         //TermBase* expandConstant() override;
 
@@ -300,6 +312,8 @@ class TermContainer : public TermBase {
 
         bool isLikeTerm(TermBase* other) override;
 
+        bool isMergeable() override;
+
         int* getValue() override;
 
         TermBase* getAtom() override;
@@ -311,6 +325,8 @@ class TermContainer : public TermBase {
         TermBase* multiply(TermBase* other) override;
 
         TermBase* divide(TermBase* other) override;
+
+        TermBase* mergeMultiplications(TermBase* other) override;
 
         //TermBase* expandConstant() override;
 

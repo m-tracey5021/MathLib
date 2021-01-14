@@ -16,6 +16,8 @@ void Variable::sanitiseForFactoring(){
 
 }
 
+
+
 bool Variable::isOne(){return false;}
 
 bool Variable::isAtomic(){return true;}
@@ -37,6 +39,10 @@ bool Variable::isLikeTerm(TermBase* other){
             return true;
         }
     }
+}
+
+bool Variable::isMergeable(){
+    return true;
 }
 
 int* Variable::getValue(){
@@ -133,6 +139,22 @@ TermBase* Variable::divide(TermBase* other){
         newContainer->appendTerm(this);
         newContainer->appendTerm(other);
         return newContainer;
+    }
+}
+
+TermBase* Variable::mergeMultiplications(TermBase* other){
+    if (other->isMergeable()){
+
+        std::vector<TermBase*> tmpTerms;
+        tmpTerms.push_back(this);
+
+        std::vector<TermBase*> otherTerms = other->getContent();
+        for (int j = 0; j < otherTerms.size(); j ++){
+            tmpTerms.push_back(otherTerms[j]);
+        }
+        return new TermContainer(true, nullptr, nullptr, OperationType::Multiplication, tmpTerms);
+    }else{
+        return this;
     }
 }
 
