@@ -49,9 +49,7 @@ void TermBase::setExponent(TermBase* e){
 }
 
 void TermBase::setParentExpression(TermBase* p){
-    if (p != nullptr){
-        parentExpression = p;
-    }
+    parentExpression = p;
     
 }
 

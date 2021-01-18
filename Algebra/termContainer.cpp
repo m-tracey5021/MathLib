@@ -354,7 +354,9 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
                     TermContainer* newExponent = static_cast<TermContainer*> (tmpExponent->copy());
                     newExponent->removeTerm(0);
                     if (newExponent->getTerms().size() == 1){
-                        newTerm->setExponent(newExponent->getTerms()[0]);
+                        TermBase* singleExponent = newExponent->getTerms()[0];
+                        singleExponent->setParentExpression(nullptr);
+                        newTerm->setExponent(singleExponent);
                     }else{
                         newTerm->setExponent(newExponent);
                     }
