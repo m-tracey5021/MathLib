@@ -144,7 +144,7 @@ TermBase* Constant::mergeMultiplications(TermBase* other){
         }
         return new TermContainer(true, nullptr, nullptr, OperationType::Multiplication, tmpTerms);
     }else{
-        return this;
+        return nullptr;
     }
 }
 
