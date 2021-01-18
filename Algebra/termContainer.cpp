@@ -353,8 +353,12 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
                     TermBase* newTerm = baseTerm->copy();
                     TermContainer* newExponent = static_cast<TermContainer*> (tmpExponent->copy());
                     newExponent->removeTerm(0);
-                    newTerm->setExponent(newExponent);
-
+                    if (newExponent->getTerms().size() == 1){
+                        newTerm->setExponent(newExponent->getTerms()[0]);
+                    }else{
+                        newTerm->setExponent(newExponent);
+                    }
+                    
                     for (int i = 0; i < coeff; i ++){
                         expandedTerm->appendTerm(newTerm->copy());
                     }

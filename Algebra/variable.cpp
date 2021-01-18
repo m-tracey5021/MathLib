@@ -13,7 +13,7 @@ Variable::~Variable(){
 }
 
 void Variable::sanitiseForFactoring(){
-
+    
 }
 
 
