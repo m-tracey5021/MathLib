@@ -12,6 +12,36 @@ Constant::~Constant(){
     delete parentExpression;
 }
 
+bool Constant::operator==(Constant* other){
+    if (constant == other->getConstant()){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+bool Constant::operator==(Variable* other){return false;}
+
+bool Constant::operator==(TermContainer* other){return false;}
+
+TermBase* Constant::operator+(TermBase* other){
+    return nullptr;
+}
+
+TermBase* Constant::operator-(TermBase* other){
+    return nullptr;
+}
+
+
+TermBase* Constant::operator*(TermBase* other){
+    return nullptr;
+}
+
+
+TermBase* Constant::operator/(TermBase* other){
+    return nullptr;
+}
+
 void Constant::sanitiseForFactoring(){
 
 }

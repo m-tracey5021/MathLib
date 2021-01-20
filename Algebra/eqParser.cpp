@@ -3,6 +3,9 @@
 #include <string>
 #include <map>
 
+#define LB '('
+#define RB ')'
+
 using namespace std;
 
 enum class ParseState {

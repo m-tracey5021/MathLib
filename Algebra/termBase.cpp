@@ -1,4 +1,5 @@
 #include "equationComponents.h"
+#include <algorithm>
 
 TermBase::TermBase(): 
                 sign(true), 
@@ -95,3 +96,9 @@ void TermBase::getAllSubTerms(std::vector<TermBase*>& terms,
     return;
 
 }
+
+// bool TermBase::operator==(Constant* other){return true;}
+
+// bool TermBase::operator==(Variable* other){return true;}
+
+// bool TermBase::operator==(TermContainer* other){return true;}

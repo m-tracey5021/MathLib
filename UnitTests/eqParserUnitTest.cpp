@@ -140,15 +140,11 @@ bool testExpand(){
     TermBase* expanded4 = term4->expandForExponent();
     string str4 = expanded4->toString();
 
-    std::vector<TermBase*> factors4 = term4->getAllFactors();
-
     string expression5 = "12^(4xy-3)";
     string expected5 = "12^(xy)12^(xy)12^(xy)12^(xy)12^(-3)";
     TermBase* term5 = parseExpression(expression5);
     TermBase* expanded5 = term5->expandForExponent();
-    string str5 = expanded5->toString();
-
-    std::vector<TermBase*> factors5 = term5->getAllFactors();
+    string str5 = expanded5->toString();    
 
     string expression6 = "x^({6/10})";
     string expected6 = "x^({1/10})x^({1/10})x^({1/10})x^({1/10})x^({1/10})x^({1/10})";
@@ -156,14 +152,18 @@ bool testExpand(){
     TermBase* expanded6 = term6->expandForExponent();
     string str6 = expanded6->toString();
 
-    std::vector<TermBase*> factors6= term6->getAllFactors();
-
     string expression7 = "x^(6(2x+7y))";
     string expected7_1 = "x^(2x+7y)x^(2x+7y)x^(2x+7y)x^(2x+7y)x^(2x+7y)x^(2x+7y)";
     string expected7_2 = "x^(xx)x^(yyyyyyy)x^(xx)x^(yyyyyyy)x^(xx)x^(yyyyyyy)x^(xx)x^(yyyyyyy)x^(xx)x^(yyyyyyy)x^(xx)x^(yyyyyyy)";
     TermBase* term7 = parseExpression(expression7);
     TermBase* expanded7 = term7->expandForExponent();
     string str7 = expanded7->toString();
+
+    std::vector<TermBase*> factors4 = term4->getAllFactors();
+
+    std::vector<TermBase*> factors5 = term5->getAllFactors();
+
+    std::vector<TermBase*> factors6= term6->getAllFactors();
 
     std::vector<TermBase*> factors7= term7->getAllFactors();
     

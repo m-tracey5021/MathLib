@@ -75,6 +75,47 @@ void TermContainer::removeTerm(int i){terms.erase(terms.begin() + i); updateExpr
 
 void TermContainer::replaceTerm(int i, TermBase* t){terms.insert(terms.begin() + i, t); removeTerm(i + 1);}
 
+bool TermContainer::operator==(Constant* other){return false;}
+
+bool TermContainer::operator==(Variable* other){return false;}
+
+bool TermContainer::operator==(TermContainer* other){
+    if (operationType != other->getOperationType()){
+        return false;
+    }else{
+        std::vector<TermBase*> otherTerms = other->getTerms();
+        if (terms.size() != otherTerms.size()){
+            return false;
+        }else{
+            for (int i = 0; i < terms.size(); i ++){
+                if (terms[i] != otherTerms[i]){
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+    
+}
+
+TermBase* TermContainer::operator+(TermBase* other){
+    return nullptr;
+}
+
+TermBase* TermContainer::operator-(TermBase* other){
+    return nullptr;
+}
+
+
+TermBase* TermContainer::operator*(TermBase* other){
+    return nullptr;
+}
+
+
+TermBase* TermContainer::operator/(TermBase* other){
+    return nullptr;
+}
+
 void TermContainer::sanitiseForFactoring(){
     std::vector<TermBase*> sanitised;
 

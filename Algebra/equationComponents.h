@@ -49,6 +49,10 @@ class TermBase {
         
         bool isEqual(TermBase* other);
 
+        bool friend operator==(TermBase* first, TermBase* second){return first->isEqual(second);}
+
+        bool isIn(std::vector<TermBase*> terms);
+
         void getAllSubTerms(std::vector<TermBase*>& terms,
                                 std::vector<TermBase*>& subTerms,
                                 int start,
@@ -62,7 +66,23 @@ class TermBase {
 
         virtual void replaceTerm(int i, TermBase* t){}
 
+        // Comparison Overloads
+
+        // virtual bool operator==(Constant* other);
+        // virtual bool operator==(Variable* other);
+        // virtual bool operator==(TermContainer* other);
+
         //  === Pure Virtual ===
+        
+        // Operator Overloads
+
+        virtual TermBase* operator+(TermBase* other) = 0;
+        
+        virtual TermBase* operator-(TermBase* other) = 0;
+
+        virtual TermBase* operator*(TermBase* other) = 0;
+
+        virtual TermBase* operator/(TermBase* other) = 0;
 
         // Clean
 
@@ -143,6 +163,18 @@ class Constant : public TermBase {
 
         // ===
 
+        bool operator==(Constant* other) override;
+        bool operator==(Variable* other) override;
+        bool operator==(TermContainer* other) override;
+
+        TermBase* operator+(TermBase* other) override;
+        
+        TermBase* operator-(TermBase* other) override;
+
+        TermBase* operator*(TermBase* other) override;
+
+        TermBase* operator/(TermBase* other) override;
+
         void sanitiseForFactoring() override;
 
         bool isOne() override;
@@ -209,6 +241,18 @@ class Variable : public TermBase {
         void setVariable(char v){variable = v; updateExpressionString();}
 
         // ===
+
+        bool operator==(Constant* other) override;
+        bool operator==(Variable* other) override;
+        bool operator==(TermContainer* other) override;
+
+        TermBase* operator+(TermBase* other) override;
+        
+        TermBase* operator-(TermBase* other) override;
+
+        TermBase* operator*(TermBase* other) override;
+
+        TermBase* operator/(TermBase* other) override;
 
         void sanitiseForFactoring() override;
 
@@ -299,6 +343,18 @@ class TermContainer : public TermBase {
         void removeTerm(int i) override;
 
         void replaceTerm(int i, TermBase* t) override;
+
+        bool operator==(Constant* other) override;
+        bool operator==(Variable* other) override;
+        bool operator==(TermContainer* other) override;
+
+        TermBase* operator+(TermBase* other) override;
+        
+        TermBase* operator-(TermBase* other) override;
+
+        TermBase* operator*(TermBase* other) override;
+
+        TermBase* operator/(TermBase* other) override;
 
         void sanitiseForFactoring() override;
         
