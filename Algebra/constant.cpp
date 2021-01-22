@@ -12,7 +12,13 @@ Constant::~Constant(){
     delete parentExpression;
 }
 
-bool Constant::operator==(Constant* other){
+void Constant::sanitiseForFactoring(){
+
+}
+
+bool Constant::isEqual(TermBase* other){return other->isEqual(this);}
+
+bool Constant::isEqual(Constant* other){
     if (constant == other->getConstant()){
         return true;
     }else{
@@ -20,30 +26,12 @@ bool Constant::operator==(Constant* other){
     }
 }
 
-bool Constant::operator==(Variable* other){return false;}
-
-bool Constant::operator==(TermContainer* other){return false;}
-
-TermBase* Constant::operator+(TermBase* other){
-    return nullptr;
+bool Constant::isEqual(Variable* other){
+    return false;
 }
 
-TermBase* Constant::operator-(TermBase* other){
-    return nullptr;
-}
-
-
-TermBase* Constant::operator*(TermBase* other){
-    return nullptr;
-}
-
-
-TermBase* Constant::operator/(TermBase* other){
-    return nullptr;
-}
-
-void Constant::sanitiseForFactoring(){
-
+bool Constant::isEqual(TermContainer* other){
+    return false;
 }
 
 bool Constant::isOne(){

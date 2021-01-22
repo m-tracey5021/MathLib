@@ -12,9 +12,17 @@ Variable::~Variable(){
     delete parentExpression;
 }
 
-bool Variable::operator==(Constant* other){return false;}
+void Variable::sanitiseForFactoring(){
+    
+}
 
-bool Variable::operator==(Variable* other){
+bool Variable::isEqual(TermBase* other){return other->isEqual(this);}
+
+bool Variable::isEqual(Constant* other){
+    return false;
+}
+
+bool Variable::isEqual(Variable* other){
     if (variable == other->getVariable()){
         return true;
     }else{
@@ -22,31 +30,9 @@ bool Variable::operator==(Variable* other){
     }
 }
 
-bool Variable::operator==(TermContainer* other){return false;}
-
-TermBase* Variable::operator+(TermBase* other){
-    return nullptr;
+bool Variable::isEqual(TermContainer* other){
+    return false;
 }
-
-TermBase* Variable::operator-(TermBase* other){
-    return nullptr;
-}
-
-
-TermBase* Variable::operator*(TermBase* other){
-    return nullptr;
-}
-
-
-TermBase* Variable::operator/(TermBase* other){
-    return nullptr;
-}
-
-void Variable::sanitiseForFactoring(){
-    
-}
-
-
 
 bool Variable::isOne(){return false;}
 
