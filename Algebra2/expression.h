@@ -55,6 +55,13 @@ class Expression {
 
         void setParentExpression(unique_ptr<Expression> e);
 
+        void updateExpressionString();
+
+        void getAllSubTerms(vector<unique_ptr<Expression>>& terms,
+                                vector<unique_ptr<Expression>>& subTerms,
+                                int start,
+                                int end);
+
         //  === Virtual methods ===
 
         // Get
@@ -76,6 +83,18 @@ class Expression {
         virtual void sanitise() = 0;
 
         // Test
+
+        virtual bool isEqual(Expression& other) = 0;
+
+        virtual bool isEqual(Summation& other) = 0;
+
+        virtual bool isEqual(Multiplication& other) = 0;
+
+        virtual bool isEqual(Division& other) = 0;
+
+        virtual bool isEqual(Constant& other) = 0;
+
+        virtual bool isEqual(Variable& other) = 0;
 
         virtual bool isAtomic() = 0;
 
@@ -172,6 +191,18 @@ class Summation : public Expression {
 
         // Test
 
+        bool isEqual(Expression& other) override;
+
+        bool isEqual(Summation& other) override;
+
+        bool isEqual(Multiplication& other) override;
+
+        bool isEqual(Division& other) override;
+
+        bool isEqual(Constant& other) override;
+
+        bool isEqual(Variable& other) override;
+
         bool isAtomic() override;
 
         bool isAtomicExponent() override;
@@ -263,6 +294,18 @@ class Multiplication : public Expression {
         void sanitise() override;
 
         // Test
+
+        bool isEqual(Expression& other) override;
+
+        bool isEqual(Summation& other) override;
+
+        bool isEqual(Multiplication& other) override;
+
+        bool isEqual(Division& other) override;
+
+        bool isEqual(Constant& other) override;
+
+        bool isEqual(Variable& other) override;
 
         bool isAtomic() override;
 
@@ -360,6 +403,18 @@ class Division : public Expression {
 
         // Test
 
+        bool isEqual(Expression& other) override;
+
+        bool isEqual(Summation& other) override;
+
+        bool isEqual(Multiplication& other) override;
+
+        bool isEqual(Division& other) override;
+
+        bool isEqual(Constant& other) override;
+
+        bool isEqual(Variable& other) override;
+
         bool isAtomic() override;
 
         bool isAtomicExponent() override;
@@ -428,6 +483,10 @@ class Constant : public Expression {
 
         Constant(bool sign, unique_ptr<Expression> root, unique_ptr<Expression> exponent, int constant);
 
+        int getConstant();
+
+        void setConstant(int c);
+
         // Overrides
 
         // Get
@@ -449,6 +508,18 @@ class Constant : public Expression {
         void sanitise() override;
 
         // Test
+
+        bool isEqual(Expression& other) override;
+
+        bool isEqual(Summation& other) override;
+
+        bool isEqual(Multiplication& other) override;
+
+        bool isEqual(Division& other) override;
+
+        bool isEqual(Constant& other) override;
+
+        bool isEqual(Variable& other) override;
 
         bool isAtomic() override;
 
@@ -539,6 +610,18 @@ class Variable : public Expression {
         void sanitise() override;
 
         // Test
+
+        bool isEqual(Expression& other) override;
+
+        bool isEqual(Summation& other) override;
+
+        bool isEqual(Multiplication& other) override;
+
+        bool isEqual(Division& other) override;
+
+        bool isEqual(Constant& other) override;
+
+        bool isEqual(Variable& other) override;
 
         bool isAtomic() override;
 
