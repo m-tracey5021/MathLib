@@ -1,4 +1,5 @@
 #include "equationComponents.h"
+#include <algorithm>
 
 TermBase::TermBase(): 
                 sign(true), 
@@ -49,9 +50,7 @@ void TermBase::setExponent(TermBase* e){
 }
 
 void TermBase::setParentExpression(TermBase* p){
-    if (p != nullptr){
-        parentExpression = p;
-    }
+    parentExpression = p;
     
 }
 

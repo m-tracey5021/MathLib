@@ -129,6 +129,34 @@ void TermContainer::sanitiseForFactoring(){
     }
 }
 
+bool TermContainer::isEqual(TermBase* other){return other->isEqual(this);}
+
+bool TermContainer::isEqual(Constant* other){
+    return false;
+}
+
+bool TermContainer::isEqual(Variable* other){
+    return false;
+}
+
+bool TermContainer::isEqual(TermContainer* other){
+    if (operationType == other->getOperationType()){
+        std::vector<TermBase*> otherTerms = other->getTerms();
+        if (terms.size() == otherTerms.size()){
+            for (int i = 0; i < terms.size(); i ++){
+                if (!terms[i]->isEqual(otherTerms[i])){
+                    return false;
+                }
+            }
+            return true;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
+
 bool TermContainer::isOne(){
     if (terms.size() == 1){
         if (terms[0]->isOne()){
@@ -353,8 +381,14 @@ TermBase* TermContainer::expandAsExponent(TermBase* baseTerm){
                     TermBase* newTerm = baseTerm->copy();
                     TermContainer* newExponent = static_cast<TermContainer*> (tmpExponent->copy());
                     newExponent->removeTerm(0);
-                    newTerm->setExponent(newExponent);
-
+                    if (newExponent->getTerms().size() == 1){
+                        TermBase* singleExponent = newExponent->getTerms()[0];
+                        singleExponent->setParentExpression(nullptr);
+                        newTerm->setExponent(singleExponent);
+                    }else{
+                        newTerm->setExponent(newExponent);
+                    }
+                    
                     for (int i = 0; i < coeff; i ++){
                         expandedTerm->appendTerm(newTerm->copy());
                     }

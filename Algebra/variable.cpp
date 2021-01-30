@@ -13,10 +13,26 @@ Variable::~Variable(){
 }
 
 void Variable::sanitiseForFactoring(){
-
+    
 }
 
+bool Variable::isEqual(TermBase* other){return other->isEqual(this);}
 
+bool Variable::isEqual(Constant* other){
+    return false;
+}
+
+bool Variable::isEqual(Variable* other){
+    if (variable == other->getVariable()){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+bool Variable::isEqual(TermContainer* other){
+    return false;
+}
 
 bool Variable::isOne(){return false;}
 

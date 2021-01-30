@@ -16,6 +16,24 @@ void Constant::sanitiseForFactoring(){
 
 }
 
+bool Constant::isEqual(TermBase* other){return other->isEqual(this);}
+
+bool Constant::isEqual(Constant* other){
+    if (constant == other->getConstant()){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+bool Constant::isEqual(Variable* other){
+    return false;
+}
+
+bool Constant::isEqual(TermContainer* other){
+    return false;
+}
+
 bool Constant::isOne(){
     if (constant == 1){
         return true;

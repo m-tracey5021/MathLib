@@ -46,8 +46,6 @@ class TermBase {
         void setParentExpression(TermBase* p);
 
         void updateExpressionString();
-        
-        bool isEqual(TermBase* other);
 
         void getAllSubTerms(std::vector<TermBase*>& terms,
                                 std::vector<TermBase*>& subTerms,
@@ -69,6 +67,14 @@ class TermBase {
         virtual void sanitiseForFactoring() = 0;
 
         // Test
+
+        virtual bool isEqual(TermBase* other) = 0;
+
+        virtual bool isEqual(Constant* other) = 0;
+
+        virtual bool isEqual(Variable* other) = 0;
+
+        virtual bool isEqual(TermContainer* other) = 0;
 
         virtual bool isOne() = 0;
 
@@ -110,11 +116,11 @@ class TermBase {
 
         virtual TermBase* expandAsNegativeExponent(TermBase* baseTerm) = 0;
 
-        virtual TermBase* factor() = 0;
-
         virtual std::vector<TermBase*> getConstantFactors() = 0;
 
         virtual std::vector<TermBase*> getAllFactors() = 0;
+
+        virtual TermBase* factor() = 0;
 
         // Misc functions
 
@@ -145,6 +151,14 @@ class Constant : public TermBase {
 
         void sanitiseForFactoring() override;
 
+        bool isEqual(TermBase* other) override;
+
+        bool isEqual(Constant* other) override;
+
+        bool isEqual(Variable* other) override;
+
+        bool isEqual(TermContainer* other) override;
+
         bool isOne() override;
 
         bool isAtomic() override;
@@ -181,11 +195,11 @@ class Constant : public TermBase {
 
         TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;
 
-        TermBase* factor() override;
-
         std::vector<TermBase*> getConstantFactors() override;
 
         std::vector<TermBase*> getAllFactors() override;
+
+        TermBase* factor() override;
 
         TermBase* copy() override;
 
@@ -212,6 +226,14 @@ class Variable : public TermBase {
 
         void sanitiseForFactoring() override;
 
+        bool isEqual(TermBase* other) override;
+
+        bool isEqual(Constant* other) override;
+
+        bool isEqual(Variable* other) override;
+
+        bool isEqual(TermContainer* other) override;
+
         bool isOne() override;
 
         bool isAtomic() override;
@@ -248,11 +270,11 @@ class Variable : public TermBase {
 
         TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;
 
-        TermBase* factor() override;
-
         std::vector<TermBase*> getConstantFactors() override;
 
         std::vector<TermBase*> getAllFactors() override;
+
+        TermBase* factor() override;
 
         TermBase* copy() override;
 
@@ -301,6 +323,14 @@ class TermContainer : public TermBase {
         void replaceTerm(int i, TermBase* t) override;
 
         void sanitiseForFactoring() override;
+
+        bool isEqual(TermBase* other) override;
+
+        bool isEqual(Constant* other) override;
+
+        bool isEqual(Variable* other) override;
+
+        bool isEqual(TermContainer* other) override;
         
         bool isOne() override;
 
@@ -336,13 +366,13 @@ class TermContainer : public TermBase {
 
         TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
 
-        TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;
-
-        TermBase* factor() override;
+        TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;        
 
         std::vector<TermBase*> getConstantFactors() override;
 
         std::vector<TermBase*> getAllFactors() override;
+
+        TermBase* factor() override;
 
         TermBase* copy() override;
 

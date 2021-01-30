@@ -8,6 +8,7 @@
 #include "UnitTests/treeUnitTest.h"
 #include "UnitTests/automataUnitTest.h"
 #include "UnitTests/eqParserUnitTest.h"
+#include "UnitTests/exprManipulationUnitTest.h"
 #include "Sets/stdSetOperations.h"
 #include "HashTables/integerHashSet.h"
 #include "HashTables/hashSet.h"
@@ -60,6 +61,8 @@ int main(){
     bool expressionParsePassed = testExpressionParse();
 
     bool expandPassed = testExpand();
+
+    bool equalityPassed = testEquality();
 
     int elements1[] = {3, 4, 5};
     char elements2[] = {'a', 'b', 'c'};
