@@ -61,13 +61,13 @@ void TermBase::updateExpressionString(){
     expressionString = this->toString();
 }
 
-bool TermBase::isEqual(TermBase* other){
-    if (expressionString == other->getExpressionString()){
-        return true;
-    }else{
-        return false;
-    }
-}
+// bool TermBase::isEqual(TermBase* other){
+//     if (expressionString == other->getExpressionString()){
+//         return true;
+//     }else{
+//         return false;
+//     }
+// }
 
 void TermBase::getAllSubTerms(std::vector<TermBase*>& terms,
                                 std::vector<TermBase*>& subTerms,
