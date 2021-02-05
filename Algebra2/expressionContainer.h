@@ -1,12 +1,15 @@
-#include "expression.h"
+#pragma once
 
-// enum class ExpressionType {
-//     S,
-//     M,
-//     D,
-//     CE,
-//     VE
-// };
+#include "expressionDeclarations.h"
+#include <string>
+#include <vector>
+#include <memory>
+
+using std::string;
+using std::vector;
+using std::unique_ptr;
+using std::make_unique;
+using std::move;
 
 class ExpressionContainer {
 
@@ -14,11 +17,15 @@ class ExpressionContainer {
 
         unique_ptr<Expression> expression;
 
+        unique_ptr<Expression> getExpression();
+
     public:
 
         ExpressionContainer();
 
-        unique_ptr<Expression> getExpression();
+        ExpressionContainer(const ExpressionContainer& ec);
+
+        ExpressionContainer& operator= (const ExpressionContainer& ec);
 
         // Build expression overloads
 
@@ -53,6 +60,12 @@ class ExpressionContainer {
 // =================== Implementation ===================
 
 ExpressionContainer::ExpressionContainer(){}
+
+ExpressionContainer::ExpressionContainer(const ExpressionContainer& ec): expression(move(expression)){}
+
+ExpressionContainer& ExpressionContainer::operator= (const ExpressionContainer& ec){
+    expression = move(ec.expression);
+}
 
 unique_ptr<Expression> ExpressionContainer::getExpression(){
     return move(expression);

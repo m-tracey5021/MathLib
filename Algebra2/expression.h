@@ -1,5 +1,7 @@
 #pragma once
 
+#include "expressionDeclarations.h"
+#include "expressionContainer.h"
 #include <string>
 #include <vector>
 #include <memory>
@@ -10,14 +12,6 @@ using std::unique_ptr;
 using std::make_unique;
 using std::move;
 
-class ExpressionContainer;
-class Expression;
-class Summation;
-class Multiplication;
-class Division;
-class ConstantExpression;
-class VariableExpression;
-
 // #define up unique_ptr
 // #define mup make_unique
 
@@ -27,11 +21,11 @@ class Expression {
 
         bool sign;
 
-        unique_ptr<Expression> root;
+        ExpressionContainer root;
 
-        unique_ptr<Expression> exponent;
+        ExpressionContainer exponent;
 
-        unique_ptr<Expression> parentExpression;
+        ExpressionContainer parentExpression;
 
         string expressionString;
 
@@ -39,27 +33,27 @@ class Expression {
 
         Expression();
 
-        Expression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent);
+        Expression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent);
 
         virtual ~Expression();
 
         bool getSign();
 
-        unique_ptr<Expression> getRoot();
+        ExpressionContainer getRoot();
 
-        unique_ptr<Expression> getExponent();
+        ExpressionContainer getExponent();
 
-        unique_ptr<Expression> getParentExpression();
+        ExpressionContainer getParentExpression();
 
         string getExpressionString();
 
         void setSign(bool s);
 
-        void setRoot(unique_ptr<Expression>& e);
+        void setRoot(ExpressionContainer& e);
 
-        void setExponent(unique_ptr<Expression>& e);
+        void setExponent(ExpressionContainer& e);
 
-        void setParentExpression(unique_ptr<Expression>& e);
+        void setParentExpression(ExpressionContainer& e);
 
         void updateExpressionString();
 

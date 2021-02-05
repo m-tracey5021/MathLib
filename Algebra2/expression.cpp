@@ -6,25 +6,25 @@ Expression::Expression():
                     exponent(nullptr), 
                     parentExpression(nullptr){}
 
-Expression::Expression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent): 
+Expression::Expression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent): 
                     sign(sign), 
-                    root(move(root)), 
-                    exponent(move(exponent)), 
+                    root(root), 
+                    exponent(exponent), 
                     parentExpression(nullptr){}
 
 bool Expression::getSign(){
     return sign;
 }
 
-unique_ptr<Expression> Expression::getRoot(){
+ExpressionContainer Expression::getRoot(){
     return move(root);
 }
 
-unique_ptr<Expression> Expression::getExponent(){
+ExpressionContainer Expression::getExponent(){
     return move(exponent);
 }
 
-unique_ptr<Expression> Expression::getParentExpression(){
+ExpressionContainer Expression::getParentExpression(){
     return move(parentExpression);
 }
 
