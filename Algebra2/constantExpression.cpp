@@ -2,7 +2,7 @@
 
 ConstantExpression::ConstantExpression(): Expression(){}
 
-ConstantExpression::ConstantExpression(bool sign, unique_ptr<Expression> root, unique_ptr<Expression> exponent, int ConstantExpression): Expression(sign, move(root), move(exponent)), constant(constant){}
+ConstantExpression::ConstantExpression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, int constant): Expression(sign, root, exponent), constant(constant){}
 
 ConstantExpression::~ConstantExpression(){
     root.reset();
@@ -94,30 +94,31 @@ bool ConstantExpression::isMergeable(){
     return true;
 }
 
-unique_ptr<Expression> ConstantExpression::sum(Summation s){
-    unique_ptr<Expression> ConstantExpressionPtr (new ConstantExpression(true, nullptr, nullptr, 1));
-    return ConstantExpressionPtr;
-}
+// unique_ptr<Expression> ConstantExpression::sum(Summation s){
+//     // unique_ptr<Expression>() ConstantExpressionPtr (new ConstantExpression(true, unique_ptr<Expression>(), unique_ptr<Expression>(), 1));
+//     // return ConstantExpressionPtr;
+//     return unique_ptr<Expression>();
+// }
 
-unique_ptr<Expression> ConstantExpression::sum(Multiplication m){
-    unique_ptr<Expression> ConstantExpressionPtr (new ConstantExpression(true, nullptr, nullptr, 1));
-    return ConstantExpressionPtr;
-}
+// unique_ptr<Expression> ConstantExpression::sum(Multiplication m){
+//     unique_ptr<Expression> ConstantExpressionPtr (new ConstantExpression(true, nullptr, nullptr, 1));
+//     return ConstantExpressionPtr;
+// }
 
-unique_ptr<Expression> ConstantExpression::sum(Division d){
-    unique_ptr<Expression> ConstantExpressionPtr (new ConstantExpression(true, nullptr, nullptr, 1));
-    return ConstantExpressionPtr;
-}
+// unique_ptr<Expression> ConstantExpression::sum(Division d){
+//     unique_ptr<Expression> ConstantExpressionPtr (new ConstantExpression(true, nullptr, nullptr, 1));
+//     return ConstantExpressionPtr;
+// }
 
-unique_ptr<Expression> ConstantExpression::sum(ConstantExpression c){
-    unique_ptr<Expression> ConstantExpressionPtr (new ConstantExpression(true, nullptr, nullptr, 1));
-    return ConstantExpressionPtr;
-}
+// unique_ptr<Expression> ConstantExpression::sum(ConstantExpression c){
+//     unique_ptr<Expression> ConstantExpressionPtr (new ConstantExpression(true, nullptr, nullptr, 1));
+//     return ConstantExpressionPtr;
+// }
 
-unique_ptr<Expression> ConstantExpression::sum(VariableExpression v){
-    unique_ptr<Expression> ConstantExpressionPtr (new ConstantExpression(true, nullptr, nullptr, 1));
-    return ConstantExpressionPtr;
-}
+// unique_ptr<Expression> ConstantExpression::sum(VariableExpression v){
+//     unique_ptr<Expression> ConstantExpressionPtr (new ConstantExpression(true, nullptr, nullptr, 1));
+//     return ConstantExpressionPtr;
+// }
 
 unique_ptr<Expression> ConstantExpression::expandForExponent(){
     if (!exponent){
@@ -139,7 +140,8 @@ unique_ptr<Expression> ConstantExpression::expandAsExponent(Expression& baseExpr
         if (constant > 1){
             for (int i = 0; i < constant; i ++){
                 unique_ptr<Expression> copiedBase (baseExpression.copy());
-                copiedBase->setExponent(nullptr);
+                unique_ptr<Expression> nullExponent(nullptr);
+                copiedBase->setExponent(nullExponent);
                 expandedTerm->appendExpression(*copiedBase);
             }
             return expandedTerm;
@@ -152,7 +154,7 @@ unique_ptr<Expression> ConstantExpression::expandAsExponent(Expression& baseExpr
 unique_ptr<Expression> ConstantExpression::expandAsConstNum(Expression& baseExpression, Division& baseDivision){
 
     unique_ptr<Expression> expandedTerm (new Multiplication());
-    unique_ptr<Expression> numerator (new ConstantExpression(true, nullptr, nullptr, 1));
+    unique_ptr<Expression> numerator make_unique<ConstantExpression>(true, nullptr, nullptr, 1));
     unique_ptr<Expression> denominator (baseDivision.getContent()[1]->copy());
 
     unique_ptr<Expression> newExponent (new Division(true, nullptr, nullptr, move(numerator), move(denominator)));
@@ -215,15 +217,16 @@ vector<unique_ptr<Expression>> ConstantExpression::getAllFactors(){
     return factors;
 }
 
-Expression* ConstantExpression::copy(){
+unique_ptr<Expression> ConstantExpression::copy(){
+    unique_ptr<ConstantExpression> constantPtr;
     if (root != nullptr & exponent != nullptr){
-        return new ConstantExpression(sign, unique_ptr<Expression> (root->copy()), unique_ptr<Expression> (exponent->copy()), constant);
+        return make_unique<ConstantExpression>(sign, root->copy(), exponent->copy(), constant);
     }else if (root == nullptr & exponent != nullptr){
-        return new ConstantExpression(sign, nullptr, unique_ptr<Expression> (exponent->copy()), constant);
+        return make_unique<ConstantExpression>(sign, nullptr, exponent->copy(), constant);
     }else if (root != nullptr & exponent == nullptr){
-        return new ConstantExpression(sign, unique_ptr<Expression> (root->copy()), nullptr, constant);
+        return make_unique<ConstantExpression>(sign, root->copy(), nullptr, constant);
     }else{
-        return new ConstantExpression(sign, nullptr, nullptr, constant);
+        return make_unique<ConstantExpression>(sign, nullptr, nullptr, constant);
     }
     
 }

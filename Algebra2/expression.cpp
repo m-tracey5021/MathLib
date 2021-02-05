@@ -6,7 +6,7 @@ Expression::Expression():
                     exponent(nullptr), 
                     parentExpression(nullptr){}
 
-Expression::Expression(bool sign, unique_ptr<Expression> root, unique_ptr<Expression> exponent): 
+Expression::Expression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent): 
                     sign(sign), 
                     root(move(root)), 
                     exponent(move(exponent)), 
@@ -36,15 +36,15 @@ void Expression::setSign(bool s){
     sign = s;
 }
 
-void Expression::setRoot(unique_ptr<Expression> e){
+void Expression::setRoot(unique_ptr<Expression>& e){
     root = move(e);
 }
 
-void Expression::setExponent(unique_ptr<Expression> e){
+void Expression::setExponent(unique_ptr<Expression>& e){
     exponent = move(e);
 }
 
-void Expression::setParentExpression(unique_ptr<Expression> e){
+void Expression::setParentExpression(unique_ptr<Expression>& e){
     parentExpression = move(e);
 }
 
@@ -59,6 +59,9 @@ void Expression::getAllSubTerms(vector<unique_ptr<Expression>>& terms,
                                 vector<unique_ptr<Expression>>& subTerms,
                                 int start,
                                 int end){
+    //int toPush = 3;
+    //ints.push_back(toPush);
+
     if (end == terms.size()){
         return;
     }else if (start > end){
@@ -72,7 +75,7 @@ void Expression::getAllSubTerms(vector<unique_ptr<Expression>>& terms,
                 newSubTerms.push_back(move(terms[i]));
             }
             if (newSubTerms.size() != 0){
-                subTerms.push_back(move(unique_ptr<Expression> (new Multiplication(true, nullptr, nullptr, newSubTerms))));
+                subTerms.push_back(move(make_unique<Multiplication>(true, nullptr, nullptr, newSubTerms)));
             }
             
         }

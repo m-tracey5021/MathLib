@@ -18,24 +18,8 @@ class Division;
 class ConstantExpression;
 class VariableExpression;
 
-#define up unique_ptr
-#define mup make_unique
-
-class ExpressionContainer {
-
-    private:
-
-        unique_ptr<Expression> contained;
-
-    public:
-
-        ExpressionContainer();
-
-        ExpressionContainer(Expression& expression);
-
-        void modifyContained(Expression& expression);
-
-};
+// #define up unique_ptr
+// #define mup make_unique
 
 class Expression {
 
@@ -55,7 +39,7 @@ class Expression {
 
         Expression();
 
-        Expression(bool sign, unique_ptr<Expression> root, unique_ptr<Expression> exponent);
+        Expression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent);
 
         virtual ~Expression();
 
@@ -71,11 +55,11 @@ class Expression {
 
         void setSign(bool s);
 
-        void setRoot(unique_ptr<Expression> e);
+        void setRoot(unique_ptr<Expression>& e);
 
-        void setExponent(unique_ptr<Expression> e);
+        void setExponent(unique_ptr<Expression>& e);
 
-        void setParentExpression(unique_ptr<Expression> e);
+        void setParentExpression(unique_ptr<Expression>& e);
 
         void updateExpressionString();
 
@@ -168,7 +152,13 @@ class Expression {
 
         // Misc
 
-        virtual Expression* copy() = 0;
+        virtual unique_ptr<Expression> copy() = 0;
+
+        //virtual unique_ptr<Expression> reassign() = 0;
+
+        //virtual unique_ptr<Expression> shallowCopy() = 0;
+
+        //virtual unique_ptr<Expression> deepCopy() = 0;
 
         virtual string toString() = 0;
 
@@ -189,7 +179,7 @@ class Summation : public Expression {
 
         Summation();
 
-        Summation(bool sign, unique_ptr<Expression> root, unique_ptr<Expression> exponent, vector<unique_ptr<Expression>> operands);
+        Summation(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, vector<unique_ptr<Expression>>& operands);
 
         ~Summation();
 
@@ -281,7 +271,9 @@ class Summation : public Expression {
 
         // Misc
 
-        Expression* copy() override;
+        unique_ptr<Expression> copy() override;
+
+        //unique_ptr<Expression> shallowCopy() override;
 
         string toString() override;
 
@@ -299,7 +291,7 @@ class Multiplication : public Expression {
 
         Multiplication();
 
-        Multiplication(bool sign, unique_ptr<Expression> root, unique_ptr<Expression> exponent, vector<unique_ptr<Expression>> operands);
+        Multiplication(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, vector<unique_ptr<Expression>>& operands);
 
         ~Multiplication();
 
@@ -391,7 +383,7 @@ class Multiplication : public Expression {
 
         // Misc
 
-        Expression* copy() override;
+        unique_ptr<Expression> copy() override;
 
         string toString() override;
 
@@ -411,7 +403,7 @@ class Division : public Expression {
 
         Division();
 
-        Division(bool sign, unique_ptr<Expression> root, unique_ptr<Expression> exponent, unique_ptr<Expression> numerator, unique_ptr<Expression> denominator);
+        Division(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, unique_ptr<Expression>& numerator, unique_ptr<Expression>& denominator);
 
         ~Division();
 
@@ -507,7 +499,7 @@ class Division : public Expression {
 
         // Misc
 
-        Expression* copy() override;
+        unique_ptr<Expression> copy() override;
 
         string toString() override;
 
@@ -525,7 +517,7 @@ class ConstantExpression : public Expression {
 
         ConstantExpression();
 
-        ConstantExpression(bool sign, unique_ptr<Expression> root, unique_ptr<Expression> exponent, int constant);
+        ConstantExpression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, int constant);
 
         ~ConstantExpression();
 
@@ -617,7 +609,7 @@ class ConstantExpression : public Expression {
 
         // Misc
 
-        Expression* copy() override;
+        unique_ptr<Expression> copy() override;
 
         string toString() override;
 
@@ -635,7 +627,7 @@ class VariableExpression : public Expression {
 
         VariableExpression();
 
-        VariableExpression(bool sign, unique_ptr<Expression> root, unique_ptr<Expression> exponent, char variable);
+        VariableExpression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, char variable);
 
         ~VariableExpression();
 
@@ -727,7 +719,7 @@ class VariableExpression : public Expression {
 
         // Misc
 
-        Expression* copy() override;
+        unique_ptr<Expression> copy() override;
 
         string toString() override;
 

@@ -3,10 +3,10 @@
 Multiplication::Multiplication(): Expression(){}
 
 Multiplication::Multiplication(bool sign, 
-                        unique_ptr<Expression> root, 
-                        unique_ptr<Expression> exponent, 
-                        vector<unique_ptr<Expression>> operands): 
-                        Expression(sign, move(root), move(exponent)), operands(operands){}
+                        unique_ptr<Expression>& root, 
+                        unique_ptr<Expression>& exponent, 
+                        vector<unique_ptr<Expression>>& operands): 
+                        Expression(sign, root, exponent), operands(operands){}
 
 Multiplication::~Multiplication(){
     root.reset();
@@ -37,7 +37,8 @@ vector<unique_ptr<Expression>> Multiplication::getContent(){
 
 void Multiplication::appendExpression(Expression& e){
     operands.push_back(move(unique_ptr<Expression> (&e)));
-    e.setParentExpression(unique_ptr<Expression> (this));
+    unique_ptr<Expression> thisPtr (this);
+    e.setParentExpression(thisPtr);
     updateExpressionString();
 }
 
@@ -80,7 +81,7 @@ void Multiplication::sanitise(){
         }
     }
     if (totalCoeff){
-        unique_ptr<ConstantExpression> coeff = make_unique<ConstantExpression>(new ConstantExpression(true, nullptr, nullptr, totalCoeff));
+        unique_ptr<ConstantExpression> coeff = make_unique<ConstantExpression>(true, nullptr, nullptr, totalCoeff);
         sanitised.insert(sanitised.begin(), move(coeff));
     }
     operands = sanitised;
@@ -122,7 +123,17 @@ bool Multiplication::isLikeExpression(Expression& e){return false;}
 
 bool Multiplication::isMergeable(){return false;}
 
-unique_ptr<Expression> Multiplication::mergeMultiplications(Expression& other){return nullptr;}
+unique_ptr<Expression> Multiplication::mergeMultiplications(Expression& other){
+    vector<unique_ptr<Expression>> copiedContent;
+    for (int i = 0; i < operands.size(); i ++){
+        copiedContent.push_back(move(operands[i]));
+    }
+    vector<unique_ptr<Expression>> otherOperands = other.getContent();
+    for (int j = 0; j < otherOperands.size(); j ++){
+        copiedContent.push_back(move(otherOperands[j]));
+    }
+    return make_unique<Multiplication>(true, nullptr, nullptr, copiedContent);
+}
 
 unique_ptr<Expression> Multiplication::expandForExponent(){
     if (!exponent){
@@ -136,11 +147,13 @@ unique_ptr<Expression> Multiplication::expandForExponent(){
 
 unique_ptr<Expression> Multiplication::expandAsExponent(Expression& baseExpression){
 
-    unique_ptr<Expression> expanded = make_unique<Multiplication>(new Multiplication());
+    sanitise();
+
+    unique_ptr<Expression> expanded = make_unique<Multiplication>();
 
     // expand the exponents of the innerTerms
 
-    unique_ptr<Multiplication> copied = make_unique<Multiplication>(static_cast<Multiplication*> (this->copy()));
+    unique_ptr<Expression> copied = this->copy(); // make_unique<Multiplication>(static_cast<Multiplication*> (this->copy()));
     vector<unique_ptr<Expression>> copiedContent = copied->getContent();
 
     for (int i = 0; i < copiedContent.size(); i ++){
@@ -157,28 +170,41 @@ unique_ptr<Expression> Multiplication::expandAsExponent(Expression& baseExpressi
     // expand the exponent of the main exponent
 
     if (copied->getExponent() != nullptr){  
-        copied = make_unique<Multiplication>(static_cast<Multiplication*> (copied->expandForExponent().get()));
+        copied = move(copied->expandForExponent());
     }
     copiedContent = copied->getContent();
 
     // expand the main exponent over the baseTerm passed in
 
     if (!sign){
-        expanded = make_unique<Expression>(expandAsNegativeExponent(baseExpression));
+        expanded = move(expandAsNegativeExponent(baseExpression));
     }else{
         if (isAtomicExponent()){
-            return make_unique<Expression>(&baseExpression);
+            return unique_ptr<Expression> (&baseExpression);
         }else if (isAtomic() & !isAtomicExponent()){
-            expanded = make_unique<Expression>(expandAsExponent(baseExpression));
+            expanded = move(expandAsExponent(baseExpression));
         }else{
             
-            for (int i = 0; i < copiedContent.size(); i ++){
+            int* coeffPtr = operands[0]->getValue();
 
-                unique_ptr<Expression> newExpression = make_unique<Expression>(*baseExpression.copy());
-                unique_ptr<Expression> newExponent = make_unique<Expression>(copiedContent[i]->copy());
-                newExpression->setExponent(move(newExponent));
-                expanded->appendExpression(*newExpression);
+            if (coeffPtr){
+                int coeff = *coeffPtr;
+                unique_ptr<Expression> newTerm = move(baseExpression.copy());
+                unique_ptr<Expression> newExponent = copied->copy(); // make_unique<Multiplication>(static_cast<Multiplication*> (copied->copy()));
+                newExponent->removeExpression(0);
+                if (newExponent->getContent().size() == 1){
+                    unique_ptr<Expression> singleExponent = move(newExponent->getContent()[0]);
+                    singleExponent->setParentExpression(nullptr);
+                    newTerm->setExponent(move(singleExponent));
+                }else{
+                    newTerm->setExponent(move(newExponent));
+                }
+                
+                for (int i = 0; i < coeff; i ++){
+                    expanded->appendExpression(*newTerm->copy());
+                }
             }
+            delete coeffPtr;
         }
     }
     
@@ -189,10 +215,10 @@ unique_ptr<Expression> Multiplication::expandAsExponent(Expression& baseExpressi
     */
 
     if (expanded->getContent().size() == 0){
-        return make_unique<Expression>(this);
+        return unique_ptr<Expression>(this);
     }else{
         for (int i = 0; i < expanded->getContent().size(); i ++){
-            unique_ptr<Expression> ithExpandedTerm = make_unique<Expression>(expanded->getContent()[i]);
+            unique_ptr<Expression> ithExpandedTerm = move(expanded->getContent()[i]);
             expanded->replaceExpression(i, *ithExpandedTerm->expandForExponent()); // this is very inefficient
         }
         return expanded;
@@ -200,11 +226,11 @@ unique_ptr<Expression> Multiplication::expandAsExponent(Expression& baseExpressi
 }
 
 unique_ptr<Expression> Multiplication::expandAsConstNum(Expression& baseExpression, Division& baseDivision){
-    return make_unique<Expression>(baseExpression);
+    return unique_ptr<Expression>(&baseExpression);
 }
 
 unique_ptr<Expression> Multiplication::expandAsNegativeExponent(Expression& baseExpression){
-    return make_unique<Expression>(baseExpression);
+    return unique_ptr<Expression>(&baseExpression);
 }
 
 unique_ptr<Expression> Multiplication::factor(){
@@ -212,13 +238,7 @@ unique_ptr<Expression> Multiplication::factor(){
 }
 
 vector<unique_ptr<Expression>> Multiplication::getConstantFactors(){
-    vector<unique_ptr<Expression>> constantFactors;
-    for (int i = 0; i < operands.size(); i ++){
-        unique_ptr<Expression> ithExpression = move(operands[i]);
-        vector<unique_ptr<Expression>> ithConstantFactors = ithExpression->getConstantFactors();
-        constantFactors.insert(constantFactors.end(), ithConstantFactors.begin(), ithConstantFactors.end());
-    }
-    
+    vector<unique_ptr<Expression>> constantFactors = operands[0]->getConstantFactors();
     return constantFactors;
 }
 
@@ -227,20 +247,20 @@ vector<unique_ptr<Expression>> Multiplication::getAllFactors(){
     return dummy;
 }
 
-Expression* Multiplication::copy(){
+unique_ptr<Expression> Multiplication::copy(){
     vector<unique_ptr<Expression>> copiedContent;
     for (int i = 0; i < operands.size(); i ++){
-        unique_ptr<Expression> ithCopy = make_unique<Expression>(operands[i]->copy());
+        unique_ptr<Expression> ithCopy = move(operands[i]->copy());
         copiedContent.push_back(move(ithCopy));
     }
 
     if (root != nullptr & exponent != nullptr){
-        return new Multiplication(sign, make_unique<Expression>(root->copy()), make_unique<Expression>(exponent->copy()), copiedContent);
+        return make_unique<Multiplication>(sign, root->copy(), exponent->copy(), copiedContent);
     }else if (root == nullptr & exponent != nullptr){
-        return new Multiplication(sign, nullptr, make_unique<Expression>(exponent->copy()), copiedContent);
+        return make_unique<Multiplication>(sign, nullptr, exponent->copy(), copiedContent);
     }else if (root != nullptr & exponent == nullptr){
-        return new Multiplication(sign, make_unique<Expression>(root->copy()), nullptr, copiedContent);
+        return make_unique<Multiplication>(sign, root->copy(), nullptr, copiedContent);
     }else{
-        return new Multiplication(sign, nullptr, nullptr, copiedContent);
+        return make_unique<Multiplication>(sign, nullptr, nullptr, copiedContent);
     } 
 }

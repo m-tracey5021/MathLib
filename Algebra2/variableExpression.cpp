@@ -2,7 +2,7 @@
 
 VariableExpression::VariableExpression(): Expression(){}
 
-VariableExpression::VariableExpression(bool sign, unique_ptr<Expression> root, unique_ptr<Expression> exponent, char VariableExpression): Expression(sign, move(root), move(exponent)), variable(variable){
+VariableExpression::VariableExpression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, char VariableExpression): Expression(sign, root, exponent), variable(variable){
     updateExpressionString();
 }
 
@@ -78,10 +78,6 @@ bool VariableExpression::isMergeable(){
     return true;
 }
 
-int* VariableExpression::getValue(){
-    return nullptr;
-}
-
 unique_ptr<Expression> VariableExpression::mergeMultiplications(Expression& other){
     if (other.isMergeable()){
 
@@ -92,7 +88,9 @@ unique_ptr<Expression> VariableExpression::mergeMultiplications(Expression& othe
         for (int j = 0; j < otherTerms.size(); j ++){
             tmpTerms.push_back(move(otherTerms[j]));
         }
-        return unique_ptr<Expression> (new Multiplication(true, nullptr, nullptr, tmpTerms));
+        unique_ptr<Expression> ();
+        unique_ptr<Expression> null2 ();
+        return unique_ptr<Expression> (new Multiplication(true, unique_ptr<Expression>(), unique_ptr<Expression>(), tmpTerms));
     }else{
         return nullptr;
     }
@@ -139,16 +137,16 @@ std::vector<unique_ptr<Expression>> VariableExpression::getAllFactors(){
 
 }
 
-Expression* VariableExpression::copy(){
+unique_ptr<Expression> VariableExpression::copy(){
 
     if (root != nullptr & exponent != nullptr){
-        return new VariableExpression(sign, unique_ptr<Expression> (root->copy()), unique_ptr<Expression> (exponent->copy()), variable);
+        return make_unique<VariableExpression>(sign, root->copy(), exponent->copy(), variable);
     }else if (root == nullptr & exponent != nullptr){
-        return new VariableExpression(sign, nullptr, unique_ptr<Expression> (exponent->copy()), variable);
+        return make_unique<VariableExpression>(sign, nullptr, exponent->copy(), variable);
     }else if (root != nullptr & exponent == nullptr){
-        return new VariableExpression(sign, unique_ptr<Expression> (root->copy()), nullptr, variable);
+        return make_unique<VariableExpression>(sign, root->copy(), nullptr, variable);
     }else{
-        return new VariableExpression(sign, nullptr, nullptr, variable);
+        return make_unique<VariableExpression>(sign, nullptr, nullptr, variable);
     }
 }
 

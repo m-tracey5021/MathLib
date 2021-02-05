@@ -3,10 +3,10 @@
 Summation::Summation(): Expression(){}
 
 Summation::Summation(bool sign, 
-                        unique_ptr<Expression> root, 
-                        unique_ptr<Expression> exponent, 
-                        vector<unique_ptr<Expression>> operands): 
-                        Expression(sign, move(root), move(exponent)), operands(operands){}
+                        unique_ptr<Expression>& root, 
+                        unique_ptr<Expression>& exponent, 
+                        vector<unique_ptr<Expression>>& operands): 
+                        Expression(sign, root, exponent), operands(operands){}
 
 Summation::~Summation(){
     root.reset();
@@ -37,7 +37,8 @@ vector<unique_ptr<Expression>> Summation::getContent(){
 
 void Summation::appendExpression(Expression& e){
     operands.push_back(move(unique_ptr<Expression> (&e)));
-    e.setParentExpression(unique_ptr<Expression> (this));
+    unique_ptr<Expression> thisPtr (this);
+    e.setParentExpression(thisPtr);
     updateExpressionString();
 }
 
@@ -97,11 +98,11 @@ unique_ptr<Expression> Summation::expandForExponent(){
 
 unique_ptr<Expression> Summation::expandAsExponent(Expression& baseExpression){
 
-    unique_ptr<Expression> expanded = make_unique<Multiplication>(new Multiplication());
+    unique_ptr<Expression> expanded = make_unique<Multiplication>();
 
     // expand the exponents of the innerTerms
 
-    unique_ptr<Summation> copied = make_unique<Summation>(static_cast<Summation*> (this->copy()));
+    unique_ptr<Expression> copied = this->copy();
     vector<unique_ptr<Expression>> copiedContent = copied->getContent();
 
     for (int i = 0; i < copiedContent.size(); i ++){
@@ -118,26 +119,26 @@ unique_ptr<Expression> Summation::expandAsExponent(Expression& baseExpression){
     // expand the exponent of the main exponent
 
     if (copied->getExponent() != nullptr){  
-        copied = make_unique<Summation>(static_cast<Summation*> (copied->expandForExponent().get()));
+        copied = move(copied->expandForExponent());
     }
     copiedContent = copied->getContent();
 
     // expand the main exponent over the baseTerm passed in
 
     if (!sign){
-        expanded = make_unique<Expression>(expandAsNegativeExponent(baseExpression));
+        expanded = move(expandAsNegativeExponent(baseExpression));
     }else{
         if (isAtomicExponent()){
-            return make_unique<Expression>(&baseExpression);
+            return unique_ptr<Expression>(&baseExpression);
         }else if (isAtomic() & !isAtomicExponent()){
-            expanded = make_unique<Expression>(expandAsExponent(baseExpression));
+            expanded = move(expandAsExponent(baseExpression));
         }else{
             
             for (int i = 0; i < copiedContent.size(); i ++){
 
-                unique_ptr<Expression> newExpression = make_unique<Expression>(*baseExpression.copy());
-                unique_ptr<Expression> newExponent = make_unique<Expression>(copiedContent[i]->copy());
-                newExpression->setExponent(move(newExponent));
+                unique_ptr<Expression> newExpression = move(baseExpression.copy());
+                unique_ptr<Expression> newExponent = move(copiedContent[i]->copy());
+                newExpression->setExponent(newExponent);
                 expanded->appendExpression(*newExpression);
             }
         }
@@ -150,10 +151,10 @@ unique_ptr<Expression> Summation::expandAsExponent(Expression& baseExpression){
     */
 
     if (expanded->getContent().size() == 0){
-        return make_unique<Expression>(this);
+        return unique_ptr<Expression>(this);
     }else{
         for (int i = 0; i < expanded->getContent().size(); i ++){
-            unique_ptr<Expression> ithExpandedTerm = make_unique<Expression>(expanded->getContent()[i]);
+            unique_ptr<Expression> ithExpandedTerm = move(expanded->getContent()[i]);
             expanded->replaceExpression(i, *ithExpandedTerm->expandForExponent()); // this is very inefficient
         }
         return expanded;
@@ -161,11 +162,11 @@ unique_ptr<Expression> Summation::expandAsExponent(Expression& baseExpression){
 }
 
 unique_ptr<Expression> Summation::expandAsConstNum(Expression& baseExpression, Division& baseDivision){
-    return make_unique<Expression>(baseExpression);
+    return unique_ptr<Expression>(&baseExpression);
 }
 
 unique_ptr<Expression> Summation::expandAsNegativeExponent(Expression& baseExpression){
-    return make_unique<Expression>(baseExpression);
+    return unique_ptr<Expression>(&baseExpression);
 }
 
 unique_ptr<Expression> Summation::factor(){
@@ -188,20 +189,20 @@ vector<unique_ptr<Expression>> Summation::getAllFactors(){
     return dummy;
 }
 
-Expression* Summation::copy(){
+unique_ptr<Expression> Summation::copy(){
     vector<unique_ptr<Expression>> copiedContent;
     for (int i = 0; i < operands.size(); i ++){
-        unique_ptr<Expression> ithCopy = make_unique<Expression>(operands[i]->copy());
+        unique_ptr<Expression> ithCopy = move(operands[i]->copy());
         copiedContent.push_back(move(ithCopy));
     }
 
     if (root != nullptr & exponent != nullptr){
-        return new Summation(sign, make_unique<Expression>(root->copy()), make_unique<Expression>(exponent->copy()), copiedContent);
+        return make_unique<Summation>(sign, root->copy(), exponent->copy(), copiedContent);
     }else if (root == nullptr & exponent != nullptr){
-        return new Summation(sign, nullptr, make_unique<Expression>(exponent->copy()), copiedContent);
+        return make_unique<Summation>(sign, nullptr, exponent->copy(), copiedContent);
     }else if (root != nullptr & exponent == nullptr){
-        return new Summation(sign, make_unique<Expression>(root->copy()), nullptr, copiedContent);
+        return make_unique<Summation>(sign, root->copy(), nullptr, copiedContent);
     }else{
-        return new Summation(sign, nullptr, nullptr, copiedContent);
+        return make_unique<Summation>(sign, nullptr, nullptr, copiedContent);
     } 
 }
