@@ -21,17 +21,24 @@ class VariableExpression;
 // #define up unique_ptr
 // #define mup make_unique
 
+typedef unique_ptr<Expression> ePtr;
+typedef unique_ptr<Summation> sPtr;
+typedef unique_ptr<Multiplication> mPtr;
+typedef unique_ptr<Division> dPtr;
+typedef unique_ptr<ConstantExpression> cePtr;
+typedef unique_ptr<VariableExpression> vePtr;
+
 class Expression {
 
     protected:
 
         bool sign;
 
-        unique_ptr<Expression> root;
+        ePtr root;
 
-        unique_ptr<Expression> exponent;
+        ePtr exponent;
 
-        unique_ptr<Expression> parentExpression;
+        ePtr parentExpression;
 
         string expressionString;
 
