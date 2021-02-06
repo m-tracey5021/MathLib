@@ -15,17 +15,21 @@ class ExpressionContainer {
 
     private:
 
-        unique_ptr<Expression> expression;
-
-        unique_ptr<Expression> getExpression();
+        Expression* expression;
 
     public:
 
-        ExpressionContainer();
+        ExpressionContainer(); // Default constructor
 
-        ExpressionContainer(const ExpressionContainer& ec);
+        ExpressionContainer(const ExpressionContainer& ec); // Copy constructor
 
-        ExpressionContainer& operator= (const ExpressionContainer& ec);
+        ExpressionContainer(ExpressionContainer&& ec); // Move constructor
+
+        friend void swap(ExpressionContainer& lhs, ExpressionContainer& rhs); // Swap function
+
+        ExpressionContainer& operator=(const ExpressionContainer& ec); // Assignment overload
+
+        ~ExpressionContainer(); // Destructor
 
         // Build expression overloads
 
@@ -49,33 +53,41 @@ class ExpressionContainer {
 
         void buildVariableExpression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, char variable);
 
-        // Assignment overloads
-
-        void assignExpression(unique_ptr<Expression>& up);
-
-        void assignExpression(ExpressionContainer& ec);
-
 };
 
 // =================== Implementation ===================
 
 ExpressionContainer::ExpressionContainer(){}
 
-ExpressionContainer::ExpressionContainer(const ExpressionContainer& ec): expression(move(expression)){}
+ExpressionContainer::ExpressionContainer(const ExpressionContainer& ec): expression(ec.expression){} //Copy
+
+ExpressionContainer::ExpressionContainer(ExpressionContainer&& ec): expression(ec.expression){ // Move
+    ec.expression = nullptr;
+}
 
 ExpressionContainer& ExpressionContainer::operator= (const ExpressionContainer& ec){
-    expression = move(ec.expression);
+    if (this != &ec){
+        Expression* tmp = ec.expression;
+        delete expression;
+        expression = tmp;
+    }else{
+        return *this;
+    }
 }
 
-unique_ptr<Expression> ExpressionContainer::getExpression(){
-    return move(expression);
+ExpressionContainer::~ExpressionContainer(){
+    delete expression;
 }
+
+// unique_ptr<Expression> ExpressionContainer::getExpression(){
+//     return move(expression);
+// }
 
 void ExpressionContainer::buildSummation(){
     ExpressionContainer emptyRoot();
     ExpressionContainer emptyExponent();
     vector<ExpressionContainer> emptyOperands;
-    expression = make_unique<Summation>(true, emptyRoot, emptyExponent, emptyOperands);
+    expression = new Summation(true, emptyRoot, emptyExponent, emptyOperands);
 }
 
 void ExpressionContainer::buildMultiplication(){

@@ -57,8 +57,8 @@ class Expression {
 
         void updateExpressionString();
 
-        void getAllSubTerms(vector<unique_ptr<Expression>>& terms,
-                                vector<unique_ptr<Expression>>& subTerms,
+        void getAllSubTerms(vector<ExpressionContainer>& terms,
+                                vector<ExpressionContainer>& subTerms,
                                 int start,
                                 int end);
 
