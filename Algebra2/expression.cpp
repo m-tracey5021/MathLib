@@ -2,22 +2,22 @@
 
 Expression::Expression(): 
                     sign(true), 
-                    root(nullptr), 
-                    exponent(nullptr), 
-                    parentExpression(nullptr){}
+                    root(ExpressionContainer()), 
+                    exponent(ExpressionContainer()), 
+                    parentExpression(ExpressionContainer()){}
 
 Expression::Expression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent): 
                     sign(sign), 
                     root(root), 
                     exponent(exponent), 
-                    parentExpression(nullptr){}
+                    parentExpression(ExpressionContainer()){}
 
 bool Expression::getSign(){
     return sign;
 }
 
 ExpressionContainer Expression::getRoot(){
-    return move(root);
+    return root;
 }
 
 ExpressionContainer Expression::getExponent(){

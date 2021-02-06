@@ -3,18 +3,12 @@
 Summation::Summation(): Expression(){}
 
 Summation::Summation(bool sign, 
-                        unique_ptr<Expression>& root, 
-                        unique_ptr<Expression>& exponent, 
-                        vector<unique_ptr<Expression>>& operands): 
+                        ExpressionContainer& root, 
+                        ExpressionContainer& exponent, 
+                        vector<ExpressionContainer>& operands): 
                         Expression(sign, root, exponent), operands(operands){}
 
 Summation::~Summation(){
-    root.reset();
-    exponent.reset();
-    parentExpression.reset();
-    delete &root;
-    delete &exponent;
-    delete &parentExpression;
     operands.clear();
     delete &operands;
 }

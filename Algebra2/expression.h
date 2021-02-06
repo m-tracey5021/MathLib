@@ -68,7 +68,7 @@ class Expression {
 
         virtual int* getValue() = 0;
 
-        virtual vector<unique_ptr<Expression>> getContent() = 0;
+        virtual vector<ExpressionContainer> getContent() = 0;
 
         // Append/Remove/Replace
 
@@ -110,49 +110,49 @@ class Expression {
 
         // Manipulate
 
-        virtual unique_ptr<Expression> sum(Summation s) = 0;
-        virtual unique_ptr<Expression> sum(Multiplication m) = 0;
-        virtual unique_ptr<Expression> sum(Division d) = 0;
-        virtual unique_ptr<Expression> sum(ConstantExpression c) = 0;
-        virtual unique_ptr<Expression> sum(VariableExpression v) = 0;
+        virtual ExpressionContainer sum(Summation s) = 0;
+        virtual ExpressionContainer sum(Multiplication m) = 0;
+        virtual ExpressionContainer sum(Division d) = 0;
+        virtual ExpressionContainer sum(ConstantExpression c) = 0;
+        virtual ExpressionContainer sum(VariableExpression v) = 0;
 
-        virtual unique_ptr<Expression> multiply(Summation s) = 0;
-        virtual unique_ptr<Expression> multiply(Multiplication m) = 0;
-        virtual unique_ptr<Expression> multiply(Division d) = 0;
-        virtual unique_ptr<Expression> multiply(ConstantExpression c) = 0;
-        virtual unique_ptr<Expression> multiply(VariableExpression v) = 0;
+        virtual ExpressionContainer multiply(Summation s) = 0;
+        virtual ExpressionContainer multiply(Multiplication m) = 0;
+        virtual ExpressionContainer multiply(Division d) = 0;
+        virtual ExpressionContainer multiply(ConstantExpression c) = 0;
+        virtual ExpressionContainer multiply(VariableExpression v) = 0;
 
-        virtual unique_ptr<Expression> divide(Summation s) = 0;
-        virtual unique_ptr<Expression> divide(Multiplication m) = 0;
-        virtual unique_ptr<Expression> divide(Division d) = 0;
-        virtual unique_ptr<Expression> divide(ConstantExpression c) = 0;
-        virtual unique_ptr<Expression> divide(VariableExpression v) = 0;
+        virtual ExpressionContainer divide(Summation s) = 0;
+        virtual ExpressionContainer divide(Multiplication m) = 0;
+        virtual ExpressionContainer divide(Division d) = 0;
+        virtual ExpressionContainer divide(ConstantExpression c) = 0;
+        virtual ExpressionContainer divide(VariableExpression v) = 0;
 
-        virtual unique_ptr<Expression> mergeMultiplications(Expression& e) = 0;
+        virtual ExpressionContainer mergeMultiplications(Expression& e) = 0;
 
-        virtual unique_ptr<Expression> expandForExponent() = 0;
+        virtual ExpressionContainer expandForExponent() = 0;
 
-        virtual unique_ptr<Expression> expandAsExponent(Expression& baseExpression) = 0;
+        virtual ExpressionContainer expandAsExponent(Expression& baseExpression) = 0;
 
-        virtual unique_ptr<Expression> expandAsConstNum(Expression& baseExpression, Division& baseDivision) = 0;
+        virtual ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) = 0;
 
-        virtual unique_ptr<Expression> expandAsNegativeExponent(Expression& baseExpression) = 0;
+        virtual ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) = 0;
 
-        virtual unique_ptr<Expression> factor() = 0;
+        virtual ExpressionContainer factor() = 0;
 
-        virtual vector<unique_ptr<Expression>> getConstantFactors() = 0;
+        virtual vector<ExpressionContainer> getConstantFactors() = 0;
 
-        virtual vector<unique_ptr<Expression>> getAllFactors() = 0;
+        virtual vector<ExpressionContainer> getAllFactors() = 0;
 
         // Misc
 
-        virtual unique_ptr<Expression> copy() = 0;
+        virtual ExpressionContainer copy() = 0;
 
-        //virtual unique_ptr<Expression> reassign() = 0;
+        //virtual ExpressionContainer reassign() = 0;
 
-        //virtual unique_ptr<Expression> shallowCopy() = 0;
+        //virtual ExpressionContainer shallowCopy() = 0;
 
-        //virtual unique_ptr<Expression> deepCopy() = 0;
+        //virtual ExpressionContainer deepCopy() = 0;
 
         virtual string toString() = 0;
 
@@ -167,19 +167,19 @@ class Summation : public Expression {
 
     private:
 
-        vector<unique_ptr<Expression>> operands;
+        vector<ExpressionContainer> operands;
 
     public:
 
         Summation();
 
-        Summation(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, vector<unique_ptr<Expression>>& operands);
+        Summation(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, vector<ExpressionContainer>& operands);
 
         ~Summation();
 
-        vector<unique_ptr<Expression>> getOperands();
+        vector<ExpressionContainer> getOperands();
 
-        void setOperands(vector<unique_ptr<Expression>> o);
+        void setOperands(vector<ExpressionContainer> o);
 
         // Overrides
 
@@ -187,7 +187,7 @@ class Summation : public Expression {
 
         int* getValue() override;
 
-        vector<unique_ptr<Expression>> getContent() override;
+        vector<ExpressionContainer> getContent() override;
 
         // Append/Remove/Replace
 
@@ -229,45 +229,45 @@ class Summation : public Expression {
 
         // Manipulate
 
-        unique_ptr<Expression> sum(Summation s) override;
-        unique_ptr<Expression> sum(Multiplication m) override;
-        unique_ptr<Expression> sum(Division d) override;
-        unique_ptr<Expression> sum(ConstantExpression c) override;
-        unique_ptr<Expression> sum(VariableExpression v) override;
+        ExpressionContainer sum(Summation s) override;
+        ExpressionContainer sum(Multiplication m) override;
+        ExpressionContainer sum(Division d) override;
+        ExpressionContainer sum(ConstantExpression c) override;
+        ExpressionContainer sum(VariableExpression v) override;
 
-        unique_ptr<Expression> multiply(Summation s) override;
-        unique_ptr<Expression> multiply(Multiplication m) override;
-        unique_ptr<Expression> multiply(Division d) override;
-        unique_ptr<Expression> multiply(ConstantExpression c) override;
-        unique_ptr<Expression> multiply(VariableExpression v) override;
+        ExpressionContainer multiply(Summation s) override;
+        ExpressionContainer multiply(Multiplication m) override;
+        ExpressionContainer multiply(Division d) override;
+        ExpressionContainer multiply(ConstantExpression c) override;
+        ExpressionContainer multiply(VariableExpression v) override;
 
-        unique_ptr<Expression> divide(Summation s) override;
-        unique_ptr<Expression> divide(Multiplication m) override;
-        unique_ptr<Expression> divide(Division d) override;
-        unique_ptr<Expression> divide(ConstantExpression c) override;
-        unique_ptr<Expression> divide(VariableExpression v) override;
+        ExpressionContainer divide(Summation s) override;
+        ExpressionContainer divide(Multiplication m) override;
+        ExpressionContainer divide(Division d) override;
+        ExpressionContainer divide(ConstantExpression c) override;
+        ExpressionContainer divide(VariableExpression v) override;
 
-        unique_ptr<Expression> mergeMultiplications(Expression& e) override;
+        ExpressionContainer mergeMultiplications(Expression& e) override;
 
-        unique_ptr<Expression> expandForExponent() override;
+        ExpressionContainer expandForExponent() override;
 
-        unique_ptr<Expression> expandAsExponent(Expression& baseExpression) override;
+        ExpressionContainer expandAsExponent(Expression& baseExpression) override;
 
-        unique_ptr<Expression> expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
+        ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
 
-        unique_ptr<Expression> expandAsNegativeExponent(Expression& baseExpression) override;
+        ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) override;
 
-        unique_ptr<Expression> factor() override;
+        ExpressionContainer factor() override;
 
-        vector<unique_ptr<Expression>> getConstantFactors() override;
+        vector<ExpressionContainer> getConstantFactors() override;
 
-        vector<unique_ptr<Expression>> getAllFactors() override;
+        vector<ExpressionContainer> getAllFactors() override;
 
         // Misc
 
-        unique_ptr<Expression> copy() override;
+        ExpressionContainer copy() override;
 
-        //unique_ptr<Expression> shallowCopy() override;
+        //ExpressionContainer shallowCopy() override;
 
         string toString() override;
 
@@ -279,19 +279,19 @@ class Multiplication : public Expression {
 
     private:
 
-        vector<unique_ptr<Expression>> operands;
+        vector<ExpressionContainer> operands;
 
     public:
 
         Multiplication();
 
-        Multiplication(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, vector<unique_ptr<Expression>>& operands);
+        Multiplication(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, vector<ExpressionContainer>& operands);
 
         ~Multiplication();
 
-        vector<unique_ptr<Expression>> getOperands();
+        vector<ExpressionContainer> getOperands();
 
-        void setOperands(vector<unique_ptr<Expression>> operands);
+        void setOperands(vector<ExpressionContainer> operands);
 
         // Overrides
 
@@ -299,7 +299,7 @@ class Multiplication : public Expression {
 
         int* getValue() override;
 
-        vector<unique_ptr<Expression>> getContent() override;
+        vector<ExpressionContainer> getContent() override;
 
         // Append/Remove/Replace
 
@@ -341,43 +341,43 @@ class Multiplication : public Expression {
 
         // Manipulate
 
-        unique_ptr<Expression> sum(Summation s) override;
-        unique_ptr<Expression> sum(Multiplication m) override;
-        unique_ptr<Expression> sum(Division d) override;
-        unique_ptr<Expression> sum(ConstantExpression c) override;
-        unique_ptr<Expression> sum(VariableExpression v) override;
+        ExpressionContainer sum(Summation s) override;
+        ExpressionContainer sum(Multiplication m) override;
+        ExpressionContainer sum(Division d) override;
+        ExpressionContainer sum(ConstantExpression c) override;
+        ExpressionContainer sum(VariableExpression v) override;
 
-        unique_ptr<Expression> multiply(Summation s) override;
-        unique_ptr<Expression> multiply(Multiplication m) override;
-        unique_ptr<Expression> multiply(Division d) override;
-        unique_ptr<Expression> multiply(ConstantExpression c) override;
-        unique_ptr<Expression> multiply(VariableExpression v) override;
+        ExpressionContainer multiply(Summation s) override;
+        ExpressionContainer multiply(Multiplication m) override;
+        ExpressionContainer multiply(Division d) override;
+        ExpressionContainer multiply(ConstantExpression c) override;
+        ExpressionContainer multiply(VariableExpression v) override;
 
-        unique_ptr<Expression> divide(Summation s) override;
-        unique_ptr<Expression> divide(Multiplication m) override;
-        unique_ptr<Expression> divide(Division d) override;
-        unique_ptr<Expression> divide(ConstantExpression c) override;
-        unique_ptr<Expression> divide(VariableExpression v) override;
+        ExpressionContainer divide(Summation s) override;
+        ExpressionContainer divide(Multiplication m) override;
+        ExpressionContainer divide(Division d) override;
+        ExpressionContainer divide(ConstantExpression c) override;
+        ExpressionContainer divide(VariableExpression v) override;
 
-        unique_ptr<Expression> mergeMultiplications(Expression& e) override;
+        ExpressionContainer mergeMultiplications(Expression& e) override;
 
-        unique_ptr<Expression> expandForExponent() override;
+        ExpressionContainer expandForExponent() override;
 
-        unique_ptr<Expression> expandAsExponent(Expression& baseExpression) override;
+        ExpressionContainer expandAsExponent(Expression& baseExpression) override;
 
-        unique_ptr<Expression> expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
+        ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
 
-        unique_ptr<Expression> expandAsNegativeExponent(Expression& baseExpression) override;
+        ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) override;
 
-        unique_ptr<Expression> factor() override;
+        ExpressionContainer factor() override;
 
-        vector<unique_ptr<Expression>> getConstantFactors() override;
+        vector<ExpressionContainer> getConstantFactors() override;
 
-        vector<unique_ptr<Expression>> getAllFactors() override;
+        vector<ExpressionContainer> getAllFactors() override;
 
         // Misc
 
-        unique_ptr<Expression> copy() override;
+        ExpressionContainer copy() override;
 
         string toString() override;
 
@@ -389,21 +389,21 @@ class Division : public Expression {
 
     private:
 
-        unique_ptr<Expression> numerator;
+        ExpressionContainer numerator;
 
-        unique_ptr<Expression> denominator;
+        ExpressionContainer denominator;
 
     public:
 
         Division();
 
-        Division(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, unique_ptr<Expression>& numerator, unique_ptr<Expression>& denominator);
+        Division(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, ExpressionContainer& numerator, ExpressionContainer& denominator);
 
         ~Division();
 
-        unique_ptr<Expression> getNumerator();
+        ExpressionContainer getNumerator();
 
-        unique_ptr<Expression> getDenominator();
+        ExpressionContainer getDenominator();
 
         void setNumerator(Expression* n);
 
@@ -415,7 +415,7 @@ class Division : public Expression {
 
         int* getValue() override;
 
-        vector<unique_ptr<Expression>> getContent() override;
+        vector<ExpressionContainer> getContent() override;
 
         // Append/Remove/Replace
 
@@ -457,43 +457,43 @@ class Division : public Expression {
 
         // Manipulate
 
-        unique_ptr<Expression> sum(Summation s) override;
-        unique_ptr<Expression> sum(Multiplication m) override;
-        unique_ptr<Expression> sum(Division d) override;
-        unique_ptr<Expression> sum(ConstantExpression c) override;
-        unique_ptr<Expression> sum(VariableExpression v) override;
+        ExpressionContainer sum(Summation s) override;
+        ExpressionContainer sum(Multiplication m) override;
+        ExpressionContainer sum(Division d) override;
+        ExpressionContainer sum(ConstantExpression c) override;
+        ExpressionContainer sum(VariableExpression v) override;
 
-        unique_ptr<Expression> multiply(Summation s) override;
-        unique_ptr<Expression> multiply(Multiplication m) override;
-        unique_ptr<Expression> multiply(Division d) override;
-        unique_ptr<Expression> multiply(ConstantExpression c) override;
-        unique_ptr<Expression> multiply(VariableExpression v) override;
+        ExpressionContainer multiply(Summation s) override;
+        ExpressionContainer multiply(Multiplication m) override;
+        ExpressionContainer multiply(Division d) override;
+        ExpressionContainer multiply(ConstantExpression c) override;
+        ExpressionContainer multiply(VariableExpression v) override;
 
-        unique_ptr<Expression> divide(Summation s) override;
-        unique_ptr<Expression> divide(Multiplication m) override;
-        unique_ptr<Expression> divide(Division d) override;
-        unique_ptr<Expression> divide(ConstantExpression c) override;
-        unique_ptr<Expression> divide(VariableExpression v) override;
+        ExpressionContainer divide(Summation s) override;
+        ExpressionContainer divide(Multiplication m) override;
+        ExpressionContainer divide(Division d) override;
+        ExpressionContainer divide(ConstantExpression c) override;
+        ExpressionContainer divide(VariableExpression v) override;
 
-        unique_ptr<Expression> mergeMultiplications(Expression& e) override;
+        ExpressionContainer mergeMultiplications(Expression& e) override;
 
-        unique_ptr<Expression> expandForExponent() override;
+        ExpressionContainer expandForExponent() override;
 
-        unique_ptr<Expression> expandAsExponent(Expression& baseExpression) override;
+        ExpressionContainer expandAsExponent(Expression& baseExpression) override;
 
-        unique_ptr<Expression> expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
+        ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
 
-        unique_ptr<Expression> expandAsNegativeExponent(Expression& baseExpression) override;
+        ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) override;
 
-        unique_ptr<Expression> factor() override;
+        ExpressionContainer factor() override;
 
-        vector<unique_ptr<Expression>> getConstantFactors() override;
+        vector<ExpressionContainer> getConstantFactors() override;
 
-        vector<unique_ptr<Expression>> getAllFactors() override;
+        vector<ExpressionContainer> getAllFactors() override;
 
         // Misc
 
-        unique_ptr<Expression> copy() override;
+        ExpressionContainer copy() override;
 
         string toString() override;
 
@@ -511,7 +511,7 @@ class ConstantExpression : public Expression {
 
         ConstantExpression();
 
-        ConstantExpression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, int constant);
+        ConstantExpression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, int constant);
 
         ~ConstantExpression();
 
@@ -525,7 +525,7 @@ class ConstantExpression : public Expression {
 
         int* getValue() override;
 
-        vector<unique_ptr<Expression>> getContent() override;
+        vector<ExpressionContainer> getContent() override;
 
         // Append/Remove/Replace
 
@@ -567,43 +567,43 @@ class ConstantExpression : public Expression {
 
         // Manipulate
 
-        unique_ptr<Expression> sum(Summation s) override;
-        unique_ptr<Expression> sum(Multiplication m) override;
-        unique_ptr<Expression> sum(Division d) override;
-        unique_ptr<Expression> sum(ConstantExpression c) override;
-        unique_ptr<Expression> sum(VariableExpression v) override;
+        ExpressionContainer sum(Summation s) override;
+        ExpressionContainer sum(Multiplication m) override;
+        ExpressionContainer sum(Division d) override;
+        ExpressionContainer sum(ConstantExpression c) override;
+        ExpressionContainer sum(VariableExpression v) override;
 
-        unique_ptr<Expression> multiply(Summation s) override;
-        unique_ptr<Expression> multiply(Multiplication m) override;
-        unique_ptr<Expression> multiply(Division d) override;
-        unique_ptr<Expression> multiply(ConstantExpression c) override;
-        unique_ptr<Expression> multiply(VariableExpression v) override;
+        ExpressionContainer multiply(Summation s) override;
+        ExpressionContainer multiply(Multiplication m) override;
+        ExpressionContainer multiply(Division d) override;
+        ExpressionContainer multiply(ConstantExpression c) override;
+        ExpressionContainer multiply(VariableExpression v) override;
 
-        unique_ptr<Expression> divide(Summation s) override;
-        unique_ptr<Expression> divide(Multiplication m) override;
-        unique_ptr<Expression> divide(Division d) override;
-        unique_ptr<Expression> divide(ConstantExpression c) override;
-        unique_ptr<Expression> divide(VariableExpression v) override;
+        ExpressionContainer divide(Summation s) override;
+        ExpressionContainer divide(Multiplication m) override;
+        ExpressionContainer divide(Division d) override;
+        ExpressionContainer divide(ConstantExpression c) override;
+        ExpressionContainer divide(VariableExpression v) override;
 
-        unique_ptr<Expression> mergeMultiplications(Expression& e) override;
+        ExpressionContainer mergeMultiplications(Expression& e) override;
 
-        unique_ptr<Expression> expandForExponent() override;
+        ExpressionContainer expandForExponent() override;
 
-        unique_ptr<Expression> expandAsExponent(Expression& baseExpression) override;
+        ExpressionContainer expandAsExponent(Expression& baseExpression) override;
 
-        unique_ptr<Expression> expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
+        ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
 
-        unique_ptr<Expression> expandAsNegativeExponent(Expression& baseExpression) override;
+        ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) override;
 
-        unique_ptr<Expression> factor() override;
+        ExpressionContainer factor() override;
 
-        vector<unique_ptr<Expression>> getConstantFactors() override;
+        vector<ExpressionContainer> getConstantFactors() override;
 
-        vector<unique_ptr<Expression>> getAllFactors() override;
+        vector<ExpressionContainer> getAllFactors() override;
 
         // Misc
 
-        unique_ptr<Expression> copy() override;
+        ExpressionContainer copy() override;
 
         string toString() override;
 
@@ -621,7 +621,7 @@ class VariableExpression : public Expression {
 
         VariableExpression();
 
-        VariableExpression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, char variable);
+        VariableExpression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, char variable);
 
         ~VariableExpression();
 
@@ -635,7 +635,7 @@ class VariableExpression : public Expression {
 
         int* getValue() override;
 
-        vector<unique_ptr<Expression>> getContent() override;
+        vector<ExpressionContainer> getContent() override;
 
         // Append/Remove/Replace
 
@@ -677,43 +677,43 @@ class VariableExpression : public Expression {
 
         // Manipulate
 
-        unique_ptr<Expression> sum(Summation s) override;
-        unique_ptr<Expression> sum(Multiplication m) override;
-        unique_ptr<Expression> sum(Division d) override;
-        unique_ptr<Expression> sum(ConstantExpression c) override;
-        unique_ptr<Expression> sum(VariableExpression v) override;
+        ExpressionContainer sum(Summation s) override;
+        ExpressionContainer sum(Multiplication m) override;
+        ExpressionContainer sum(Division d) override;
+        ExpressionContainer sum(ConstantExpression c) override;
+        ExpressionContainer sum(VariableExpression v) override;
 
-        unique_ptr<Expression> multiply(Summation s) override;
-        unique_ptr<Expression> multiply(Multiplication m) override;
-        unique_ptr<Expression> multiply(Division d) override;
-        unique_ptr<Expression> multiply(ConstantExpression c) override;
-        unique_ptr<Expression> multiply(VariableExpression v) override;
+        ExpressionContainer multiply(Summation s) override;
+        ExpressionContainer multiply(Multiplication m) override;
+        ExpressionContainer multiply(Division d) override;
+        ExpressionContainer multiply(ConstantExpression c) override;
+        ExpressionContainer multiply(VariableExpression v) override;
 
-        unique_ptr<Expression> divide(Summation s) override;
-        unique_ptr<Expression> divide(Multiplication m) override;
-        unique_ptr<Expression> divide(Division d) override;
-        unique_ptr<Expression> divide(ConstantExpression c) override;
-        unique_ptr<Expression> divide(VariableExpression v) override;
+        ExpressionContainer divide(Summation s) override;
+        ExpressionContainer divide(Multiplication m) override;
+        ExpressionContainer divide(Division d) override;
+        ExpressionContainer divide(ConstantExpression c) override;
+        ExpressionContainer divide(VariableExpression v) override;
 
-        unique_ptr<Expression> mergeMultiplications(Expression& e) override;
+        ExpressionContainer mergeMultiplications(Expression& e) override;
 
-        unique_ptr<Expression> expandForExponent() override;
+        ExpressionContainer expandForExponent() override;
 
-        unique_ptr<Expression> expandAsExponent(Expression& baseExpression) override;
+        ExpressionContainer expandAsExponent(Expression& baseExpression) override;
 
-        unique_ptr<Expression> expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
+        ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
 
-        unique_ptr<Expression> expandAsNegativeExponent(Expression& baseExpression) override;
+        ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) override;
 
-        unique_ptr<Expression> factor() override;
+        ExpressionContainer factor() override;
 
-        vector<unique_ptr<Expression>> getConstantFactors() override;
+        vector<ExpressionContainer> getConstantFactors() override;
 
-        vector<unique_ptr<Expression>> getAllFactors() override;
+        vector<ExpressionContainer> getAllFactors() override;
 
         // Misc
 
-        unique_ptr<Expression> copy() override;
+        ExpressionContainer copy() override;
 
         string toString() override;
 
