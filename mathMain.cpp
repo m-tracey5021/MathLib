@@ -9,10 +9,12 @@
 #include "UnitTests/automataUnitTest.h"
 #include "UnitTests/eqParserUnitTest.h"
 #include "UnitTests/exprManipulationUnitTest.h"
+#include "UnitTests/expressionStructureTest.h"
 #include "Sets/stdSetOperations.h"
 #include "HashTables/integerHashSet.h"
 #include "HashTables/hashSet.h"
 #include "Binary/binaryFunctions.h"
+
 
 #include "basicArithmeticFunctions.h"
 #include "Algebra/algabraicFunctions.h"
@@ -63,6 +65,10 @@ int main(){
     bool expandPassed = testExpand();
 
     bool equalityPassed = testEquality();
+
+    bool copyPassed = testDeepCopy();
+
+    bool copyConstructPassed = testCopyConstructor();
 
     int elements1[] = {3, 4, 5};
     char elements2[] = {'a', 'b', 'c'};

@@ -1,7 +1,13 @@
 #pragma once
 
-#include "expressionDeclarations.h"
-#include "expressionContainer.h"
+class ExpressionContainer;
+class Expression;
+class Summation;
+class Multiplication;
+class Division;
+class ConstantExpression;
+class VariableExpression;
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -14,6 +20,73 @@ using std::move;
 
 // #define up unique_ptr
 // #define mup make_unique
+
+class ExpressionContainer {
+
+    private:
+
+        Expression* expression;
+
+        // Private copy
+
+        
+
+    public:
+
+        ExpressionContainer(); // Default constructor
+
+        ExpressionContainer(Expression& e);
+
+        ExpressionContainer(const ExpressionContainer& ec); // Copy constructor
+
+        ExpressionContainer(ExpressionContainer&& ec); // Move constructor
+
+        ExpressionContainer& operator=(const ExpressionContainer& ec); // Assignment overload
+
+        //~ExpressionContainer(); // Destructor
+
+        // Build expression overloads
+
+        void buildSummation();
+
+        void buildSummation(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, vector<ExpressionContainer>& operands);
+
+        void buildMultiplication();
+
+        void buildMultiplication(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, vector<ExpressionContainer>& operands);
+
+        void buildDivision();
+
+        void buildDivision(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, ExpressionContainer& numerator, ExpressionContainer& denominator);
+
+        void buildConstantExpression();
+
+        void buildConstantExpression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, int constant);
+
+        void buildVariableExpression();
+
+        void buildVariableExpression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, char variable);
+
+        // Test
+
+        bool isEmpty();
+
+        // Public copy
+
+        // Expression subclasses actually do the 'newing' of pointers, but only return containers, so that no pointers are left dangling. The copy function from
+        // within ExpressionContainer takes the pointer returned from the container and assigns it to the wrapped pointer
+
+        ExpressionContainer copyContainer(bool deep = true);
+
+        Expression* deepCopy();
+
+        Expression* shallowCopy();
+
+        // Exposed methods
+
+        vector<ExpressionContainer> getContent();
+
+};
 
 class Expression {
 
@@ -35,131 +108,11 @@ class Expression {
 
         Expression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent);
 
-        virtual ~Expression();
+        Expression(bool sign, ExpressionContainer&& root, ExpressionContainer&& exponent);
 
-        bool getSign();
-
-        ExpressionContainer getRoot();
-
-        ExpressionContainer getExponent();
-
-        ExpressionContainer getParentExpression();
-
-        string getExpressionString();
-
-        void setSign(bool s);
-
-        void setRoot(ExpressionContainer& e);
-
-        void setExponent(ExpressionContainer& e);
-
-        void setParentExpression(ExpressionContainer& e);
-
-        void updateExpressionString();
-
-        void getAllSubTerms(vector<ExpressionContainer>& terms,
-                                vector<ExpressionContainer>& subTerms,
-                                int start,
-                                int end);
-
-        //  === Virtual methods ===
-
-        // Get
-
-        virtual int* getValue() = 0;
+        virtual ExpressionContainer copyExpression() = 0; // copyToContainer ?
 
         virtual vector<ExpressionContainer> getContent() = 0;
-
-        // Append/Remove/Replace
-
-        virtual void appendExpression(Expression& e) = 0;
-
-        virtual void removeExpression(int i) = 0;
-
-        virtual void replaceExpression(int i, Expression& e) = 0;
-
-        // Clean
-
-        virtual void sanitise() = 0;
-
-        // Test
-
-        virtual bool isEqual(Expression& other) = 0;
-
-        virtual bool isEqual(Summation& other) = 0;
-
-        virtual bool isEqual(Multiplication& other) = 0;
-
-        virtual bool isEqual(Division& other) = 0;
-
-        virtual bool isEqual(ConstantExpression& other) = 0;
-
-        virtual bool isEqual(VariableExpression& other) = 0;
-
-        virtual bool isOne() = 0;
-
-        virtual bool isAtomic() = 0;
-
-        virtual bool isAtomicExponent() = 0;
-
-        virtual bool isAtomicNumerator() = 0;
-
-        virtual bool isLikeExpression(Expression& e) = 0;
-
-        virtual bool isMergeable() = 0;
-
-        // Manipulate
-
-        virtual ExpressionContainer sum(Summation s) = 0;
-        virtual ExpressionContainer sum(Multiplication m) = 0;
-        virtual ExpressionContainer sum(Division d) = 0;
-        virtual ExpressionContainer sum(ConstantExpression c) = 0;
-        virtual ExpressionContainer sum(VariableExpression v) = 0;
-
-        virtual ExpressionContainer multiply(Summation s) = 0;
-        virtual ExpressionContainer multiply(Multiplication m) = 0;
-        virtual ExpressionContainer multiply(Division d) = 0;
-        virtual ExpressionContainer multiply(ConstantExpression c) = 0;
-        virtual ExpressionContainer multiply(VariableExpression v) = 0;
-
-        virtual ExpressionContainer divide(Summation s) = 0;
-        virtual ExpressionContainer divide(Multiplication m) = 0;
-        virtual ExpressionContainer divide(Division d) = 0;
-        virtual ExpressionContainer divide(ConstantExpression c) = 0;
-        virtual ExpressionContainer divide(VariableExpression v) = 0;
-
-        virtual ExpressionContainer mergeMultiplications(Expression& e) = 0;
-
-        virtual ExpressionContainer expandForExponent() = 0;
-
-        virtual ExpressionContainer expandAsExponent(Expression& baseExpression) = 0;
-
-        virtual ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) = 0;
-
-        virtual ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) = 0;
-
-        virtual ExpressionContainer factor() = 0;
-
-        virtual vector<ExpressionContainer> getConstantFactors() = 0;
-
-        virtual vector<ExpressionContainer> getAllFactors() = 0;
-
-        // Misc
-
-        virtual ExpressionContainer copy() = 0;
-
-        //virtual ExpressionContainer reassign() = 0;
-
-        //virtual ExpressionContainer shallowCopy() = 0;
-
-        //virtual ExpressionContainer deepCopy() = 0;
-
-        virtual string toString() = 0;
-
-        virtual string exponentToString() = 0;
-
-
-
 
 };
 
@@ -171,107 +124,15 @@ class Summation : public Expression {
 
     public:
 
-        Summation();
+        Summation(); // Default
 
-        Summation(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, vector<ExpressionContainer>& operands);
+        Summation(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, vector<ExpressionContainer>& operands); // Custom
 
-        ~Summation();
+        //Summation(const Summation& s); // Copy
 
-        vector<ExpressionContainer> getOperands();
-
-        void setOperands(vector<ExpressionContainer> o);
-
-        // Overrides
-
-        // Get
-
-        int* getValue() override;
+        ExpressionContainer copyExpression() override;
 
         vector<ExpressionContainer> getContent() override;
-
-        // Append/Remove/Replace
-
-        void appendExpression(Expression& e) override;
-
-        void removeExpression(int i) override;
-
-        void replaceExpression(int i, Expression& e) override;
-
-        // Clean
-
-        void sanitise() override;
-
-        // Test
-
-        bool isEqual(Expression& other) override;
-
-        bool isEqual(Summation& other) override;
-
-        bool isEqual(Multiplication& other) override;
-
-        bool isEqual(Division& other) override;
-
-        bool isEqual(ConstantExpression& other) override;
-
-        bool isEqual(VariableExpression& other) override;
-
-        bool isOne() override;
-
-        bool isAtomic() override;
-
-        bool isAtomicExponent() override;
-
-        bool isAtomicNumerator() override;
-
-        bool isLikeExpression(Expression& e) override;
-
-        bool isMergeable() override;
-
-        // Manipulate
-
-        ExpressionContainer sum(Summation s) override;
-        ExpressionContainer sum(Multiplication m) override;
-        ExpressionContainer sum(Division d) override;
-        ExpressionContainer sum(ConstantExpression c) override;
-        ExpressionContainer sum(VariableExpression v) override;
-
-        ExpressionContainer multiply(Summation s) override;
-        ExpressionContainer multiply(Multiplication m) override;
-        ExpressionContainer multiply(Division d) override;
-        ExpressionContainer multiply(ConstantExpression c) override;
-        ExpressionContainer multiply(VariableExpression v) override;
-
-        ExpressionContainer divide(Summation s) override;
-        ExpressionContainer divide(Multiplication m) override;
-        ExpressionContainer divide(Division d) override;
-        ExpressionContainer divide(ConstantExpression c) override;
-        ExpressionContainer divide(VariableExpression v) override;
-
-        ExpressionContainer mergeMultiplications(Expression& e) override;
-
-        ExpressionContainer expandForExponent() override;
-
-        ExpressionContainer expandAsExponent(Expression& baseExpression) override;
-
-        ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
-
-        ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) override;
-
-        ExpressionContainer factor() override;
-
-        vector<ExpressionContainer> getConstantFactors() override;
-
-        vector<ExpressionContainer> getAllFactors() override;
-
-        // Misc
-
-        ExpressionContainer copy() override;
-
-        //ExpressionContainer shallowCopy() override;
-
-        string toString() override;
-
-        string exponentToString() override;
 
 };
 
@@ -283,105 +144,15 @@ class Multiplication : public Expression {
 
     public:
 
-        Multiplication();
+        Multiplication(); // Default
 
-        Multiplication(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, vector<ExpressionContainer>& operands);
+        Multiplication(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, vector<ExpressionContainer>& operands); // Custom
 
-        ~Multiplication();
+        //Multiplication(const Multiplication& m); // Copy
 
-        vector<ExpressionContainer> getOperands();
-
-        void setOperands(vector<ExpressionContainer> operands);
-
-        // Overrides
-
-        // Get
-
-        int* getValue() override;
+        ExpressionContainer copyExpression() override;
 
         vector<ExpressionContainer> getContent() override;
-
-        // Append/Remove/Replace
-
-        void appendExpression(Expression& e) override;
-
-        void removeExpression(int i) override;
-
-        void replaceExpression(int i, Expression& e) override;
-
-        // Clean
-
-        void sanitise() override;
-
-        // Test
-
-        bool isEqual(Expression& other) override;
-
-        bool isEqual(Summation& other) override;
-
-        bool isEqual(Multiplication& other) override;
-
-        bool isEqual(Division& other) override;
-
-        bool isEqual(ConstantExpression& other) override;
-
-        bool isEqual(VariableExpression& other) override;
-
-        bool isOne() override;
-
-        bool isAtomic() override;
-
-        bool isAtomicExponent() override;
-
-        bool isAtomicNumerator() override;
-
-        bool isLikeExpression(Expression& e) override;
-
-        bool isMergeable() override;
-
-        // Manipulate
-
-        ExpressionContainer sum(Summation s) override;
-        ExpressionContainer sum(Multiplication m) override;
-        ExpressionContainer sum(Division d) override;
-        ExpressionContainer sum(ConstantExpression c) override;
-        ExpressionContainer sum(VariableExpression v) override;
-
-        ExpressionContainer multiply(Summation s) override;
-        ExpressionContainer multiply(Multiplication m) override;
-        ExpressionContainer multiply(Division d) override;
-        ExpressionContainer multiply(ConstantExpression c) override;
-        ExpressionContainer multiply(VariableExpression v) override;
-
-        ExpressionContainer divide(Summation s) override;
-        ExpressionContainer divide(Multiplication m) override;
-        ExpressionContainer divide(Division d) override;
-        ExpressionContainer divide(ConstantExpression c) override;
-        ExpressionContainer divide(VariableExpression v) override;
-
-        ExpressionContainer mergeMultiplications(Expression& e) override;
-
-        ExpressionContainer expandForExponent() override;
-
-        ExpressionContainer expandAsExponent(Expression& baseExpression) override;
-
-        ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
-
-        ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) override;
-
-        ExpressionContainer factor() override;
-
-        vector<ExpressionContainer> getConstantFactors() override;
-
-        vector<ExpressionContainer> getAllFactors() override;
-
-        // Misc
-
-        ExpressionContainer copy() override;
-
-        string toString() override;
-
-        string exponentToString() override;
     
 };
 
@@ -399,105 +170,11 @@ class Division : public Expression {
 
         Division(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, ExpressionContainer& numerator, ExpressionContainer& denominator);
 
-        ~Division();
+        //Division(const Division& d);
 
-        ExpressionContainer getNumerator();
-
-        ExpressionContainer getDenominator();
-
-        void setNumerator(Expression* n);
-
-        void setDenominator(Expression* d);
-
-        // Overrides
-
-        // Get
-
-        int* getValue() override;
+        ExpressionContainer copyExpression() override;
 
         vector<ExpressionContainer> getContent() override;
-
-        // Append/Remove/Replace
-
-        void appendExpression(Expression& e) override;
-
-        void removeExpression(int i) override;
-
-        void replaceExpression(int i, Expression& e) override;
-
-        // Clean
-
-        void sanitise() override;
-
-        // Test
-
-        bool isEqual(Expression& other) override;
-
-        bool isEqual(Summation& other) override;
-
-        bool isEqual(Multiplication& other) override;
-
-        bool isEqual(Division& other) override;
-
-        bool isEqual(ConstantExpression& other) override;
-
-        bool isEqual(VariableExpression& other) override;
-
-        bool isOne() override;
-
-        bool isAtomic() override;
-
-        bool isAtomicExponent() override;
-
-        bool isAtomicNumerator() override;
-
-        bool isLikeExpression(Expression& e) override;
-
-        bool isMergeable() override;
-
-        // Manipulate
-
-        ExpressionContainer sum(Summation s) override;
-        ExpressionContainer sum(Multiplication m) override;
-        ExpressionContainer sum(Division d) override;
-        ExpressionContainer sum(ConstantExpression c) override;
-        ExpressionContainer sum(VariableExpression v) override;
-
-        ExpressionContainer multiply(Summation s) override;
-        ExpressionContainer multiply(Multiplication m) override;
-        ExpressionContainer multiply(Division d) override;
-        ExpressionContainer multiply(ConstantExpression c) override;
-        ExpressionContainer multiply(VariableExpression v) override;
-
-        ExpressionContainer divide(Summation s) override;
-        ExpressionContainer divide(Multiplication m) override;
-        ExpressionContainer divide(Division d) override;
-        ExpressionContainer divide(ConstantExpression c) override;
-        ExpressionContainer divide(VariableExpression v) override;
-
-        ExpressionContainer mergeMultiplications(Expression& e) override;
-
-        ExpressionContainer expandForExponent() override;
-
-        ExpressionContainer expandAsExponent(Expression& baseExpression) override;
-
-        ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
-
-        ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) override;
-
-        ExpressionContainer factor() override;
-
-        vector<ExpressionContainer> getConstantFactors() override;
-
-        vector<ExpressionContainer> getAllFactors() override;
-
-        // Misc
-
-        ExpressionContainer copy() override;
-
-        string toString() override;
-
-        string exponentToString() override;
 
 };
 
@@ -513,101 +190,11 @@ class ConstantExpression : public Expression {
 
         ConstantExpression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, int constant);
 
-        ~ConstantExpression();
+        //ConstantExpression(const ConstantExpression& c);
 
-        int getConstant();
-
-        void setConstant(int c);
-
-        // Overrides
-
-        // Get
-
-        int* getValue() override;
+        ExpressionContainer copyExpression() override;
 
         vector<ExpressionContainer> getContent() override;
-
-        // Append/Remove/Replace
-
-        void appendExpression(Expression& e) override;
-
-        void removeExpression(int i) override;
-
-        void replaceExpression(int i, Expression& e) override;
-
-        // Clean
-
-        void sanitise() override;
-
-        // Test
-
-        bool isEqual(Expression& other) override;
-
-        bool isEqual(Summation& other) override;
-
-        bool isEqual(Multiplication& other) override;
-
-        bool isEqual(Division& other) override;
-
-        bool isEqual(ConstantExpression& other) override;
-
-        bool isEqual(VariableExpression& other) override;
-
-        bool isOne() override;
-
-        bool isAtomic() override;
-
-        bool isAtomicExponent() override;
-
-        bool isAtomicNumerator() override;
-
-        bool isLikeExpression(Expression& e) override;
-
-        bool isMergeable() override;
-
-        // Manipulate
-
-        ExpressionContainer sum(Summation s) override;
-        ExpressionContainer sum(Multiplication m) override;
-        ExpressionContainer sum(Division d) override;
-        ExpressionContainer sum(ConstantExpression c) override;
-        ExpressionContainer sum(VariableExpression v) override;
-
-        ExpressionContainer multiply(Summation s) override;
-        ExpressionContainer multiply(Multiplication m) override;
-        ExpressionContainer multiply(Division d) override;
-        ExpressionContainer multiply(ConstantExpression c) override;
-        ExpressionContainer multiply(VariableExpression v) override;
-
-        ExpressionContainer divide(Summation s) override;
-        ExpressionContainer divide(Multiplication m) override;
-        ExpressionContainer divide(Division d) override;
-        ExpressionContainer divide(ConstantExpression c) override;
-        ExpressionContainer divide(VariableExpression v) override;
-
-        ExpressionContainer mergeMultiplications(Expression& e) override;
-
-        ExpressionContainer expandForExponent() override;
-
-        ExpressionContainer expandAsExponent(Expression& baseExpression) override;
-
-        ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
-
-        ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) override;
-
-        ExpressionContainer factor() override;
-
-        vector<ExpressionContainer> getConstantFactors() override;
-
-        vector<ExpressionContainer> getAllFactors() override;
-
-        // Misc
-
-        ExpressionContainer copy() override;
-
-        string toString() override;
-
-        string exponentToString() override;
 
 };
 
@@ -623,100 +210,11 @@ class VariableExpression : public Expression {
 
         VariableExpression(bool sign, ExpressionContainer& root, ExpressionContainer& exponent, char variable);
 
-        ~VariableExpression();
+        //VariableExpression(const VariableExpression& v);
 
-        char getVariable();
-
-        void setVariable(char v);
-
-        // Overrides
-
-        // Get
-
-        int* getValue() override;
+        ExpressionContainer copyExpression() override;
 
         vector<ExpressionContainer> getContent() override;
 
-        // Append/Remove/Replace
-
-        void appendExpression(Expression& e) override;
-
-        void removeExpression(int i) override;
-
-        void replaceExpression(int i, Expression& e) override;
-
-        // Clean
-
-        void sanitise() override;
-
-        // Test
-
-        bool isEqual(Expression& other) override;
-
-        bool isEqual(Summation& other) override;
-
-        bool isEqual(Multiplication& other) override;
-
-        bool isEqual(Division& other) override;
-
-        bool isEqual(ConstantExpression& other) override;
-
-        bool isEqual(VariableExpression& other) override;
-
-        bool isOne() override;
-
-        bool isAtomic() override;
-
-        bool isAtomicExponent() override;
-
-        bool isAtomicNumerator() override;
-
-        bool isLikeExpression(Expression& e) override;
-
-        bool isMergeable() override;
-
-        // Manipulate
-
-        ExpressionContainer sum(Summation s) override;
-        ExpressionContainer sum(Multiplication m) override;
-        ExpressionContainer sum(Division d) override;
-        ExpressionContainer sum(ConstantExpression c) override;
-        ExpressionContainer sum(VariableExpression v) override;
-
-        ExpressionContainer multiply(Summation s) override;
-        ExpressionContainer multiply(Multiplication m) override;
-        ExpressionContainer multiply(Division d) override;
-        ExpressionContainer multiply(ConstantExpression c) override;
-        ExpressionContainer multiply(VariableExpression v) override;
-
-        ExpressionContainer divide(Summation s) override;
-        ExpressionContainer divide(Multiplication m) override;
-        ExpressionContainer divide(Division d) override;
-        ExpressionContainer divide(ConstantExpression c) override;
-        ExpressionContainer divide(VariableExpression v) override;
-
-        ExpressionContainer mergeMultiplications(Expression& e) override;
-
-        ExpressionContainer expandForExponent() override;
-
-        ExpressionContainer expandAsExponent(Expression& baseExpression) override;
-
-        ExpressionContainer expandAsConstNum(Expression& baseExpression, Division& baseDivision) override;
-
-        ExpressionContainer expandAsNegativeExponent(Expression& baseExpression) override;
-
-        ExpressionContainer factor() override;
-
-        vector<ExpressionContainer> getConstantFactors() override;
-
-        vector<ExpressionContainer> getAllFactors() override;
-
-        // Misc
-
-        ExpressionContainer copy() override;
-
-        string toString() override;
-
-        string exponentToString() override;
 };
 

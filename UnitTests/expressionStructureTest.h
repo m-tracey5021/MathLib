@@ -1,0 +1,3 @@
+bool testCopyConstructor();
+
+bool testDeepCopy();
