@@ -38,7 +38,7 @@ bool testDeepCopy(){
     Summation sum = Summation(true, tmpRoot, tmpExponent, operands);
     ExpressionContainer sumContainer = ExpressionContainer(sum);
 
-    ExpressionContainer sumCopy = sumContainer.copy(true);
+    ExpressionContainer sumCopy = sumContainer.copyContainer();
 
     if ((&sumCopy != &sumContainer) &
          (&sumCopy.getContent()[0] != &sumContainer.getContent()[0]) &

@@ -21,9 +21,12 @@ ExpressionContainer& ExpressionContainer::operator= (const ExpressionContainer& 
     }
 }
 
-// ExpressionContainer::~ExpressionContainer(){ // Destructor
-//     delete expression;
-// }
+ExpressionContainer::~ExpressionContainer(){ // Destructor
+    if (!expression){
+        delete expression;
+    }
+    
+}
 
 
 bool ExpressionContainer::isEmpty(){
@@ -34,7 +37,7 @@ bool ExpressionContainer::isEmpty(){
     }
 }
 
-ExpressionContainer ExpressionContainer::copyContainer(bool deep = true){
+ExpressionContainer ExpressionContainer::copyContainer(bool deep){
     Expression* toPass;
     if (deep){
         toPass = deepCopy();
@@ -49,8 +52,7 @@ Expression* ExpressionContainer::deepCopy(){
         return expression->copyExpression().expression;
     }else{
         return nullptr;
-    }
-    
+    } 
 }
 
 Expression* ExpressionContainer::shallowCopy(){
