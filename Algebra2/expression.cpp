@@ -1,4 +1,5 @@
 #include "expression.h"
+#include "expressionFactory.h"
 
 Expression::Expression(): 
                     sign(true), 
@@ -6,7 +7,7 @@ Expression::Expression():
                     exponent(nullptr), 
                     parentExpression(nullptr){}
 
-Expression::Expression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent): 
+Expression::Expression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent): 
                     sign(sign), 
                     root(move(root)), 
                     exponent(move(exponent)), 
@@ -16,15 +17,15 @@ bool Expression::getSign(){
     return sign;
 }
 
-unique_ptr<Expression> Expression::getRoot(){
-    return move(root);
+ExpressionPtr Expression::getRoot(){
+    return move(root); // must be moved because it is not a local variable
 }
 
-unique_ptr<Expression> Expression::getExponent(){
+ExpressionPtr Expression::getExponent(){
     return move(exponent);
 }
 
-unique_ptr<Expression> Expression::getParentExpression(){
+ExpressionPtr Expression::getParentExpression(){
     return move(parentExpression);
 }
 
@@ -36,15 +37,15 @@ void Expression::setSign(bool s){
     sign = s;
 }
 
-void Expression::setRoot(unique_ptr<Expression>& e){
+void Expression::setRoot(ExpressionPtr& e){
     root = move(e);
 }
 
-void Expression::setExponent(unique_ptr<Expression>& e){
+void Expression::setExponent(ExpressionPtr& e){
     exponent = move(e);
 }
 
-void Expression::setParentExpression(unique_ptr<Expression>& e){
+void Expression::setParentExpression(ExpressionPtr& e){
     parentExpression = move(e);
 }
 
@@ -55,12 +56,10 @@ void Expression::updateExpressionString(){
     expressionString = this->toString();
 }
 
-void Expression::getAllSubTerms(vector<unique_ptr<Expression>>& terms,
-                                vector<unique_ptr<Expression>>& subTerms,
+void Expression::getAllSubTerms(vector<ExpressionPtr>& terms,
+                                vector<ExpressionPtr>& subTerms,
                                 int start,
                                 int end){
-    //int toPush = 3;
-    //ints.push_back(toPush);
 
     if (end == terms.size()){
         return;
@@ -70,12 +69,14 @@ void Expression::getAllSubTerms(vector<unique_ptr<Expression>>& terms,
         if (end - start == 1){
             subTerms.push_back(move(terms[start]));
         }else{
-            vector<unique_ptr<Expression>> newSubTerms;
+            vector<ExpressionPtr> newSubTerms;
             for (int i = start; i < end; i ++){
                 newSubTerms.push_back(move(terms[i]));
             }
             if (newSubTerms.size() != 0){
-                subTerms.push_back(move(make_unique<Multiplication>(true, nullptr, nullptr, newSubTerms)));
+                ExpressionFactory factory;
+                ExpressionPtr subTerm = factory.operands(newSubTerms).buildMultiplication().get();
+                subTerms.push_back(move(subTerm));
             }
             
         }

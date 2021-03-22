@@ -1,24 +1,32 @@
 #pragma once
 
-#include "binaryNodeBase.h"
-#include "shift.h"
-#include <vector>
+#include "../Containers/nodeBase.h"
 
-using namespace std;
+using std::string;
 
 class BinaryTree {
+    
     protected:
-        BinaryNodeBase* rootNode;
+
+        unique_ptr<NodeBase> rootNode;
 
     public:
+
         BinaryTree();
-        BinaryTree(BinaryNodeBase* rootNode);
 
-        BinaryNodeBase* getRoot();
+        BinaryTree(unique_ptr<NodeBase>& rootNode);
 
-        BinaryNodeBase* removeMainFunctionLeft();
-        BinaryNodeBase* removeMainFunctionRight();
-        void insertNode(BinaryNodeBase& newNode);
-        void insertNodeAtPosition(BinaryNodeBase* newNode, BinaryNodeBase* parent, Shift shift);
+        void setRoot(unique_ptr<NodeBase>& n);
+
+        unique_ptr<NodeBase> getRoot();
+
+        // NodePtr removeMainFunctionLeft();
+
+        // NodePtr removeMainFunctionRight();
+
+        // void insertNode(BinaryNodeBase& newNode);
+
+        // void insertNodeAtPosition(NodePtr newNode, NodePtr parent, Shift shift);
+
         string toString();
 };

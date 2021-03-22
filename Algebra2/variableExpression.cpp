@@ -1,19 +1,18 @@
 #include "expression.h"
+#include "expressionFactory.h"
 
 VariableExpression::VariableExpression(): Expression(){}
 
-VariableExpression::VariableExpression(bool sign, unique_ptr<Expression>& root, unique_ptr<Expression>& exponent, char VariableExpression): Expression(sign, root, exponent), variable(variable){
-    updateExpressionString();
-}
+VariableExpression::VariableExpression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, char variable): Expression(sign, root, exponent), variable(variable){}
 
-VariableExpression::~VariableExpression(){
-    root.reset();
-    exponent.reset();
-    parentExpression.reset();
-    delete &root;
-    delete &exponent;
-    delete &parentExpression;
-}
+// VariableExpression::~VariableExpression(){
+//     root.reset();
+//     exponent.reset();
+//     parentExpression.reset();
+//     delete &root;
+//     delete &exponent;
+//     delete &parentExpression;
+// }
 
 char VariableExpression::getVariable(){
     return variable;
@@ -23,14 +22,15 @@ void VariableExpression::setVariable(char v){
     variable = v;
 }
 
-int* VariableExpression::getValue(){
-    return nullptr;
+IntPtr VariableExpression::getValue(){
+    IntPtr empty = IntPtr();
+    return empty;
 }
 
-vector<unique_ptr<Expression>> VariableExpression::getContent(){
-    unique_ptr<VariableExpression> ptr (this);
-    vector<unique_ptr<Expression>> content;
-    content.push_back(move(ptr));
+vector<ExpressionPtr> VariableExpression::getContent(){
+    ExpressionPtr thisPtr  = VEPtr(this);
+    vector<ExpressionPtr> content;
+    content.push_back(move(thisPtr));
     return content;
 }
 
@@ -78,99 +78,159 @@ bool VariableExpression::isMergeable(){
     return true;
 }
 
-unique_ptr<Expression> VariableExpression::mergeMultiplications(Expression& other){
+ExpressionPtr VariableExpression::sum(Summation& s){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::sum(Multiplication& m){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::sum(Division& d){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::sum(ConstantExpression& ce){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::sum(VariableExpression& ve){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::multiply(Summation& m){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::multiply(Multiplication& m){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::multiply(Division& d){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::multiply(ConstantExpression& ce){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::multiply(VariableExpression& ve){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::divide(Summation& m){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::divide(Multiplication& m){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::divide(Division& d){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::divide(ConstantExpression& ce){
+    return nullptr;
+}
+
+ExpressionPtr VariableExpression::divide(VariableExpression& ve){
+    return nullptr;
+}
+
+
+ExpressionPtr VariableExpression::mergeMultiplications(Expression& other){
+    ExpressionFactory factory;
     if (other.isMergeable()){
 
-        vector<unique_ptr<Expression>> tmpTerms;
-        tmpTerms.push_back(move(unique_ptr<Expression> (this)));
+        vector<ExpressionPtr> tmpTerms;
+        tmpTerms.push_back(move(ExpressionPtr (this)));
 
-        vector<unique_ptr<Expression>> otherTerms = other.getContent();
+        vector<ExpressionPtr> otherTerms = other.getContent();
         for (int j = 0; j < otherTerms.size(); j ++){
             tmpTerms.push_back(move(otherTerms[j]));
         }
-        unique_ptr<Expression> ();
-        unique_ptr<Expression> null2 ();
-        return unique_ptr<Expression> (new Multiplication(true, unique_ptr<Expression>(), unique_ptr<Expression>(), tmpTerms));
+        return factory.sign(true).root(nullptr).exponent(nullptr).operands(tmpTerms).buildMultiplication().get();
     }else{
-        return nullptr;
+        return factory.buildMultiplication().get();
     }
 }
 
-unique_ptr<Expression> VariableExpression::expandForExponent(){
+ExpressionPtr VariableExpression::expandForExponent(){
     if (!exponent){
-        return unique_ptr<Expression> (this);
+        return ExpressionPtr (this);
     }else{
-        unique_ptr<Expression> expanded = exponent->expandAsExponent(*this);
+        ExpressionPtr expanded = exponent->expandAsExponent(*this);
         expanded->sanitise();
         return expanded;
     }
 }
 
-unique_ptr<Expression> VariableExpression::expandAsExponent(Expression& baseExpression){
-    return unique_ptr<Expression> (&baseExpression);
+ExpressionPtr VariableExpression::expandAsExponent(Expression& baseExpression){
+    return ExpressionPtr (&baseExpression);
 }
 
-unique_ptr<Expression> VariableExpression::expandAsConstNum(Expression& baseExpression, Division& baseDivision){
-    return unique_ptr<Expression> (&baseExpression);
+ExpressionPtr VariableExpression::expandAsConstNum(Expression& baseExpression, Expression& baseDivision){
+    return ExpressionPtr (&baseExpression);
 }
 
-unique_ptr<Expression> VariableExpression::expandAsNegativeExponent(Expression& baseExpression){
-    return unique_ptr<Expression> (&baseExpression);
+ExpressionPtr VariableExpression::expandAsNegativeExponent(Expression& baseExpression){
+    return ExpressionPtr (&baseExpression);
 }
 
-unique_ptr<Expression> VariableExpression::factor(){
+ExpressionPtr VariableExpression::factor(){
     return nullptr;
 }
 
-std::vector<unique_ptr<Expression>> VariableExpression::getConstantFactors(){
-    std::vector<unique_ptr<Expression>> constantFactors;
+std::vector<ExpressionPtr> VariableExpression::getConstantFactors(){
+    std::vector<ExpressionPtr> constantFactors;
     return constantFactors;
 }
 
-std::vector<unique_ptr<Expression>> VariableExpression::getAllFactors(){
+std::vector<ExpressionPtr> VariableExpression::getAllFactors(){
 
-    std::vector<unique_ptr<Expression>> factors;
-    std::vector<unique_ptr<Expression>> expandedTerms = expandForExponent()->getContent();
+    std::vector<ExpressionPtr> factors;
+    std::vector<ExpressionPtr> expandedTerms = expandForExponent()->getContent();
     getAllSubTerms(expandedTerms, factors, 0, 0);
 
     return factors;
 
 }
 
-unique_ptr<Expression> VariableExpression::copy(){
-
-    if (root != nullptr & exponent != nullptr){
-        return make_unique<VariableExpression>(sign, root->copy(), exponent->copy(), variable);
+ExpressionPtr VariableExpression::copy(){
+    ExpressionFactory factory;
+    if (root != nullptr & exponent != nullptr){        
+        return factory.sign(sign).root(root->copy()).exponent(exponent->copy()).variable(variable).buildVariableExpression().get(); 
     }else if (root == nullptr & exponent != nullptr){
-        return make_unique<VariableExpression>(sign, nullptr, exponent->copy(), variable);
+        return factory.sign(sign).root(nullptr).exponent(exponent->copy()).variable(variable).buildVariableExpression().get();
     }else if (root != nullptr & exponent == nullptr){
-        return make_unique<VariableExpression>(sign, root->copy(), nullptr, variable);
+        return factory.sign(sign).root(root->copy()).exponent(nullptr).variable(variable).buildVariableExpression().get();
     }else{
-        return make_unique<VariableExpression>(sign, nullptr, nullptr, variable);
-    }
+        return factory.sign(sign).root(nullptr).exponent(nullptr).variable(variable).buildVariableExpression().get();
+    } 
 }
 
 std::string VariableExpression::toString(){
-    std::string termStr = "";
+    std::string expressionStr = "";
     if (!sign){
-        termStr += '-';
+        expressionStr += '-';
     }
 
-    termStr += variable;
+    expressionStr += variable;
 
     if (root != nullptr){
         if (!root->isOne()){
-            termStr = '[' + root->toString() + '|' + termStr + ']';
+            expressionStr = '[' + root->toString() + '|' + expressionStr + ']';
         }
     }
     if (exponent != nullptr){
         if (!exponent->isOne()){
-            termStr = termStr + exponent->exponentToString();
+            expressionStr = expressionStr + exponent->exponentToString();
             
         }
     }
 
-    return termStr;
+    return expressionStr;
 }
 
 std::string VariableExpression::exponentToString(){

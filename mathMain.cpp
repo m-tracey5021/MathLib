@@ -9,6 +9,7 @@
 #include "UnitTests/automataUnitTest.h"
 #include "UnitTests/eqParserUnitTest.h"
 #include "UnitTests/exprManipulationUnitTest.h"
+#include "UnitTests/parseUnitTest.h"
 #include "Sets/stdSetOperations.h"
 #include "HashTables/integerHashSet.h"
 #include "HashTables/hashSet.h"
@@ -40,7 +41,7 @@ int main(){
 
     //std::set<int> diff = stdSet::setDifference(ints1, ints2);
 
-    bool treeStructurePassed = testTreeStructure();
+    // bool treeStructurePassed = testTreeStructure();
 
     bool setDiffPassed = testSetDifference();
 
@@ -63,6 +64,8 @@ int main(){
     bool expandPassed = testExpand();
 
     bool equalityPassed = testEquality();
+
+    bool parsePassed = testMParse();
 
     int elements1[] = {3, 4, 5};
     char elements2[] = {'a', 'b', 'c'};

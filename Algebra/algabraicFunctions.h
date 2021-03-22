@@ -3,7 +3,7 @@
 #include "../Trees/binaryTree.h"
 #include <string>
 
-BinaryTree createTreeFromEquation(char* eq, int size);
+// BinaryTree createTreeFromEquation(char* eq, int size);
 
-void printEqTree(BinaryNodeBase root);
+// void printEqTree(BinaryNodeBase root);
 
