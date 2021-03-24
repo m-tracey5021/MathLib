@@ -1,9 +1,9 @@
-#pragma once
+// #pragma once
 
-#include "../Trees/binaryTree.h"
-#include <string>
+// #include "../Trees/binaryTree.h"
+// #include <string>
 
-// BinaryTree createTreeFromEquation(char* eq, int size);
+// // BinaryTree createTreeFromEquation(char* eq, int size);
 
-// void printEqTree(BinaryNodeBase root);
+// // void printEqTree(BinaryNodeBase root);
 

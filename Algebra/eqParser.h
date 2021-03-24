@@ -1,15 +1,15 @@
-#pragma once
+// #pragma once
 
-#include "equation.h"
-#include "equationComponents.h"
+// #include "equation.h"
+// #include "equationComponents.h"
 
-using namespace std;
+// using namespace std;
 
-enum class ParseState;
+// enum class ParseState;
 
-TermBase* parseExpression(string expStr, ParseState state, int& i);
+// TermBase* parseExpression(string expStr, ParseState state, int& i);
 
-TermBase* parseExpression(string expStr);
+// TermBase* parseExpression(string expStr);
 
-Equation* parseEquation(string eqStr);
+// Equation* parseEquation(string eqStr);
 

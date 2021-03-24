@@ -1,113 +1,113 @@
-#pragma once
+// #pragma once
 
-#include "expression.h"
-#include "Fwd/fwdExpression.h"
-#include "Fwd/fwdSummation.h"
-#include "Fwd/fwdMultiplication.h"
-#include "Fwd/fwdDivision.h"
-#include "Fwd/fwdConstantExpression.h"
-#include "Fwd/fwdVariableExpression.h"
+// #include "expression.h"
+// #include "Fwd/fwdExpression.h"
+// #include "Fwd/fwdSummation.h"
+// #include "Fwd/fwdMultiplication.h"
+// #include "Fwd/fwdDivision.h"
+// #include "Fwd/fwdConstantExpression.h"
+// #include "Fwd/fwdVariableExpression.h"
 
-class ExpressionFactory {
+// class ExpressionFactory {
 
-    private:
+//     private:
 
-        ExpressionPtr expression;
+//         ExpressionPtr expression;
 
-        bool tmpSign;
+//         bool tmpSign;
 
-        ExpressionPtr tmpRoot;
+//         ExpressionPtr tmpRoot;
 
-        ExpressionPtr tmpExponent;
+//         ExpressionPtr tmpExponent;
 
-        vector<ExpressionPtr> tmpOperands;
+//         vector<ExpressionPtr> tmpOperands;
 
-        ExpressionPtr tmpNumerator;
+//         ExpressionPtr tmpNumerator;
 
-        ExpressionPtr tmpDenominator;
+//         ExpressionPtr tmpDenominator;
 
-        int tmpConstant;
+//         int tmpConstant;
 
-        char tmpVariable;
+//         char tmpVariable;
 
-    public:
+//     public:
 
-        ExpressionFactory();
+//         ExpressionFactory();
 
-        ExpressionPtr get();
+//         ExpressionPtr get();
 
-        void reset();
+//         void reset();
 
-        // ExpressionFactory buildSummation(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, vector<ExpressionPtr>& operands);
+//         // ExpressionFactory buildSummation(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, vector<ExpressionPtr>& operands);
 
-        // ExpressionFactory buildMultiplication(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, vector<ExpressionPtr>& operands);
+//         // ExpressionFactory buildMultiplication(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, vector<ExpressionPtr>& operands);
 
-        // ExpressionFactory buildDivision(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, ExpressionPtr& numerator, ExpressionPtr& denominator);
+//         // ExpressionFactory buildDivision(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, ExpressionPtr& numerator, ExpressionPtr& denominator);
 
-        // ExpressionFactory buildConstantExpression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, int constant);
+//         // ExpressionFactory buildConstantExpression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, int constant);
 
-        // ExpressionFactory buildVariableExpression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, char variable);
+//         // ExpressionFactory buildVariableExpression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, char variable);
 
-        // ExpressionFactory moveSummation();
+//         // ExpressionFactory moveSummation();
     
-        // ExpressionFactory moveMultiplication();
+//         // ExpressionFactory moveMultiplication();
 
-        // ExpressionFactory moveDivision();
+//         // ExpressionFactory moveDivision();
 
-        // ExpressionFactory moveConstantExpression();
+//         // ExpressionFactory moveConstantExpression();
 
-        // ExpressionFactory moveVariableExpression();
+//         // ExpressionFactory moveVariableExpression();
 
-        ExpressionFactory buildSummation();
+//         ExpressionFactory buildSummation();
 
-        ExpressionFactory buildMultiplication();
+//         ExpressionFactory buildMultiplication();
 
-        ExpressionFactory buildDivision();
+//         ExpressionFactory buildDivision();
 
-        ExpressionFactory buildConstantExpression();        
+//         ExpressionFactory buildConstantExpression();        
 
-        ExpressionFactory buildVariableExpression();
+//         ExpressionFactory buildVariableExpression();
 
-        ExpressionFactory sign(bool s);
+//         ExpressionFactory sign(bool s);
 
-        ExpressionFactory root(Expression& r);
+//         ExpressionFactory root(Expression& r);
 
-        ExpressionFactory root(ExpressionPtr& r);
+//         ExpressionFactory root(ExpressionPtr& r);
 
-        ExpressionFactory root(ExpressionPtr&& r);
+//         ExpressionFactory root(ExpressionPtr&& r);
 
-        ExpressionFactory exponent(Expression& e);
+//         ExpressionFactory exponent(Expression& e);
 
-        ExpressionFactory exponent(ExpressionPtr& e);
+//         ExpressionFactory exponent(ExpressionPtr& e);
 
-        ExpressionFactory exponent(ExpressionPtr&& e);
+//         ExpressionFactory exponent(ExpressionPtr&& e);
 
-        ExpressionFactory operands(vector<ExpressionPtr>& o);
+//         ExpressionFactory operands(vector<ExpressionPtr>& o);
 
-        ExpressionFactory numerator(Expression& n);
+//         ExpressionFactory numerator(Expression& n);
 
-        ExpressionFactory numerator(ExpressionPtr& n);
+//         ExpressionFactory numerator(ExpressionPtr& n);
 
-        ExpressionFactory numerator(ExpressionPtr&& n);
+//         ExpressionFactory numerator(ExpressionPtr&& n);
 
-        ExpressionFactory denominator(Expression& d);
+//         ExpressionFactory denominator(Expression& d);
 
-        ExpressionFactory denominator(ExpressionPtr& d);
+//         ExpressionFactory denominator(ExpressionPtr& d);
 
-        ExpressionFactory denominator(ExpressionPtr&& d);
+//         ExpressionFactory denominator(ExpressionPtr&& d);
 
-        ExpressionFactory constant(int c);
+//         ExpressionFactory constant(int c);
 
-        ExpressionFactory variable(char v);
-
-
-
-
-};
-
-// =================== Implementation ===================
+//         ExpressionFactory variable(char v);
 
 
 
 
-// Expose methods from expression which need to be reached externally
+// };
+
+// // =================== Implementation ===================
+
+
+
+
+// // Expose methods from expression which need to be reached externally

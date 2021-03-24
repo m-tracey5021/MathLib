@@ -1,23 +1,23 @@
 
 
-#include "../Trees/binaryTree.h"
-#include <string>
-#include <cstring>
-#include <iostream>
+// #include "../Trees/binaryTree.h"
+// #include <string>
+// #include <cstring>
+// #include <iostream>
 
-using namespace std;
+// using namespace std;
 
 
 
-// BinaryTree createTreeFromEquation(char* eq, int size){
+// // BinaryTree createTreeFromEquation(char* eq, int size){
 
-//     BinaryNodeBase* rootNode = new BinaryNodeBase();
-//     BinaryTree tree(rootNode);
+// //     BinaryNodeBase* rootNode = new BinaryNodeBase();
+// //     BinaryTree tree(rootNode);
 
-//     //rootNode->splitEquation(eq, 0, size);
+// //     //rootNode->splitEquation(eq, 0, size);
 
-//     return tree;
-// }
+// //     return tree;
+// // }
 
 
 

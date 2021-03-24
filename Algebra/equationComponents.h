@@ -1,382 +1,382 @@
-#pragma once
+// #pragma once
 
-#include <utility>
-#include <string>
-#include <vector>
+// #include <utility>
+// #include <string>
+// #include <vector>
 
-class TermBase;
-class Constant;
-class Variable;
-class TermContainer;
+// class TermBase;
+// class Constant;
+// class Variable;
+// class TermContainer;
 
-enum class OperationType{
-    Summation,
-    Multiplication,
-    Division
-};
+// enum class OperationType{
+//     Summation,
+//     Multiplication,
+//     Division
+// };
 
-class TermBase {
-    protected:
-        bool sign;
-        TermBase* root;
-        TermBase* exponent;
-        TermBase* parentExpression;
-        std::string expressionString;
-    public:
-        TermBase();
+// class TermBase {
+//     protected:
+//         bool sign;
+//         TermBase* root;
+//         TermBase* exponent;
+//         TermBase* parentExpression;
+//         std::string expressionString;
+//     public:
+//         TermBase();
 
-        TermBase(bool sign, TermBase* root, TermBase* exponent);
+//         TermBase(bool sign, TermBase* root, TermBase* exponent);
 
-        bool getSign();
+//         bool getSign();
 
-        TermBase* getRoot();
+//         TermBase* getRoot();
 
-        TermBase* getExponent();
+//         TermBase* getExponent();
 
-        TermBase* getParentExpression();
+//         TermBase* getParentExpression();
 
-        std::string getExpressionString();
+//         std::string getExpressionString();
 
-        void setSign(bool s);
+//         void setSign(bool s);
 
-        void setRoot(TermBase* r);
+//         void setRoot(TermBase* r);
 
-        void setExponent(TermBase* e);
+//         void setExponent(TermBase* e);
 
-        void setParentExpression(TermBase* p);
+//         void setParentExpression(TermBase* p);
 
-        void updateExpressionString();
+//         void updateExpressionString();
 
-        void getAllSubTerms(std::vector<TermBase*>& terms,
-                                std::vector<TermBase*>& subTerms,
-                                int start,
-                                int end);
+//         void getAllSubTerms(std::vector<TermBase*>& terms,
+//                                 std::vector<TermBase*>& subTerms,
+//                                 int start,
+//                                 int end);
 
-        // === Virtual ===
+//         // === Virtual ===
 
-        virtual void appendTerm(TermBase* t){}
+//         virtual void appendTerm(TermBase* t){}
 
-        virtual void removeTerm(int i){}
+//         virtual void removeTerm(int i){}
 
-        virtual void replaceTerm(int i, TermBase* t){}
+//         virtual void replaceTerm(int i, TermBase* t){}
 
-        //  === Pure Virtual ===
+//         //  === Pure Virtual ===
 
-        // Clean
+//         // Clean
 
-        virtual void sanitiseForFactoring() = 0;
+//         virtual void sanitiseForFactoring() = 0;
 
-        // Test
+//         // Test
 
-        virtual bool isEqual(TermBase* other) = 0;
+//         virtual bool isEqual(TermBase* other) = 0;
 
-        virtual bool isEqual(Constant* other) = 0;
+//         virtual bool isEqual(Constant* other) = 0;
 
-        virtual bool isEqual(Variable* other) = 0;
+//         virtual bool isEqual(Variable* other) = 0;
 
-        virtual bool isEqual(TermContainer* other) = 0;
+//         virtual bool isEqual(TermContainer* other) = 0;
 
-        virtual bool isOne() = 0;
+//         virtual bool isOne() = 0;
 
-        virtual bool isAtomic() = 0;
+//         virtual bool isAtomic() = 0;
 
-        virtual bool isAtomicExponent() = 0;
+//         virtual bool isAtomicExponent() = 0;
 
-        virtual bool isAtomicNumerator() = 0;
+//         virtual bool isAtomicNumerator() = 0;
 
-        virtual bool isLikeTerm(TermBase* other) = 0;
+//         virtual bool isLikeTerm(TermBase* other) = 0;
 
-        virtual bool isMergeable() = 0;
+//         virtual bool isMergeable() = 0;
 
-        // Get 
+//         // Get 
 
-        virtual int* getValue() = 0;
+//         virtual int* getValue() = 0;
 
-        virtual TermBase* getAtom() = 0;
+//         virtual TermBase* getAtom() = 0;
 
-        virtual std::vector<TermBase*> getContent() = 0;
+//         virtual std::vector<TermBase*> getContent() = 0;
 
-        // Manipulate
+//         // Manipulate
 
-        virtual TermBase* sum(TermBase* other) = 0;
+//         virtual TermBase* sum(TermBase* other) = 0;
 
-        virtual TermBase* multiply(TermBase* other) = 0;
+//         virtual TermBase* multiply(TermBase* other) = 0;
 
-        virtual TermBase* divide(TermBase* other) = 0;
+//         virtual TermBase* divide(TermBase* other) = 0;
 
-        virtual TermBase* mergeMultiplications(TermBase* other) = 0;
+//         virtual TermBase* mergeMultiplications(TermBase* other) = 0;
 
-        //virtual TermBase* expandConstant() = 0;
+//         //virtual TermBase* expandConstant() = 0;
 
-        virtual TermBase* expandForExponent() = 0;
+//         virtual TermBase* expandForExponent() = 0;
 
-        virtual TermBase* expandAsExponent(TermBase* baseTerm) = 0;
+//         virtual TermBase* expandAsExponent(TermBase* baseTerm) = 0;
 
-        virtual TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) = 0;
+//         virtual TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) = 0;
 
-        virtual TermBase* expandAsNegativeExponent(TermBase* baseTerm) = 0;
+//         virtual TermBase* expandAsNegativeExponent(TermBase* baseTerm) = 0;
 
-        virtual std::vector<TermBase*> getConstantFactors() = 0;
+//         virtual std::vector<TermBase*> getConstantFactors() = 0;
 
-        virtual std::vector<TermBase*> getAllFactors() = 0;
+//         virtual std::vector<TermBase*> getAllFactors() = 0;
 
-        virtual TermBase* factor() = 0;
+//         virtual TermBase* factor() = 0;
 
-        // Misc functions
+//         // Misc functions
 
-        virtual TermBase* copy() = 0;
+//         virtual TermBase* copy() = 0;
 
-        virtual std::string toString() = 0;
+//         virtual std::string toString() = 0;
 
-        virtual std::string exponentToString() = 0;
+//         virtual std::string exponentToString() = 0;
 
     
-};
+// };
 
-class Constant : public TermBase {
-    private:
-        int constant;
-    public:
-        Constant();
+// class Constant : public TermBase {
+//     private:
+//         int constant;
+//     public:
+//         Constant();
 
-        Constant(bool sign, TermBase* root, TermBase* exponent, int constant);
+//         Constant(bool sign, TermBase* root, TermBase* exponent, int constant);
 
-        ~Constant();
+//         ~Constant();
 
-        int getConstant(){return constant;}
+//         int getConstant(){return constant;}
 
-        void setConstant(int c){constant = c; updateExpressionString();}
+//         void setConstant(int c){constant = c; updateExpressionString();}
 
-        // ===
+//         // ===
 
-        void sanitiseForFactoring() override;
+//         void sanitiseForFactoring() override;
 
-        bool isEqual(TermBase* other) override;
+//         bool isEqual(TermBase* other) override;
 
-        bool isEqual(Constant* other) override;
+//         bool isEqual(Constant* other) override;
 
-        bool isEqual(Variable* other) override;
+//         bool isEqual(Variable* other) override;
 
-        bool isEqual(TermContainer* other) override;
+//         bool isEqual(TermContainer* other) override;
 
-        bool isOne() override;
+//         bool isOne() override;
 
-        bool isAtomic() override;
+//         bool isAtomic() override;
 
-        bool isAtomicExponent() override;
+//         bool isAtomicExponent() override;
 
-        bool isAtomicNumerator() override;
+//         bool isAtomicNumerator() override;
 
-        bool isLikeTerm(TermBase* other) override;
+//         bool isLikeTerm(TermBase* other) override;
 
-        bool isMergeable() override;
+//         bool isMergeable() override;
 
-        int* getValue() override;
+//         int* getValue() override;
 
-        TermBase* getAtom() override;
+//         TermBase* getAtom() override;
 
-        std::vector<TermBase*> getContent() override;
+//         std::vector<TermBase*> getContent() override;
 
-        TermBase* sum(TermBase* other) override;
+//         TermBase* sum(TermBase* other) override;
 
-        TermBase* multiply(TermBase* other) override;
+//         TermBase* multiply(TermBase* other) override;
 
-        TermBase* divide(TermBase* other) override;
+//         TermBase* divide(TermBase* other) override;
 
-        TermBase* mergeMultiplications(TermBase* other) override;
+//         TermBase* mergeMultiplications(TermBase* other) override;
         
-        //TermBase* expandConstant() override;
+//         //TermBase* expandConstant() override;
 
-        TermBase* expandForExponent() override;
+//         TermBase* expandForExponent() override;
 
-        TermBase* expandAsExponent(TermBase* baseTerm) override;
+//         TermBase* expandAsExponent(TermBase* baseTerm) override;
 
-        TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
+//         TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
 
-        TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;
+//         TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;
 
-        std::vector<TermBase*> getConstantFactors() override;
+//         std::vector<TermBase*> getConstantFactors() override;
 
-        std::vector<TermBase*> getAllFactors() override;
+//         std::vector<TermBase*> getAllFactors() override;
 
-        TermBase* factor() override;
+//         TermBase* factor() override;
 
-        TermBase* copy() override;
+//         TermBase* copy() override;
 
-        std::string toString() override;
+//         std::string toString() override;
 
-        std::string exponentToString() override;
-};
+//         std::string exponentToString() override;
+// };
 
-class Variable : public TermBase {
-    private:
-        char variable;
-    public:
-        Variable();
+// class Variable : public TermBase {
+//     private:
+//         char variable;
+//     public:
+//         Variable();
         
-        Variable(bool sign, TermBase* root, TermBase* exponent, char variable);
+//         Variable(bool sign, TermBase* root, TermBase* exponent, char variable);
 
-        ~Variable();
+//         ~Variable();
 
-        char getVariable(){return variable;}
+//         char getVariable(){return variable;}
 
-        void setVariable(char v){variable = v; updateExpressionString();}
+//         void setVariable(char v){variable = v; updateExpressionString();}
 
-        // ===
+//         // ===
 
-        void sanitiseForFactoring() override;
+//         void sanitiseForFactoring() override;
 
-        bool isEqual(TermBase* other) override;
+//         bool isEqual(TermBase* other) override;
 
-        bool isEqual(Constant* other) override;
+//         bool isEqual(Constant* other) override;
 
-        bool isEqual(Variable* other) override;
+//         bool isEqual(Variable* other) override;
 
-        bool isEqual(TermContainer* other) override;
+//         bool isEqual(TermContainer* other) override;
 
-        bool isOne() override;
+//         bool isOne() override;
 
-        bool isAtomic() override;
+//         bool isAtomic() override;
 
-        bool isAtomicExponent() override;
+//         bool isAtomicExponent() override;
 
-        bool isAtomicNumerator() override;
+//         bool isAtomicNumerator() override;
 
-        bool isLikeTerm(TermBase* other) override;
+//         bool isLikeTerm(TermBase* other) override;
 
-        bool isMergeable() override;
+//         bool isMergeable() override;
 
-        int* getValue() override;
+//         int* getValue() override;
 
-        TermBase* getAtom() override;
+//         TermBase* getAtom() override;
 
-        std::vector<TermBase*> getContent() override;
+//         std::vector<TermBase*> getContent() override;
 
-        TermBase* sum(TermBase* other) override;
+//         TermBase* sum(TermBase* other) override;
 
-        TermBase* multiply(TermBase* other) override;
+//         TermBase* multiply(TermBase* other) override;
 
-        TermBase* divide(TermBase* other) override;
+//         TermBase* divide(TermBase* other) override;
 
-        TermBase* mergeMultiplications(TermBase* other) override;
+//         TermBase* mergeMultiplications(TermBase* other) override;
         
-        //TermBase* expandConstant() override;
+//         //TermBase* expandConstant() override;
 
-        TermBase* expandForExponent() override;
+//         TermBase* expandForExponent() override;
 
-        TermBase* expandAsExponent(TermBase* baseTerm) override;
+//         TermBase* expandAsExponent(TermBase* baseTerm) override;
 
-        TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
+//         TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
 
-        TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;
+//         TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;
 
-        std::vector<TermBase*> getConstantFactors() override;
+//         std::vector<TermBase*> getConstantFactors() override;
 
-        std::vector<TermBase*> getAllFactors() override;
+//         std::vector<TermBase*> getAllFactors() override;
 
-        TermBase* factor() override;
+//         TermBase* factor() override;
 
-        TermBase* copy() override;
+//         TermBase* copy() override;
 
-        std::string toString() override;
+//         std::string toString() override;
 
-        std::string exponentToString() override;
+//         std::string exponentToString() override;
 
-};
+// };
 
-class TermContainer : public TermBase {
-    private:
-        //Constant* coefficient;
-        OperationType operationType;
-        std::vector<TermBase*> terms;
+// class TermContainer : public TermBase {
+//     private:
+//         //Constant* coefficient;
+//         OperationType operationType;
+//         std::vector<TermBase*> terms;
         
         
-    public:
-        TermContainer();
+//     public:
+//         TermContainer();
 
-        TermContainer(bool sign, TermBase* root, TermBase* exponent);
+//         TermContainer(bool sign, TermBase* root, TermBase* exponent);
 
-        TermContainer(bool sign, TermBase* root, TermBase* exponent, OperationType operationType, std::vector<TermBase*> terms);
+//         TermContainer(bool sign, TermBase* root, TermBase* exponent, OperationType operationType, std::vector<TermBase*> terms);
 
-        ~TermContainer();
+//         ~TermContainer();
 
-        //Constant* getCoefficient();
+//         //Constant* getCoefficient();
 
-        OperationType getOperationType();
+//         OperationType getOperationType();
 
-        std::vector<TermBase*> getTerms();  
+//         std::vector<TermBase*> getTerms();  
 
-        std::vector<TermBase*> duplicateTerms(int start, int end);
+//         std::vector<TermBase*> duplicateTerms(int start, int end);
 
-        //void setCoefficient(Constant* c);  
+//         //void setCoefficient(Constant* c);  
 
-        void setOperationType(OperationType o);   
+//         void setOperationType(OperationType o);   
 
-        void setTerms(std::vector<TermBase*> t);
+//         void setTerms(std::vector<TermBase*> t);
 
-        // ===
+//         // ===
 
-        void appendTerm(TermBase* t) override;
+//         void appendTerm(TermBase* t) override;
 
-        void removeTerm(int i) override;
+//         void removeTerm(int i) override;
 
-        void replaceTerm(int i, TermBase* t) override;
+//         void replaceTerm(int i, TermBase* t) override;
 
-        void sanitiseForFactoring() override;
+//         void sanitiseForFactoring() override;
 
-        bool isEqual(TermBase* other) override;
+//         bool isEqual(TermBase* other) override;
 
-        bool isEqual(Constant* other) override;
+//         bool isEqual(Constant* other) override;
 
-        bool isEqual(Variable* other) override;
+//         bool isEqual(Variable* other) override;
 
-        bool isEqual(TermContainer* other) override;
+//         bool isEqual(TermContainer* other) override;
         
-        bool isOne() override;
+//         bool isOne() override;
 
-        bool isAtomic() override;
+//         bool isAtomic() override;
 
-        bool isAtomicExponent() override;
+//         bool isAtomicExponent() override;
 
-        bool isAtomicNumerator() override;
+//         bool isAtomicNumerator() override;
 
-        bool isLikeTerm(TermBase* other) override;
+//         bool isLikeTerm(TermBase* other) override;
 
-        bool isMergeable() override;
+//         bool isMergeable() override;
 
-        int* getValue() override;
+//         int* getValue() override;
 
-        TermBase* getAtom() override;
+//         TermBase* getAtom() override;
 
-        std::vector<TermBase*> getContent() override;
+//         std::vector<TermBase*> getContent() override;
 
-        TermBase* sum(TermBase* other) override;
+//         TermBase* sum(TermBase* other) override;
 
-        TermBase* multiply(TermBase* other) override;
+//         TermBase* multiply(TermBase* other) override;
 
-        TermBase* divide(TermBase* other) override;
+//         TermBase* divide(TermBase* other) override;
 
-        TermBase* mergeMultiplications(TermBase* other) override;
+//         TermBase* mergeMultiplications(TermBase* other) override;
 
-        //TermBase* expandConstant() override;
+//         //TermBase* expandConstant() override;
 
-        TermBase* expandForExponent() override;
+//         TermBase* expandForExponent() override;
 
-        TermBase* expandAsExponent(TermBase* baseTerm) override;
+//         TermBase* expandAsExponent(TermBase* baseTerm) override;
 
-        TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
+//         TermBase* expandAsConstNum(TermBase* baseTerm, TermContainer* baseRational) override;
 
-        TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;        
+//         TermBase* expandAsNegativeExponent(TermBase* baseTerm) override;        
 
-        std::vector<TermBase*> getConstantFactors() override;
+//         std::vector<TermBase*> getConstantFactors() override;
 
-        std::vector<TermBase*> getAllFactors() override;
+//         std::vector<TermBase*> getAllFactors() override;
 
-        TermBase* factor() override;
+//         TermBase* factor() override;
 
-        TermBase* copy() override;
+//         TermBase* copy() override;
 
-        std::string toString() override;
+//         std::string toString() override;
 
-        std::string exponentToString() override;
-};
+//         std::string exponentToString() override;
+// };

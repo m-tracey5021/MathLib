@@ -1,729 +1,729 @@
-#pragma once
+// #pragma once
 
-#include <string>
-#include <vector>
-#include <memory>
-#include "Fwd/fwdExpressionFactory.h"
-#include "Fwd/fwdExpression.h"
-#include "Fwd/fwdSummation.h"
-#include "Fwd/fwdMultiplication.h"
-#include "Fwd/fwdDivision.h"
-#include "Fwd/fwdConstantExpression.h"
-#include "Fwd/fwdVariableExpression.h"
+// #include <string>
+// #include <vector>
+// #include <memory>
+// #include "Fwd/fwdExpressionFactory.h"
+// #include "Fwd/fwdExpression.h"
+// #include "Fwd/fwdSummation.h"
+// #include "Fwd/fwdMultiplication.h"
+// #include "Fwd/fwdDivision.h"
+// #include "Fwd/fwdConstantExpression.h"
+// #include "Fwd/fwdVariableExpression.h"
 
-using std::string;
-using std::vector;
-using std::unique_ptr;
-using std::make_unique;
-using std::move;
+// using std::string;
+// using std::vector;
+// using std::unique_ptr;
+// using std::make_unique;
+// using std::move;
 
-typedef unique_ptr<Expression> ExpressionPtr;
-typedef unique_ptr<ConstantExpression> CEPtr;
-typedef unique_ptr<VariableExpression> VEPtr;
-typedef unique_ptr<int> IntPtr;
+// typedef unique_ptr<Expression> ExpressionPtr;
+// typedef unique_ptr<ConstantExpression> CEPtr;
+// typedef unique_ptr<VariableExpression> VEPtr;
+// typedef unique_ptr<int> IntPtr;
 
-class Expression {
+// class Expression {
 
-    protected:
+//     protected:
 
-        bool sign;
+//         bool sign;
 
-        ExpressionPtr root;
+//         ExpressionPtr root;
 
-        ExpressionPtr exponent;
+//         ExpressionPtr exponent;
 
-        ExpressionPtr parentExpression;
+//         ExpressionPtr parentExpression;
 
-        string expressionString;
+//         string expressionString;
 
-    public:
+//     public:
 
-        Expression();
+//         Expression();
 
-        Expression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent);
+//         Expression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent);
 
-        //virtual ~Expression();
+//         //virtual ~Expression();
 
-        bool getSign();
+//         bool getSign();
 
-        ExpressionPtr getRoot();
+//         ExpressionPtr getRoot();
 
-        ExpressionPtr getExponent();
+//         ExpressionPtr getExponent();
 
-        ExpressionPtr getParentExpression();
+//         ExpressionPtr getParentExpression();
 
-        string getExpressionString();
+//         string getExpressionString();
 
-        void setSign(bool s);
+//         void setSign(bool s);
 
-        void setRoot(ExpressionPtr& e);
+//         void setRoot(ExpressionPtr& e);
 
-        void setExponent(ExpressionPtr& e);
+//         void setExponent(ExpressionPtr& e);
 
-        void setParentExpression(ExpressionPtr& e);
+//         void setParentExpression(ExpressionPtr& e);
 
-        void updateExpressionString();
+//         void updateExpressionString();
 
-        void getAllSubTerms(vector<ExpressionPtr>& terms,
-                                vector<ExpressionPtr>& subTerms,
-                                int start,
-                                int end);
+//         void getAllSubTerms(vector<ExpressionPtr>& terms,
+//                                 vector<ExpressionPtr>& subTerms,
+//                                 int start,
+//                                 int end);
 
-        //  === Virtual methods ===
+//         //  === Virtual methods ===
 
-        // Get
+//         // Get
 
-        virtual IntPtr getValue() = 0;
+//         virtual IntPtr getValue() = 0;
 
-        virtual vector<ExpressionPtr> getContent() = 0;
+//         virtual vector<ExpressionPtr> getContent() = 0;
 
-        // Append/Remove/Replace
+//         // Append/Remove/Replace
 
-        virtual void appendExpression(Expression& e) = 0;
+//         virtual void appendExpression(Expression& e) = 0;
 
-        virtual void removeExpression(int i) = 0;
+//         virtual void removeExpression(int i) = 0;
 
-        virtual void replaceExpression(int i, Expression& e) = 0;
+//         virtual void replaceExpression(int i, Expression& e) = 0;
 
-        // Clean
+//         // Clean
 
-        virtual void sanitise() = 0;
+//         virtual void sanitise() = 0;
 
-        // Test
+//         // Test
 
-        virtual bool isEqual(Expression& other) = 0;
+//         virtual bool isEqual(Expression& other) = 0;
 
-        virtual bool isEqual(Summation& other) = 0;
+//         virtual bool isEqual(Summation& other) = 0;
 
-        virtual bool isEqual(Multiplication& other) = 0;
+//         virtual bool isEqual(Multiplication& other) = 0;
 
-        virtual bool isEqual(Division& other) = 0;
+//         virtual bool isEqual(Division& other) = 0;
 
-        virtual bool isEqual(ConstantExpression& other) = 0;
+//         virtual bool isEqual(ConstantExpression& other) = 0;
 
-        virtual bool isEqual(VariableExpression& other) = 0;
+//         virtual bool isEqual(VariableExpression& other) = 0;
 
-        virtual bool isOne() = 0;
+//         virtual bool isOne() = 0;
 
-        virtual bool isAtomic() = 0;
+//         virtual bool isAtomic() = 0;
 
-        virtual bool isAtomicExponent() = 0;
+//         virtual bool isAtomicExponent() = 0;
 
-        virtual bool isAtomicNumerator() = 0;
+//         virtual bool isAtomicNumerator() = 0;
 
-        virtual bool isLikeExpression(Expression& e) = 0;
+//         virtual bool isLikeExpression(Expression& e) = 0;
 
-        virtual bool isMergeable() = 0;
+//         virtual bool isMergeable() = 0;
 
-        // Manipulate
+//         // Manipulate
 
-        virtual ExpressionPtr sum(Summation& s) = 0;
-        virtual ExpressionPtr sum(Multiplication& m) = 0;
-        virtual ExpressionPtr sum(Division& d) = 0;
-        virtual ExpressionPtr sum(ConstantExpression& c) = 0;
-        virtual ExpressionPtr sum(VariableExpression& v) = 0;
+//         virtual ExpressionPtr sum(Summation& s) = 0;
+//         virtual ExpressionPtr sum(Multiplication& m) = 0;
+//         virtual ExpressionPtr sum(Division& d) = 0;
+//         virtual ExpressionPtr sum(ConstantExpression& c) = 0;
+//         virtual ExpressionPtr sum(VariableExpression& v) = 0;
 
-        virtual ExpressionPtr multiply(Summation& s) = 0;
-        virtual ExpressionPtr multiply(Multiplication& m) = 0;
-        virtual ExpressionPtr multiply(Division& d) = 0;
-        virtual ExpressionPtr multiply(ConstantExpression& c) = 0;
-        virtual ExpressionPtr multiply(VariableExpression& v) = 0;
+//         virtual ExpressionPtr multiply(Summation& s) = 0;
+//         virtual ExpressionPtr multiply(Multiplication& m) = 0;
+//         virtual ExpressionPtr multiply(Division& d) = 0;
+//         virtual ExpressionPtr multiply(ConstantExpression& c) = 0;
+//         virtual ExpressionPtr multiply(VariableExpression& v) = 0;
 
-        virtual ExpressionPtr divide(Summation& s) = 0;
-        virtual ExpressionPtr divide(Multiplication& m) = 0;
-        virtual ExpressionPtr divide(Division& d) = 0;
-        virtual ExpressionPtr divide(ConstantExpression& c) = 0;
-        virtual ExpressionPtr divide(VariableExpression& v) = 0;
+//         virtual ExpressionPtr divide(Summation& s) = 0;
+//         virtual ExpressionPtr divide(Multiplication& m) = 0;
+//         virtual ExpressionPtr divide(Division& d) = 0;
+//         virtual ExpressionPtr divide(ConstantExpression& c) = 0;
+//         virtual ExpressionPtr divide(VariableExpression& v) = 0;
 
-        virtual ExpressionPtr mergeMultiplications(Expression& e) = 0;
+//         virtual ExpressionPtr mergeMultiplications(Expression& e) = 0;
 
-        virtual ExpressionPtr expandForExponent() = 0;
+//         virtual ExpressionPtr expandForExponent() = 0;
 
-        virtual ExpressionPtr expandAsExponent(Expression& baseExpression) = 0;
+//         virtual ExpressionPtr expandAsExponent(Expression& baseExpression) = 0;
 
-        virtual ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) = 0;
+//         virtual ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) = 0;
 
-        virtual ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) = 0;
+//         virtual ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) = 0;
 
-        virtual ExpressionPtr factor() = 0;
+//         virtual ExpressionPtr factor() = 0;
 
-        virtual vector<ExpressionPtr> getConstantFactors() = 0;
+//         virtual vector<ExpressionPtr> getConstantFactors() = 0;
 
-        virtual vector<ExpressionPtr> getAllFactors() = 0;
+//         virtual vector<ExpressionPtr> getAllFactors() = 0;
 
-        // Misc
+//         // Misc
 
-        virtual ExpressionPtr copy() = 0;
+//         virtual ExpressionPtr copy() = 0;
 
-        //virtual ExpressionPtr reassign() = 0;
+//         //virtual ExpressionPtr reassign() = 0;
 
-        //virtual ExpressionPtr shallowCopy() = 0;
+//         //virtual ExpressionPtr shallowCopy() = 0;
 
-        //virtual ExpressionPtr deepCopy() = 0;
+//         //virtual ExpressionPtr deepCopy() = 0;
 
-        virtual string toString() = 0;
+//         virtual string toString() = 0;
 
-        virtual string exponentToString() = 0;
+//         virtual string exponentToString() = 0;
 
 
 
 
-};
+// };
 
-class Summation : public Expression {
+// class Summation : public Expression {
 
-    private:
+//     private:
 
-        vector<ExpressionPtr> operands;
+//         vector<ExpressionPtr> operands;
 
-    public:
+//     public:
 
-        Summation();
+//         Summation();
 
-        Summation(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, vector<ExpressionPtr>& operands);
+//         Summation(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, vector<ExpressionPtr>& operands);
 
-        // ~Summation();
+//         // ~Summation();
 
-        vector<ExpressionPtr> getOperands();
+//         vector<ExpressionPtr> getOperands();
 
-        void setOperands(vector<ExpressionPtr>& o);
+//         void setOperands(vector<ExpressionPtr>& o);
 
-        // Overrides
+//         // Overrides
 
-        // Get
+//         // Get
 
-        IntPtr getValue() override;
+//         IntPtr getValue() override;
 
-        vector<ExpressionPtr> getContent() override;
+//         vector<ExpressionPtr> getContent() override;
 
-        // Append/Remove/Replace
+//         // Append/Remove/Replace
 
-        void appendExpression(Expression& e) override;
+//         void appendExpression(Expression& e) override;
 
-        void removeExpression(int i) override;
+//         void removeExpression(int i) override;
 
-        void replaceExpression(int i, Expression& e) override;
+//         void replaceExpression(int i, Expression& e) override;
 
-        // Clean
+//         // Clean
 
-        void sanitise() override;
+//         void sanitise() override;
 
-        // Test
+//         // Test
 
-        bool isEqual(Expression& other) override;
+//         bool isEqual(Expression& other) override;
 
-        bool isEqual(Summation& other) override;
+//         bool isEqual(Summation& other) override;
 
-        bool isEqual(Multiplication& other) override;
+//         bool isEqual(Multiplication& other) override;
 
-        bool isEqual(Division& other) override;
+//         bool isEqual(Division& other) override;
 
-        bool isEqual(ConstantExpression& other) override;
+//         bool isEqual(ConstantExpression& other) override;
 
-        bool isEqual(VariableExpression& other) override;
+//         bool isEqual(VariableExpression& other) override;
 
-        bool isOne() override;
+//         bool isOne() override;
 
-        bool isAtomic() override;
+//         bool isAtomic() override;
 
-        bool isAtomicExponent() override;
+//         bool isAtomicExponent() override;
 
-        bool isAtomicNumerator() override;
+//         bool isAtomicNumerator() override;
 
-        bool isLikeExpression(Expression& e) override;
+//         bool isLikeExpression(Expression& e) override;
 
-        bool isMergeable() override;
+//         bool isMergeable() override;
 
-        // Manipulate
+//         // Manipulate
 
-        ExpressionPtr sum(Summation& s) override;
-        ExpressionPtr sum(Multiplication& m) override;
-        ExpressionPtr sum(Division& d) override;
-        ExpressionPtr sum(ConstantExpression& c) override;
-        ExpressionPtr sum(VariableExpression& v) override;
+//         ExpressionPtr sum(Summation& s) override;
+//         ExpressionPtr sum(Multiplication& m) override;
+//         ExpressionPtr sum(Division& d) override;
+//         ExpressionPtr sum(ConstantExpression& c) override;
+//         ExpressionPtr sum(VariableExpression& v) override;
 
-        ExpressionPtr multiply(Summation& s) override;
-        ExpressionPtr multiply(Multiplication& m) override;
-        ExpressionPtr multiply(Division& d) override;
-        ExpressionPtr multiply(ConstantExpression& c) override;
-        ExpressionPtr multiply(VariableExpression& v) override;
+//         ExpressionPtr multiply(Summation& s) override;
+//         ExpressionPtr multiply(Multiplication& m) override;
+//         ExpressionPtr multiply(Division& d) override;
+//         ExpressionPtr multiply(ConstantExpression& c) override;
+//         ExpressionPtr multiply(VariableExpression& v) override;
 
-        ExpressionPtr divide(Summation& s) override;
-        ExpressionPtr divide(Multiplication& m) override;
-        ExpressionPtr divide(Division& d) override;
-        ExpressionPtr divide(ConstantExpression& c) override;
-        ExpressionPtr divide(VariableExpression& v) override;
+//         ExpressionPtr divide(Summation& s) override;
+//         ExpressionPtr divide(Multiplication& m) override;
+//         ExpressionPtr divide(Division& d) override;
+//         ExpressionPtr divide(ConstantExpression& c) override;
+//         ExpressionPtr divide(VariableExpression& v) override;
 
-        ExpressionPtr mergeMultiplications(Expression& e) override;
+//         ExpressionPtr mergeMultiplications(Expression& e) override;
 
-        ExpressionPtr expandForExponent() override;
+//         ExpressionPtr expandForExponent() override;
 
-        ExpressionPtr expandAsExponent(Expression& baseExpression) override;
+//         ExpressionPtr expandAsExponent(Expression& baseExpression) override;
 
-        ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) override;
+//         ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) override;
 
-        ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) override;
+//         ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) override;
 
-        ExpressionPtr factor() override;
+//         ExpressionPtr factor() override;
 
-        vector<ExpressionPtr> getConstantFactors() override;
+//         vector<ExpressionPtr> getConstantFactors() override;
 
-        vector<ExpressionPtr> getAllFactors() override;
+//         vector<ExpressionPtr> getAllFactors() override;
 
-        // Misc
+//         // Misc
 
-        ExpressionPtr copy() override;
+//         ExpressionPtr copy() override;
 
-        //ExpressionPtr shallowCopy() override;
+//         //ExpressionPtr shallowCopy() override;
 
-        string toString() override;
+//         string toString() override;
 
-        string exponentToString() override;
+//         string exponentToString() override;
 
-};
+// };
 
-class Multiplication : public Expression {
+// class Multiplication : public Expression {
 
-    private:
+//     private:
 
-        vector<ExpressionPtr> operands;
+//         vector<ExpressionPtr> operands;
 
-    public:
+//     public:
 
-        Multiplication();
+//         Multiplication();
 
-        Multiplication(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, vector<ExpressionPtr>& operands);
+//         Multiplication(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, vector<ExpressionPtr>& operands);
 
-        //~Multiplication() override;
+//         //~Multiplication() override;
 
-        vector<ExpressionPtr> getOperands();
+//         vector<ExpressionPtr> getOperands();
 
-        void setOperands(vector<ExpressionPtr>& operands);
+//         void setOperands(vector<ExpressionPtr>& operands);
 
-        // Overrides
+//         // Overrides
 
-        // Get
+//         // Get
 
-        IntPtr getValue() override;
+//         IntPtr getValue() override;
 
-        vector<ExpressionPtr> getContent() override;
+//         vector<ExpressionPtr> getContent() override;
 
-        // Append/Remove/Replace
+//         // Append/Remove/Replace
 
-        void appendExpression(Expression& e) override;
+//         void appendExpression(Expression& e) override;
 
-        void removeExpression(int i) override;
+//         void removeExpression(int i) override;
 
-        void replaceExpression(int i, Expression& e) override;
+//         void replaceExpression(int i, Expression& e) override;
 
-        // Clean
+//         // Clean
 
-        void sanitise() override;
+//         void sanitise() override;
 
-        // Test
+//         // Test
 
-        bool isEqual(Expression& other) override;
+//         bool isEqual(Expression& other) override;
 
-        bool isEqual(Summation& other) override;
+//         bool isEqual(Summation& other) override;
 
-        bool isEqual(Multiplication& other) override;
+//         bool isEqual(Multiplication& other) override;
 
-        bool isEqual(Division& other) override;
+//         bool isEqual(Division& other) override;
 
-        bool isEqual(ConstantExpression& other) override;
+//         bool isEqual(ConstantExpression& other) override;
 
-        bool isEqual(VariableExpression& other) override;
+//         bool isEqual(VariableExpression& other) override;
 
-        bool isOne() override;
+//         bool isOne() override;
 
-        bool isAtomic() override;
+//         bool isAtomic() override;
 
-        bool isAtomicExponent() override;
+//         bool isAtomicExponent() override;
 
-        bool isAtomicNumerator() override;
+//         bool isAtomicNumerator() override;
 
-        bool isLikeExpression(Expression& e) override;
+//         bool isLikeExpression(Expression& e) override;
 
-        bool isMergeable() override;
+//         bool isMergeable() override;
 
-        // Manipulate
+//         // Manipulate
 
-        ExpressionPtr sum(Summation& s) override;
-        ExpressionPtr sum(Multiplication& m) override;
-        ExpressionPtr sum(Division& d) override;
-        ExpressionPtr sum(ConstantExpression& c) override;
-        ExpressionPtr sum(VariableExpression& v) override;
+//         ExpressionPtr sum(Summation& s) override;
+//         ExpressionPtr sum(Multiplication& m) override;
+//         ExpressionPtr sum(Division& d) override;
+//         ExpressionPtr sum(ConstantExpression& c) override;
+//         ExpressionPtr sum(VariableExpression& v) override;
 
-        ExpressionPtr multiply(Summation& s) override;
-        ExpressionPtr multiply(Multiplication& m) override;
-        ExpressionPtr multiply(Division& d) override;
-        ExpressionPtr multiply(ConstantExpression& c) override;
-        ExpressionPtr multiply(VariableExpression& v) override;
+//         ExpressionPtr multiply(Summation& s) override;
+//         ExpressionPtr multiply(Multiplication& m) override;
+//         ExpressionPtr multiply(Division& d) override;
+//         ExpressionPtr multiply(ConstantExpression& c) override;
+//         ExpressionPtr multiply(VariableExpression& v) override;
 
-        ExpressionPtr divide(Summation& s) override;
-        ExpressionPtr divide(Multiplication& m) override;
-        ExpressionPtr divide(Division& d) override;
-        ExpressionPtr divide(ConstantExpression& c) override;
-        ExpressionPtr divide(VariableExpression& v) override;
+//         ExpressionPtr divide(Summation& s) override;
+//         ExpressionPtr divide(Multiplication& m) override;
+//         ExpressionPtr divide(Division& d) override;
+//         ExpressionPtr divide(ConstantExpression& c) override;
+//         ExpressionPtr divide(VariableExpression& v) override;
 
-        ExpressionPtr mergeMultiplications(Expression& e) override;
+//         ExpressionPtr mergeMultiplications(Expression& e) override;
 
-        ExpressionPtr expandForExponent() override;
+//         ExpressionPtr expandForExponent() override;
 
-        ExpressionPtr expandAsExponent(Expression& baseExpression) override;
+//         ExpressionPtr expandAsExponent(Expression& baseExpression) override;
 
-        ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) override;
+//         ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) override;
 
-        ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) override;
+//         ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) override;
 
-        ExpressionPtr factor() override;
+//         ExpressionPtr factor() override;
 
-        vector<ExpressionPtr> getConstantFactors() override;
+//         vector<ExpressionPtr> getConstantFactors() override;
 
-        vector<ExpressionPtr> getAllFactors() override;
+//         vector<ExpressionPtr> getAllFactors() override;
 
-        // Misc
+//         // Misc
 
-        ExpressionPtr copy() override;
+//         ExpressionPtr copy() override;
 
-        string toString() override;
+//         string toString() override;
 
-        string exponentToString() override;
+//         string exponentToString() override;
     
-};
+// };
 
-class Division : public Expression {
+// class Division : public Expression {
 
-    private:
+//     private:
 
-        ExpressionPtr numerator;
+//         ExpressionPtr numerator;
 
-        ExpressionPtr denominator;
+//         ExpressionPtr denominator;
 
-    public:
+//     public:
 
-        Division();
+//         Division();
 
-        Division(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, ExpressionPtr& numerator, ExpressionPtr& denominator);
+//         Division(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, ExpressionPtr& numerator, ExpressionPtr& denominator);
 
-        // ~Division();
+//         // ~Division();
 
-        ExpressionPtr getNumerator();
+//         ExpressionPtr getNumerator();
 
-        ExpressionPtr getDenominator();
+//         ExpressionPtr getDenominator();
 
-        void setNumerator(ExpressionPtr& n);
+//         void setNumerator(ExpressionPtr& n);
 
-        void setDenominator(ExpressionPtr& d);
+//         void setDenominator(ExpressionPtr& d);
 
-        // Overrides
+//         // Overrides
 
-        // Get
+//         // Get
 
-        IntPtr getValue() override;
+//         IntPtr getValue() override;
 
-        vector<ExpressionPtr> getContent() override;
+//         vector<ExpressionPtr> getContent() override;
 
-        // Append/Remove/Replace
+//         // Append/Remove/Replace
 
-        void appendExpression(Expression& e) override;
+//         void appendExpression(Expression& e) override;
 
-        void removeExpression(int i) override;
+//         void removeExpression(int i) override;
 
-        void replaceExpression(int i, Expression& e) override;
+//         void replaceExpression(int i, Expression& e) override;
 
-        // Clean
+//         // Clean
 
-        void sanitise() override;
+//         void sanitise() override;
 
-        // Test
+//         // Test
 
-        bool isEqual(Expression& other) override;
+//         bool isEqual(Expression& other) override;
 
-        bool isEqual(Summation& other) override;
+//         bool isEqual(Summation& other) override;
 
-        bool isEqual(Multiplication& other) override;
+//         bool isEqual(Multiplication& other) override;
 
-        bool isEqual(Division& other) override;
+//         bool isEqual(Division& other) override;
 
-        bool isEqual(ConstantExpression& other) override;
+//         bool isEqual(ConstantExpression& other) override;
 
-        bool isEqual(VariableExpression& other) override;
+//         bool isEqual(VariableExpression& other) override;
 
-        bool isOne() override;
+//         bool isOne() override;
 
-        bool isAtomic() override;
+//         bool isAtomic() override;
 
-        bool isAtomicExponent() override;
+//         bool isAtomicExponent() override;
 
-        bool isAtomicNumerator() override;
+//         bool isAtomicNumerator() override;
 
-        bool isLikeExpression(Expression& e) override;
+//         bool isLikeExpression(Expression& e) override;
 
-        bool isMergeable() override;
+//         bool isMergeable() override;
 
-        // Manipulate
+//         // Manipulate
 
-        ExpressionPtr sum(Summation& s) override;
-        ExpressionPtr sum(Multiplication& m) override;
-        ExpressionPtr sum(Division& d) override;
-        ExpressionPtr sum(ConstantExpression& c) override;
-        ExpressionPtr sum(VariableExpression& v) override;
+//         ExpressionPtr sum(Summation& s) override;
+//         ExpressionPtr sum(Multiplication& m) override;
+//         ExpressionPtr sum(Division& d) override;
+//         ExpressionPtr sum(ConstantExpression& c) override;
+//         ExpressionPtr sum(VariableExpression& v) override;
 
-        ExpressionPtr multiply(Summation& s) override;
-        ExpressionPtr multiply(Multiplication& m) override;
-        ExpressionPtr multiply(Division& d) override;
-        ExpressionPtr multiply(ConstantExpression& c) override;
-        ExpressionPtr multiply(VariableExpression& v) override;
+//         ExpressionPtr multiply(Summation& s) override;
+//         ExpressionPtr multiply(Multiplication& m) override;
+//         ExpressionPtr multiply(Division& d) override;
+//         ExpressionPtr multiply(ConstantExpression& c) override;
+//         ExpressionPtr multiply(VariableExpression& v) override;
 
-        ExpressionPtr divide(Summation& s) override;
-        ExpressionPtr divide(Multiplication& m) override;
-        ExpressionPtr divide(Division& d) override;
-        ExpressionPtr divide(ConstantExpression& c) override;
-        ExpressionPtr divide(VariableExpression& v) override;
+//         ExpressionPtr divide(Summation& s) override;
+//         ExpressionPtr divide(Multiplication& m) override;
+//         ExpressionPtr divide(Division& d) override;
+//         ExpressionPtr divide(ConstantExpression& c) override;
+//         ExpressionPtr divide(VariableExpression& v) override;
 
-        ExpressionPtr mergeMultiplications(Expression& e) override;
+//         ExpressionPtr mergeMultiplications(Expression& e) override;
 
-        ExpressionPtr expandForExponent() override;
+//         ExpressionPtr expandForExponent() override;
 
-        ExpressionPtr expandAsExponent(Expression& baseExpression) override;
+//         ExpressionPtr expandAsExponent(Expression& baseExpression) override;
 
-        ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) override;
+//         ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) override;
 
-        ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) override;
+//         ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) override;
 
-        ExpressionPtr factor() override;
+//         ExpressionPtr factor() override;
 
-        vector<ExpressionPtr> getConstantFactors() override;
+//         vector<ExpressionPtr> getConstantFactors() override;
 
-        vector<ExpressionPtr> getAllFactors() override;
+//         vector<ExpressionPtr> getAllFactors() override;
 
-        // Misc
+//         // Misc
 
-        ExpressionPtr copy() override;
+//         ExpressionPtr copy() override;
 
-        string toString() override;
+//         string toString() override;
 
-        string exponentToString() override;
+//         string exponentToString() override;
 
-};
+// };
 
-class ConstantExpression : public Expression {
+// class ConstantExpression : public Expression {
 
-    private:
+//     private:
 
-        int constant;
+//         int constant;
 
-    public:
+//     public:
 
-        ConstantExpression();
+//         ConstantExpression();
 
-        ConstantExpression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, int constant);
+//         ConstantExpression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, int constant);
 
-        // ~ConstantExpression();
+//         // ~ConstantExpression();
 
-        int getConstant();
+//         int getConstant();
 
-        void setConstant(int c);
+//         void setConstant(int c);
 
-        // Overrides
+//         // Overrides
 
-        // Get
+//         // Get
 
-        IntPtr getValue() override;
+//         IntPtr getValue() override;
 
-        vector<ExpressionPtr> getContent() override;
+//         vector<ExpressionPtr> getContent() override;
 
-        // Append/Remove/Replace
+//         // Append/Remove/Replace
 
-        void appendExpression(Expression& e) override;
+//         void appendExpression(Expression& e) override;
 
-        void removeExpression(int i) override;
+//         void removeExpression(int i) override;
 
-        void replaceExpression(int i, Expression& e) override;
+//         void replaceExpression(int i, Expression& e) override;
 
-        // Clean
+//         // Clean
 
-        void sanitise() override;
+//         void sanitise() override;
 
-        // Test
+//         // Test
 
-        bool isEqual(Expression& other) override;
+//         bool isEqual(Expression& other) override;
 
-        bool isEqual(Summation& other) override;
+//         bool isEqual(Summation& other) override;
 
-        bool isEqual(Multiplication& other) override;
+//         bool isEqual(Multiplication& other) override;
 
-        bool isEqual(Division& other) override;
+//         bool isEqual(Division& other) override;
 
-        bool isEqual(ConstantExpression& other) override;
+//         bool isEqual(ConstantExpression& other) override;
 
-        bool isEqual(VariableExpression& other) override;
+//         bool isEqual(VariableExpression& other) override;
 
-        bool isOne() override;
+//         bool isOne() override;
 
-        bool isAtomic() override;
+//         bool isAtomic() override;
 
-        bool isAtomicExponent() override;
+//         bool isAtomicExponent() override;
 
-        bool isAtomicNumerator() override;
+//         bool isAtomicNumerator() override;
 
-        bool isLikeExpression(Expression& e) override;
+//         bool isLikeExpression(Expression& e) override;
 
-        bool isMergeable() override;
+//         bool isMergeable() override;
 
-        // Manipulate
+//         // Manipulate
 
-        ExpressionPtr sum(Summation& s) override;
-        ExpressionPtr sum(Multiplication& m) override;
-        ExpressionPtr sum(Division& d) override;
-        ExpressionPtr sum(ConstantExpression& c) override;
-        ExpressionPtr sum(VariableExpression& v) override;
+//         ExpressionPtr sum(Summation& s) override;
+//         ExpressionPtr sum(Multiplication& m) override;
+//         ExpressionPtr sum(Division& d) override;
+//         ExpressionPtr sum(ConstantExpression& c) override;
+//         ExpressionPtr sum(VariableExpression& v) override;
 
-        ExpressionPtr multiply(Summation& s) override;
-        ExpressionPtr multiply(Multiplication& m) override;
-        ExpressionPtr multiply(Division& d) override;
-        ExpressionPtr multiply(ConstantExpression& c) override;
-        ExpressionPtr multiply(VariableExpression& v) override;
+//         ExpressionPtr multiply(Summation& s) override;
+//         ExpressionPtr multiply(Multiplication& m) override;
+//         ExpressionPtr multiply(Division& d) override;
+//         ExpressionPtr multiply(ConstantExpression& c) override;
+//         ExpressionPtr multiply(VariableExpression& v) override;
 
-        ExpressionPtr divide(Summation& s) override;
-        ExpressionPtr divide(Multiplication& m) override;
-        ExpressionPtr divide(Division& d) override;
-        ExpressionPtr divide(ConstantExpression& c) override;
-        ExpressionPtr divide(VariableExpression& v) override;
+//         ExpressionPtr divide(Summation& s) override;
+//         ExpressionPtr divide(Multiplication& m) override;
+//         ExpressionPtr divide(Division& d) override;
+//         ExpressionPtr divide(ConstantExpression& c) override;
+//         ExpressionPtr divide(VariableExpression& v) override;
 
-        ExpressionPtr mergeMultiplications(Expression& e) override;
+//         ExpressionPtr mergeMultiplications(Expression& e) override;
 
-        ExpressionPtr expandForExponent() override;
+//         ExpressionPtr expandForExponent() override;
 
-        ExpressionPtr expandAsExponent(Expression& baseExpression) override;
+//         ExpressionPtr expandAsExponent(Expression& baseExpression) override;
 
-        ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) override;
+//         ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) override;
 
-        ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) override;
+//         ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) override;
 
-        ExpressionPtr factor() override;
+//         ExpressionPtr factor() override;
 
-        vector<ExpressionPtr> getConstantFactors() override;
+//         vector<ExpressionPtr> getConstantFactors() override;
 
-        vector<ExpressionPtr> getAllFactors() override;
+//         vector<ExpressionPtr> getAllFactors() override;
 
-        // Misc
+//         // Misc
 
-        ExpressionPtr copy() override;
+//         ExpressionPtr copy() override;
 
-        string toString() override;
+//         string toString() override;
 
-        string exponentToString() override;
+//         string exponentToString() override;
 
-};
+// };
 
-class VariableExpression : public Expression {
+// class VariableExpression : public Expression {
 
-    private:
+//     private:
 
-        char variable;
+//         char variable;
 
-    public:
+//     public:
 
-        VariableExpression();
+//         VariableExpression();
 
-        VariableExpression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, char variable);
+//         VariableExpression(bool sign, ExpressionPtr& root, ExpressionPtr& exponent, char variable);
 
-        // ~VariableExpression();
+//         // ~VariableExpression();
 
-        char getVariable();
+//         char getVariable();
 
-        void setVariable(char v);
+//         void setVariable(char v);
 
-        // Overrides
+//         // Overrides
 
-        // Get
+//         // Get
 
-        IntPtr getValue() override;
+//         IntPtr getValue() override;
 
-        vector<ExpressionPtr> getContent() override;
+//         vector<ExpressionPtr> getContent() override;
 
-        // Append/Remove/Replace
+//         // Append/Remove/Replace
 
-        void appendExpression(Expression& e) override;
+//         void appendExpression(Expression& e) override;
 
-        void removeExpression(int i) override;
+//         void removeExpression(int i) override;
 
-        void replaceExpression(int i, Expression& e) override;
+//         void replaceExpression(int i, Expression& e) override;
 
-        // Clean
+//         // Clean
 
-        void sanitise() override;
+//         void sanitise() override;
 
-        // Test
+//         // Test
 
-        bool isEqual(Expression& other) override;
+//         bool isEqual(Expression& other) override;
 
-        bool isEqual(Summation& other) override;
+//         bool isEqual(Summation& other) override;
 
-        bool isEqual(Multiplication& other) override;
+//         bool isEqual(Multiplication& other) override;
 
-        bool isEqual(Division& other) override;
+//         bool isEqual(Division& other) override;
 
-        bool isEqual(ConstantExpression& other) override;
+//         bool isEqual(ConstantExpression& other) override;
 
-        bool isEqual(VariableExpression& other) override;
+//         bool isEqual(VariableExpression& other) override;
 
-        bool isOne() override;
+//         bool isOne() override;
 
-        bool isAtomic() override;
+//         bool isAtomic() override;
 
-        bool isAtomicExponent() override;
+//         bool isAtomicExponent() override;
 
-        bool isAtomicNumerator() override;
+//         bool isAtomicNumerator() override;
 
-        bool isLikeExpression(Expression& e) override;
+//         bool isLikeExpression(Expression& e) override;
 
-        bool isMergeable() override;
+//         bool isMergeable() override;
 
-        // Manipulate
+//         // Manipulate
 
-        ExpressionPtr sum(Summation& s) override;
-        ExpressionPtr sum(Multiplication& m) override;
-        ExpressionPtr sum(Division& d) override;
-        ExpressionPtr sum(ConstantExpression& c) override;
-        ExpressionPtr sum(VariableExpression& v) override;
+//         ExpressionPtr sum(Summation& s) override;
+//         ExpressionPtr sum(Multiplication& m) override;
+//         ExpressionPtr sum(Division& d) override;
+//         ExpressionPtr sum(ConstantExpression& c) override;
+//         ExpressionPtr sum(VariableExpression& v) override;
 
-        ExpressionPtr multiply(Summation& s) override;
-        ExpressionPtr multiply(Multiplication& m) override;
-        ExpressionPtr multiply(Division& d) override;
-        ExpressionPtr multiply(ConstantExpression& c) override;
-        ExpressionPtr multiply(VariableExpression& v) override;
+//         ExpressionPtr multiply(Summation& s) override;
+//         ExpressionPtr multiply(Multiplication& m) override;
+//         ExpressionPtr multiply(Division& d) override;
+//         ExpressionPtr multiply(ConstantExpression& c) override;
+//         ExpressionPtr multiply(VariableExpression& v) override;
 
-        ExpressionPtr divide(Summation& s) override;
-        ExpressionPtr divide(Multiplication& m) override;
-        ExpressionPtr divide(Division& d) override;
-        ExpressionPtr divide(ConstantExpression& c) override;
-        ExpressionPtr divide(VariableExpression& v) override;
+//         ExpressionPtr divide(Summation& s) override;
+//         ExpressionPtr divide(Multiplication& m) override;
+//         ExpressionPtr divide(Division& d) override;
+//         ExpressionPtr divide(ConstantExpression& c) override;
+//         ExpressionPtr divide(VariableExpression& v) override;
 
-        ExpressionPtr mergeMultiplications(Expression& e) override;
+//         ExpressionPtr mergeMultiplications(Expression& e) override;
 
-        ExpressionPtr expandForExponent() override;
+//         ExpressionPtr expandForExponent() override;
 
-        ExpressionPtr expandAsExponent(Expression& baseExpression) override;
+//         ExpressionPtr expandAsExponent(Expression& baseExpression) override;
 
-        ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) override;
+//         ExpressionPtr expandAsConstNum(Expression& baseExpression, Expression& baseDivision) override;
 
-        ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) override;
+//         ExpressionPtr expandAsNegativeExponent(Expression& baseExpression) override;
 
-        ExpressionPtr factor() override;
+//         ExpressionPtr factor() override;
 
-        vector<ExpressionPtr> getConstantFactors() override;
+//         vector<ExpressionPtr> getConstantFactors() override;
 
-        vector<ExpressionPtr> getAllFactors() override;
+//         vector<ExpressionPtr> getAllFactors() override;
 
-        // Misc
+//         // Misc
 
-        ExpressionPtr copy() override;
+//         ExpressionPtr copy() override;
 
-        string toString() override;
+//         string toString() override;
 
-        string exponentToString() override;
-};
+//         string exponentToString() override;
+// };
 

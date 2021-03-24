@@ -2,7 +2,7 @@
 
 #include "symbol.h"
 
-class Expressionn {
+class Expression {
 
     private:
 
@@ -10,7 +10,7 @@ class Expressionn {
 
     public:
 
-        Expressionn();
+        Expression();
 
-        Expressionn(unique_ptr<Symbol>& rootSymbol);
+        Expression(unique_ptr<Symbol>& rootSymbol);
 };

@@ -8,9 +8,9 @@
 #include "../Algebra3/exponent.h"
 #include "../Algebra3/root.h"
 #include "../Algebra3/function.h"
-#include "../Algebra3/constantElement.h"
-#include "../Algebra3/variableElement.h"
-#include "../Algebra3/expressionn.h"
+#include "../Algebra3/constant.h"
+#include "../Algebra3/variable.h"
+#include "../Algebra3/expression.h"
 #include <vector>
 #include <string>
 #include <utility>
