@@ -10,6 +10,8 @@ class SumOp : public Operation {
 
         SumOp();
 
+        SumOp(bool sign);
+
         SumOp(bool sign, vector<unique_ptr<Symbol>> operands);
 
         SumOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>> operands);

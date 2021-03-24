@@ -70,8 +70,21 @@ unique_ptr<Symbol> MParser::buildSymbol(char c){
 }
 
 void MParser::parseExpression(string expression){
-    // Expressionn expression = Expressionn();
-    // Scope mainScope = findMainScope(expression);
+
+    Expression expression = Expression();
+    Scope mainScope = findMainScope(expression);
+    char mainOp = mainScope.ops[0].first;
+            
+    if (mainOp == '+'){
+
+        unique_ptr<Symbol> op = make_unique<SumOp>(true);
+    }else if (mainOp == '-'){
+
+    }else if (mainOp == '/'){
+
+    }else if (mainOp == '*'){
+
+    }
 }
 
 void MParser::parseEquation(string equation){
@@ -264,7 +277,8 @@ Scope MParser::scopeHighPriorityOp(int i, string expression){
             break;
         }
     }
-    pair<char, int> op = {expression[i], i};
+    pair<char, int> op;
+    expression[i] == '/' ? op = {'/', i} : op = {'*', i}; 
     scope.ops.push_back(op);
     scope.start = k;
     scope.end = j;

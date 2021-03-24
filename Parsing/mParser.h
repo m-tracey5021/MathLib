@@ -15,7 +15,6 @@
 #include <string>
 #include <utility>
 
-
 using std::vector;
 using std::string;
 using std::pair;
@@ -30,7 +29,7 @@ class MParser {
 
     private:
 
-        ExpressionTree parseTree;
+        Expression parseTree;
 
     public:
 
