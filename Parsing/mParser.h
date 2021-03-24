@@ -10,6 +10,7 @@
 #include "../Algebra3/function.h"
 #include "../Algebra3/constantElement.h"
 #include "../Algebra3/variableElement.h"
+#include "../Algebra3/expressionn.h"
 #include <vector>
 #include <string>
 #include <utility>
@@ -19,11 +20,11 @@ using std::vector;
 using std::string;
 using std::pair;
 
-// struct Scope {
-//     int start;
-//     int end;
-//     char op;
-// };
+struct Scope {
+    vector<pair<char, int>> ops;
+    int start;
+    int end;
+};
 
 class MParser {
 
@@ -47,14 +48,14 @@ class MParser {
 
         vector<int> findSurroundingBrackets(int i, string expression);
 
-        vector<int> scopeLowPriorityOp(int i, string expression);
+        Scope scopeLowPriorityOp(int i, string expression);
 
-        vector<int> scopeHighPriorityOp(int i, string expression);
+        Scope scopeHighPriorityOp(int i, string expression);
 
-        // vector<int> scopeOfDivOp(int i, string expression);
-
-        vector<int> scopeAuxOp(int i, string expression);
+        Scope scopeAuxOp(int i, string expression);
 
         Scope findScope(int i, string expression);
+
+        Scope findMainScope(string expression);
         
 };

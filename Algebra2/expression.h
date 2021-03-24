@@ -17,14 +17,6 @@ using std::unique_ptr;
 using std::make_unique;
 using std::move;
 
-// class ExpressionFactory;
-// class Expression;
-// class Summation;
-// class Multiplication;
-// class Division;
-// class ConstantExpression;
-// class VariableExpression;
-
 typedef unique_ptr<Expression> ExpressionPtr;
 typedef unique_ptr<ConstantExpression> CEPtr;
 typedef unique_ptr<VariableExpression> VEPtr;

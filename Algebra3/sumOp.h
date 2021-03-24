@@ -2,17 +2,19 @@
 
 #include "operation.h"
 
-class AddOp : public Operation {
+class SumOp : public Operation {
 
     private:
 
-        char sign;
-
     public:
 
-        AddOp();
+        SumOp();
 
-        AddOp(char sign);
+        SumOp(bool sign, vector<unique_ptr<Symbol>> operands);
+
+        SumOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>> operands);
+
+        SumOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>> operands);
     
 
 };

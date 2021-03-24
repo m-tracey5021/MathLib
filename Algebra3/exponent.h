@@ -12,6 +12,6 @@ class Exponent : public AuxOp {
 
         Exponent();
 
-        Exponent(ExpressionTree& expression);
+        Exponent(unique_ptr<Symbol>& rootSymbol);
 
 };

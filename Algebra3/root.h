@@ -10,6 +10,6 @@ class Root : public AuxOp {
 
         Root();
 
-        Root(ExpressionTree& expression);
+        Root(unique_ptr<Symbol>& rootSymbol);
         
 };

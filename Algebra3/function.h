@@ -1,18 +1,19 @@
 #pragma once
 
 #include "auxOp.h"
+#include "symbol.h"
 
 class Function : public AuxOp {
     
     private:
 
-        ExpressionTree definition;
+        unique_ptr<Symbol> definition;
 
     public:
 
         Function();
 
-        Function(ExpressionTree& expression);
+        Function(unique_ptr<Symbol>& rootSymbol);
 
-        Function(ExpressionTree& expression, ExpressionTree& definition);
+        Function(unique_ptr<Symbol>& rootSymbol, unique_ptr<Symbol>& definition);
 };

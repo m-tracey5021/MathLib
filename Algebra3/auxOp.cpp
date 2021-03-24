@@ -1,7 +1,8 @@
 #include "auxOp.h"
+#include "symbol.h"
 
-AuxOp::AuxOp(): Symbol(){}
+AuxOp::AuxOp(){}
 
-AuxOp::AuxOp(char op): Symbol(op){}
+AuxOp::AuxOp(unique_ptr<Symbol>& rootSymbol): rootSymbol(move(rootSymbol)){}
 
-AuxOp::AuxOp(char op, ExpressionTree& expression): Symbol(op), expression(move(expression)){}
+AuxOp::~AuxOp() = default;

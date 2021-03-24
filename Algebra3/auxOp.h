@@ -1,20 +1,25 @@
 #pragma once
 
-#include "symbol.h"
-#include "expressionTree.h"
+#include <memory>
 
-class AuxOp : public Symbol {
+using std::unique_ptr;
+using std::move;
+using std::make_unique;
+
+class Symbol;
+
+class AuxOp {
 
     protected:
 
-        ExpressionTree expression;
+        unique_ptr<Symbol> rootSymbol;
 
     public:
 
         AuxOp();
 
-        AuxOp(char op);
+        AuxOp(unique_ptr<Symbol>& rootSymbol);
 
-        AuxOp(char op, ExpressionTree& expression);
+        ~AuxOp();
 
 };

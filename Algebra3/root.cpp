@@ -1,5 +1,5 @@
 #include "root.h"
 
-Root::Root(): AuxOp('v'){}
+Root::Root(): AuxOp(){}
 
-Root::Root(ExpressionTree& expression): AuxOp('v', expression){}
+Root::Root(unique_ptr<Symbol>& rootSymbol): AuxOp(rootSymbol){}

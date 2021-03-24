@@ -1,10 +1,10 @@
 #include "function.h"
 
-Function::Function(): AuxOp('f'){}
+Function::Function(): AuxOp(){}
 
-Function::Function(ExpressionTree& expression): AuxOp('f', expression){}
+Function::Function(unique_ptr<Symbol>& rootSymbol): AuxOp(rootSymbol){}
 
-Function::Function(ExpressionTree& expression, ExpressionTree& definition): AuxOp('f', expression), definition(move(definition)){}
+Function::Function(unique_ptr<Symbol>& rootSymbol, unique_ptr<Symbol>& definition): AuxOp(rootSymbol), definition(move(definition)){}
 
 
 

@@ -1,5 +1,5 @@
 #include "exponent.h"
 
-Exponent::Exponent(): AuxOp('^'){}
+Exponent::Exponent(): AuxOp(){}
 
-Exponent::Exponent(ExpressionTree& expression): AuxOp('^', expression){}
+Exponent::Exponent(unique_ptr<Symbol>& rootSymbol): AuxOp(rootSymbol){}

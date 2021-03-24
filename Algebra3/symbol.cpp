@@ -2,4 +2,12 @@
 
 Symbol::Symbol(){}
 
-Symbol::Symbol(char symbol): symbol(symbol){}
+Symbol::Symbol(char symbol): symbol(symbol), sign(true){}
+
+Symbol::Symbol(char symbol, bool sign): symbol(symbol), sign(sign){}
+
+Symbol::Symbol(char symbol, unique_ptr<AuxOp>& auxOp): symbol(symbol), sign(true), auxOp(move(auxOp)){}
+
+Symbol::Symbol(char symbol, bool sign, unique_ptr<AuxOp>& auxOp): symbol(symbol), sign(sign), auxOp(move(auxOp)){}
+
+Symbol::~Symbol() = default;

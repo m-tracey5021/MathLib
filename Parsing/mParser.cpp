@@ -53,9 +53,9 @@
 MParser::MParser(){}
 
 unique_ptr<Symbol> MParser::buildSymbol(char c){
+    unique_ptr<Operation> op;
     if (c == '+' | c == '-'){
-        unique_ptr<Operation> op = unique_ptr<AddOp>(new AddOp());
-        return op;
+
     }else if (c == '*'){
 
     }else if (c == '/'){
@@ -70,40 +70,8 @@ unique_ptr<Symbol> MParser::buildSymbol(char c){
 }
 
 void MParser::parseExpression(string expression){
-
-    Scope largestScope;
-    largestScope.start = 0;
-    largestScope.end = 0;
-    vector<Scope> scopes;
-    int i = 0;
-
-    while (true){
-
-        Scope ithScope = findScope(i, expression);
-        scopes.push_back(ithScope);
-        i = ithScope.end;
-
-        int ithScopeSize = ithScope.end - ithScope.start;
-        int largestScopeSize = largestScope.end - largestScope.start;
-
-        if (ithScopeSize > largestScopeSize){
-            largestScope = ithScope;
-        }
-        if (i >= expression.size()){
-            break;
-        }
-    }
-
-    parseTree = ExpressionTree();
-    if (largestScope.op == '+' | largestScope.op == '-' | largestScope.op == '*'){
-
-    }else if (largestScope.op == '/'){
-
-    }else{
-
-    }
-
-
+    // Expressionn expression = Expressionn();
+    // Scope mainScope = findMainScope(expression);
 }
 
 void MParser::parseEquation(string equation){
@@ -143,7 +111,7 @@ int MParser::findMatchingBracket(int i, string expression){
     }
 }
 
-vector<int> MParser::findSurroundingBrackets(int i, string expression, vector<pair<char, vector<int>>>& toCount){
+vector<int> MParser::findSurroundingBrackets(int i, string expression){
     vector<int> brackets;
 
     int bracketStack;
@@ -197,7 +165,7 @@ vector<int> MParser::findSurroundingBrackets(int i, string expression, vector<pa
     return brackets;
 }
 
-vector<int> MParser::scopeLowPriorityOp(int i, string expression){
+Scope MParser::scopeLowPriorityOp(int i, string expression){
 
     Scope scope;
 
@@ -216,6 +184,9 @@ vector<int> MParser::scopeLowPriorityOp(int i, string expression){
                 bracketStack ++;
             }else if (expression[j] == ')'){
                 bracketStack --;
+            }else if ((expression[j] == '+' | expression[j] == '-') & bracketStack == 0){
+                pair<char, int> opWithinScope = {expression[j], j};
+                scope.ops.push_back(opWithinScope);
             }
             if (bracketStack == -1){
                 forwards = false;
@@ -234,6 +205,9 @@ vector<int> MParser::scopeLowPriorityOp(int i, string expression){
                 bracketStack ++;
             }else if (expression[k] == '('){
                 bracketStack --;
+            }else if ((expression[k] == '+' | expression[k] == '-') & bracketStack == 0){
+                pair<char, int> opWithinScope = {expression[k], k};
+                scope.ops.push_back(opWithinScope);
             }
             if (bracketStack == -1){
                 backwards = false;
@@ -251,10 +225,12 @@ vector<int> MParser::scopeLowPriorityOp(int i, string expression){
         scope.start = k;
         scope.end = j;
     }
+    return scope;
 }
 
-vector<int> MParser::scopeHighPriorityOp(int i, string expression){
-    vector<int> scope;
+Scope MParser::scopeHighPriorityOp(int i, string expression){
+    //vector<int> scope;
+    Scope scope;
     int j = i + 1;
     int k = i - 1;
     bool forwards = true;
@@ -288,35 +264,15 @@ vector<int> MParser::scopeHighPriorityOp(int i, string expression){
             break;
         }
     }
-    scope = {k, j};
+    pair<char, int> op = {expression[i], i};
+    scope.ops.push_back(op);
+    scope.start = k;
+    scope.end = j;
     return scope;
 }
 
-// vector<int> MParser::scopeOfDivOp(int i, string expression){
-//     vector<int> scope;
-//     int j = i + 1;
-//     int k = i - 1;
-//     if (expression[j] == '('){
-//         j = findMatchingBracket(j, expression);
-//     }else if (isalpha(expression[j]) | isdigit(expression[j])){
-//         j = scopeOfMulOp(j, expression)[1];
-//     }else{
-//         // throw error
-//     } 
-//     if (expression[k] == ')'){
-//         k = findMatchingBracket(k, expression);
-//     }else if (isalpha(expression[k]) | isdigit(expression[k])){
-//         k = scopeOfMulOp(k, expression)[0];
-//     }else{
-//         // throw error
-//     }
-//     scope = {k, j};
-//     return scope;
-    
-// }
-
-vector<int> MParser::scopeAuxOp(int i, string expression){
-    vector<int> scope;
+Scope MParser::scopeAuxOp(int i, string expression){
+    Scope scope;
     int j = i + 1;
     int k = i - 1;
     while(true){
@@ -329,11 +285,14 @@ vector<int> MParser::scopeAuxOp(int i, string expression){
     if (expression[k] == ')'){
         k = findMatchingBracket(k, expression);
     }else if(isalpha(expression[k]) | isdigit(expression[k])){
-        k = scopeHighPriorityOp(k, expression)[0];
+        k = scopeHighPriorityOp(k, expression).end;
     }else{
         // throw error
     }
-    scope = {k, j};
+    pair<char, int> op = {expression[i], i};
+    scope.ops.push_back(op);
+    scope.start = k;
+    scope.end = j;
     return scope;
 }
 
@@ -346,40 +305,56 @@ Scope MParser::findScope(int i, string expression){
     char symbol = expression[i];
     if (symbol == '+' | symbol == '-'){
 
-        vector<int> addOp = scopeLowPriorityOp(i, expression);
-        scope.start = addOp[0];
-        scope.end = addOp[1];
-        symbol == '+' ? scope.op = '+' : scope.op = '-';
-        return scope;
+        // vector<int> addOp = scopeLowPriorityOp(i, expression);
+        // scope.start = addOp[0];
+        // scope.end = addOp[1];
+        // symbol == '+' ? scope.op = '+' : scope.op = '-';
+        // return scope;
+        return scopeLowPriorityOp(i, expression);
 
     }else if ((isalpha(symbol) | isdigit(symbol) | symbol == '/') & symbol != 'v'){
 
-        vector<int> mulOp = scopeHighPriorityOp(i, expression);
-        scope.start = mulOp[0];
-        scope.end = mulOp[1];
-        symbol == '/' ? scope.op = '/' : scope.op = '*';
-        return scope;
-
-    // }else if (symbol == '/'){
-
-    //     vector<int> divOp = scopeOfMulOp(i, expression);
-    //     scope.start = divOp[0];
-    //     scope.end = divOp[1];
-    //     scope.op = '/'; 
-    //     return scope;
+        // vector<int> mulOp = scopeHighPriorityOp(i, expression);
+        // scope.start = mulOp[0];
+        // scope.end = mulOp[1];
+        // symbol == '/' ? scope.op = '/' : scope.op = '*';
+        // return scope;
+        return scopeHighPriorityOp(i, expression);
 
     }else if (symbol == '^' | symbol  == 'v'){ // parse til escape char '|'
 
-        vector<int> auxOp = scopeAuxOp(i, expression);
-        scope.start = auxOp[0];
-        scope.end = auxOp[1];
-        symbol == '^' ? scope.op = '^' : scope.op = 'v';
-        return scope;
+        // vector<int> auxOp = scopeAuxOp(i, expression);
+        // scope.start = auxOp[0];
+        // scope.end = auxOp[1];
+        // symbol == '^' ? scope.op = '^' : scope.op = 'v';
+        // return scope;
+        return scopeAuxOp(i, expression);
 
     }else{
 
         // throw error
 
     }
+}
+
+Scope MParser::findMainScope(string expression){
+    Scope mainScope;
+    mainScope.start = 0;
+    mainScope.end = 0;
+    for (int i = 0; i < expression.size(); i ++){
+        if (isalpha(expression[i]) | 
+                isdigit(expression[i]) | 
+                expression[i] == '+' | 
+                expression[i] == '-' | 
+                expression[i] == '/' | 
+                expression[i] == '^' | 
+                expression[i] == 'v'){
+            Scope ithScope = findScope(i, expression);
+            if ((ithScope.end - ithScope.start) > (mainScope.end - mainScope.start)){
+                mainScope = ithScope;
+            } 
+        }
+    }
+    return mainScope;
 }
 
