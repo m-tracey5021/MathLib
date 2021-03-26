@@ -19,19 +19,49 @@ using std::vector;
 using std::string;
 using std::pair;
 
-enum class OpType { 
-    Sum,
-    Multiply,
-    Divide
+// enum class OpType { 
+//     Sum,
+//     Multiply,
+//     Divide
+// };
+
+// struct Scope {
+//     vector<pair<char, int>> ops;
+//     int start;
+//     int end;
+
+//     Scope(): start(0), end(0){}
+
+// }
+
+struct OpInfo {
+
+    char op;
+
+    pair<int, int> between;
+
+    OpInfo(){}
+
+    OpInfo(char op, int lhsBetween, int rhsBetween): op(op), between{lhsBetween, rhsBetween}{}
+
 };
 
 struct Scope {
-    vector<pair<char, int>> ops;
-    vector<pair<int, int>> operands;
+
+    vector<OpInfo> ops;
+
     int start;
+
     int end;
 
     Scope(): start(0), end(0){}
+
+    Scope(int start, int end): start(start), end(end){}
+
+    void appendOperator(char op, int lhs, int rhs){
+        OpInfo opWithinScope(op, lhs, rhs);
+        ops.push_back(opWithinScope);
+    }
 
 };
 
@@ -59,8 +89,6 @@ class MParser {
 
         vector<int> findSurroundingBrackets(int i, string expression);
 
-        void appendOperator(Scope scope, int i, string expression);
-
         Scope scopeLowPriorityOp(int i, string expression);
 
         Scope scopeHighPriorityOp(int i, string expression);
@@ -70,8 +98,6 @@ class MParser {
         Scope findScope(int i, string expression);
 
         Scope findMainScope(string expression);
-
-        
 
         vector<string> separateOperands(string expression);
         

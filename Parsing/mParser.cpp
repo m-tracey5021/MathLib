@@ -178,22 +178,10 @@ vector<int> MParser::findSurroundingBrackets(int i, string expression){
     return brackets;
 }
 
-// void MParser::appendOperator(Scope scope, int i, string expression, bool forwards){
-//     pair<char, int> opWithinScope = {expression[i], i};
-//     int currentSize = scope.ops.size();
-//     int priorOp = scope.ops[currentSize - 1].second;
-//     if (forwards)[
-
-//     ]else{
-
-//     }
-// }
-
 Scope MParser::scopeLowPriorityOp(int i, string expression){ // applies to + and -
 
     Scope scope;
-    pair<char, int> mainOp = {expression[i], i};
-    scope.ops.push_back(mainOp);
+    scope.appendOperator(expression[i], i - 1, i + 1);
 
     int bracketStack;
 
@@ -211,8 +199,7 @@ Scope MParser::scopeLowPriorityOp(int i, string expression){ // applies to + and
             }else if (expression[j] == ')'){
                 bracketStack --;
             }else if ((expression[j] == '+' || expression[j] == '-') && bracketStack == 0){
-                pair<char, int> opWithinScope = {expression[j], j};
-                scope.ops.push_back(opWithinScope);
+                scope.appendOperator(expression[j], j - 1, j + 1);
             }
             if (bracketStack == -1){
                 forwards = false;
@@ -232,8 +219,7 @@ Scope MParser::scopeLowPriorityOp(int i, string expression){ // applies to + and
             }else if (expression[k] == '('){
                 bracketStack --;
             }else if ((expression[k] == '+' || expression[k] == '-') && bracketStack == 0){
-                pair<char, int> opWithinScope = {expression[k], k};
-                scope.ops.push_back(opWithinScope);
+                scope.appendOperator(expression[k], k - 1, k + 1);
             }
             if (bracketStack == -1){
                 backwards = false;
@@ -256,13 +242,15 @@ Scope MParser::scopeLowPriorityOp(int i, string expression){ // applies to + and
 
 Scope MParser::scopeHighPriorityOp(int i, string expression){ // applies to * and /
     
-    //vector<int> scope;
     Scope scope;
 
     bool multiplication;
+
     if(expression[i] == '/'){
+        scope.appendOperator('/', i - 1, i + 1);
         multiplication = false;
-        pair<char, int> op = {'/', i};
+    }else{
+        multiplication = true;
     }
     
     int j = i + 1;
@@ -272,11 +260,14 @@ Scope MParser::scopeHighPriorityOp(int i, string expression){ // applies to * an
     while (true){
         if (forwards){
             if (isalpha(expression[j]) || isdigit(expression[j])){
-                // if(multiplication){
-
-                // }
+                if(multiplication){
+                    scope.appendOperator('*', j - 1, j);
+                }
                 j ++;
             }else if (expression[j] == '('){
+                if (multiplication){
+                    scope.appendOperator('*', j - 1, j);
+                }
                 j = findMatchingBracket(j, expression) + 1;
             }else{
                 forwards = false;
@@ -284,8 +275,14 @@ Scope MParser::scopeHighPriorityOp(int i, string expression){ // applies to * an
         }
         if (backwards){
             if (isalpha(expression[k]) || isdigit(expression[k])){
+                if (multiplication){
+                    scope.appendOperator('*', k, k + 1);
+                }
                 k --;
             }else if (expression[k] == ')'){
+                if (multiplication){
+                    scope.appendOperator('*', k, k + 1);
+                }
                 k = findMatchingBracket(k, expression) - 1;
             }else{
                 backwards = false;
@@ -301,9 +298,7 @@ Scope MParser::scopeHighPriorityOp(int i, string expression){ // applies to * an
             break;
         }
     }
-    pair<char, int> op;
-    expression[i] == '/' ? op = {'/', i} : op = {'*', i}; 
-    scope.ops.push_back(op);
+
     scope.start = k;
     scope.end = j;
     return scope;
@@ -323,12 +318,11 @@ Scope MParser::scopeAuxOp(int i, string expression){
     if (expression[k] == ')'){
         k = findMatchingBracket(k, expression);
     }else if(isalpha(expression[k]) || isdigit(expression[k])){
-        k = scopeHighPriorityOp(k, expression).end;
+        k = i - 2;
     }else{
         // throw error
     }
-    pair<char, int> op = {expression[i], i};
-    scope.ops.push_back(op);
+    scope.appendOperator(expression[i], i - 1, i + 1);
     scope.start = k;
     scope.end = j;
     return scope;
@@ -408,13 +402,13 @@ vector<string> MParser::separateOperands(string expression){
         int k;
         if (i == 0){
             j = 0;
-            k = scope.ops[i].second;
+            k = scope.ops[i].between.first + 1;
         }else if (i == scope.ops.size()){
-            j = scope.ops[i - 1].second + 1;
+            j = scope.ops[i - 1].between.second;
             k = expression.size() - j;
         }else{
-            j = scope.ops[i - 1].second + 1;
-            k = scope.ops[i].second - j;
+            j = scope.ops[i - 1].between.second;
+            k = scope.ops[i].between.first + 1 - j;
         }
         string newOperand = expression.substr(j, k);
         operands.push_back(newOperand);
