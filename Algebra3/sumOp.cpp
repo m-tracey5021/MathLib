@@ -2,7 +2,7 @@
 
 SumOp::SumOp(): Operation('+'){}
 
-SumOp::SumOp(bool sign): Operation('+'), sign(sign){}
+SumOp::SumOp(bool sign): Operation('+', sign){}
 
 SumOp::SumOp(bool sign, vector<unique_ptr<Symbol>> operands): Operation('+', sign, operands){}
 

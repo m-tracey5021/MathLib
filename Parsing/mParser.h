@@ -19,11 +19,23 @@ using std::vector;
 using std::string;
 using std::pair;
 
+enum class OpType { 
+    Sum,
+    Multiply,
+    Divide
+};
+
 struct Scope {
     vector<pair<char, int>> ops;
+    vector<pair<int, int>> operands;
     int start;
     int end;
+
+    Scope(): start(0), end(0){}
+
 };
+
+
 
 class MParser {
 
@@ -35,7 +47,7 @@ class MParser {
 
         MParser();
 
-        unique_ptr<Symbol> buildSymbol(char c);
+        // unique_ptr<Symbol> buildSymbol(char c);
 
         void parseExpression(string expression);
 
@@ -47,6 +59,8 @@ class MParser {
 
         vector<int> findSurroundingBrackets(int i, string expression);
 
+        void appendOperator(Scope scope, int i, string expression);
+
         Scope scopeLowPriorityOp(int i, string expression);
 
         Scope scopeHighPriorityOp(int i, string expression);
@@ -56,5 +70,9 @@ class MParser {
         Scope findScope(int i, string expression);
 
         Scope findMainScope(string expression);
+
+        
+
+        vector<string> separateOperands(string expression);
         
 };

@@ -59,13 +59,15 @@ int main(){
 
     bool fiveStateDFAPassed = testFiveState();
 
-    bool expressionParsePassed = testExpressionParse();
+    // bool expressionParsePassed = testExpressionParse();
 
-    bool expandPassed = testExpand();
+    // bool expandPassed = testExpand();
 
-    bool equalityPassed = testEquality();
+    // bool equalityPassed = testEquality();
 
-    bool parsePassed = testMParse();
+    bool findScopePassed = testFindScope();
+
+    bool separateOPerandsPassed = testSeparateOperands();
 
     int elements1[] = {3, 4, 5};
     char elements2[] = {'a', 'b', 'c'};

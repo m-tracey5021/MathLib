@@ -2,4 +2,6 @@
 
 bool testDataAllocation();
 
-bool testMParse();
+bool testFindScope();
+
+bool testSeparateOperands();

@@ -10,6 +10,8 @@ class MulOp : public Operation {
 
         MulOp();
 
+        MulOp(bool sign);
+
         MulOp(bool sign, vector<unique_ptr<Symbol>> operands);
 
         MulOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>> operands);

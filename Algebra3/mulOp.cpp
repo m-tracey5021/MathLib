@@ -2,6 +2,8 @@
 
 MulOp::MulOp(): Operation('*'){}
 
+MulOp::MulOp(bool sign): Operation('*', sign){}
+
 MulOp::MulOp(bool sign, vector<unique_ptr<Symbol>> operands): Operation('*', sign, operands){}
 
 MulOp::MulOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>> operands): Operation('*', true, auxOp, operands){}

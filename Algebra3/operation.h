@@ -22,6 +22,8 @@ class Operation : public Symbol {
 
         Operation(char op);
 
+        Operation(char op, bool sign);
+
         Operation(char op, bool sign, vector<unique_ptr<Symbol>>& operands);
 
         Operation(char op, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
