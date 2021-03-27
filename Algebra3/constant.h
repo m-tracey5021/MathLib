@@ -13,5 +13,7 @@ class Constant : public Symbol {
         Constant();
 
         Constant(int value);
+
+        void appendChild(unique_ptr<Symbol>& child) override;
         
 };

@@ -30,4 +30,6 @@ class Operation : public Symbol {
 
         Operation(char op, bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
 
+        void appendChild(unique_ptr<Symbol>& child) override;
+
 };

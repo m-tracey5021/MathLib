@@ -17,6 +17,7 @@ class SumOp : public Operation {
         SumOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>> operands);
 
         SumOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>> operands);
+
     
 
 };

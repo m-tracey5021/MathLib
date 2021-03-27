@@ -13,4 +13,6 @@ class Variable : public Symbol {
         Variable();
 
         Variable(char value);
+
+        void appendChild(unique_ptr<Symbol>& child) override;
 };

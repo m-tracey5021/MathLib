@@ -19,20 +19,16 @@ using std::vector;
 using std::string;
 using std::pair;
 
-// enum class OpType { 
-//     Sum,
-//     Multiply,
-//     Divide
-// };
+enum class ScopeType { 
 
-// struct Scope {
-//     vector<pair<char, int>> ops;
-//     int start;
-//     int end;
+    Summation,
+    Multiplication,
+    Division,
+    Exponent,
+    Radical,
+    Atomic
 
-//     Scope(): start(0), end(0){}
-
-// }
+};
 
 struct OpInfo {
 
@@ -47,6 +43,8 @@ struct OpInfo {
 };
 
 struct Scope {
+
+    ScopeType type;
 
     vector<OpInfo> ops;
 
@@ -77,9 +75,11 @@ class MParser {
 
         MParser();
 
-        // unique_ptr<Symbol> buildSymbol(char c);
+        unique_ptr<Operation> buildOperation(char c);
 
-        void parseExpression(string expression);
+        unique_ptr<AuxOp> buildAuxOperation(char c);
+
+        void parseExpression(unique_ptr<Symbol>& parentSymbol, string expression);
 
         void parseEquation(string equation);
 
@@ -87,18 +87,20 @@ class MParser {
 
         int findMatchingBracket(int i, string expression);
 
-        vector<int> findSurroundingBrackets(int i, string expression);
+        Scope scopeExpression(int i, string expression);
 
-        Scope scopeLowPriorityOp(int i, string expression);
+        Scope scopeTerm(int i, string expression);
 
-        Scope scopeHighPriorityOp(int i, string expression);
+        Scope scopeRational(int i, string expression);
 
         Scope scopeAuxOp(int i, string expression);
+
+        Scope scopeConstant(int i, string expression);
 
         Scope findScope(int i, string expression);
 
         Scope findMainScope(string expression);
 
-        vector<string> separateOperands(string expression);
+        vector<string> separateOperands(Scope& scope, string expression);
         
 };

@@ -9,6 +9,12 @@ bool testFindScope(){
 
     MParser parser;
     vector<string> expressions = {
+        "2",
+        "235",
+        "2xyz",
+        "2x+3y",
+        "2x+376",
+        "2x+7",
         "x+y+z",
         "x+(y+z)",
         "x+(y+z+a)",
@@ -16,10 +22,15 @@ bool testFindScope(){
         "2(x+y+z-1/2)",
         "xy/pq",
         "(t+2r)/(3er)",
-        "c^2|",
-        "x+t^2|",
-        "(x+t)^2|",
-        "2(2+3t)/4r"
+        "2(2+3t)/4r",
+        "c^{2}",
+        "x+t^{2}",
+        "(x+t)^{2}",
+        "[2]v2x",
+        "[2]v(2x)",
+        "[2x+3]v4",
+        "[2x+4]v(4t+1/2)",
+        "[2x+4]v4(t+1/2)"
     };
 
     vector<Scope> scopes;
@@ -60,7 +71,8 @@ bool testSeparateOperands(){
     vector<vector<string>> operandsPerExp;
 
     for(string exp : expressions){
-        vector<string> operands = parser.separateOperands(exp);
+        Scope mainScope = parser.findMainScope(exp);
+        vector<string> operands = parser.separateOperands(mainScope, exp);
         operandsPerExp.push_back(operands);
     }
 

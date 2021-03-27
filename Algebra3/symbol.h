@@ -37,4 +37,6 @@ class Symbol {
 
         ~Symbol();
 
+        virtual void appendChild(unique_ptr<Symbol>& child) = 0;
+
 };
