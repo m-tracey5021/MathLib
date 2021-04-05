@@ -9,28 +9,33 @@ bool testFindScope(){
 
     MParser parser;
     vector<string> expressions = {
-        "2",
-        "235",
-        "2xyz",
-        "2x+3y",
-        "2x+376",
-        "2x+7",
-        "x+y+z",
-        "x+(y+z)",
-        "x+(y+z+a)",
-        "xy+z",
-        "2(x+y+z-1/2)",
-        "xy/pq",
-        "(t+2r)/(3er)",
-        "2(2+3t)/4r",
-        "c^{2}",
-        "x+t^{2}",
-        "(x+t)^{2}",
-        "[2]v2x",
-        "[2]v(2x)",
-        "[2x+3]v4",
+        // "2",
+        // "235",
+        // "2xyz",
+        // "2x+3y",
+        // "2x+376",
+        // "2x+7",
+        // "x+y+z",
+        // "x+(y+z)",
+        // "x+(y+z+a)",
+        // "xy+z",
+        // "2(x+y+z-1/2)",
+        // "xy/pq",
+        // "(t+2r)/(3er)",
+        // "2(2+3t)/4r",
+        // "c^{2}",
+        // "x+t^{2}",
+        // "(x+t)^{2}",
+        // "[2]v3",
+        // "[2]v2x",
+        // "[2]v(2x)",
+        // "[2x+3]v4",
         "[2x+4]v(4t+1/2)",
-        "[2x+4]v4(t+1/2)"
+        "[2x+4]v4(t+1/2)",
+        "xy^{2x}z",
+        "(xy)^{2x}z",
+        "x[2x]vyz",
+        "x[2x]v(yz)"
     };
 
     vector<Scope> scopes;
@@ -55,6 +60,12 @@ bool testSeparateOperands(){
     
     MParser parser;
     vector<string> expressions = {
+        "2",
+        "235",
+        "2xyz",
+        "2x+3y",
+        "2x+376",
+        "2x+7",
         "x+y+z",
         "x+(y+z)",
         "x+(y+z+a)",
@@ -62,10 +73,20 @@ bool testSeparateOperands(){
         "2(x+y+z-1/2)",
         "xy/pq",
         "(t+2r)/(3er)",
-        "c^2|",
-        "x+t^2|",
-        "(x+t)^2|",
-        "2(2+3t)/4r"
+        "2(2+3t)/4r",
+        "c^{2}",
+        "x+t^{2}",
+        "(x+t)^{2}",
+        "[2]v3",
+        "[2]v2x",
+        "[2]v(2x)",
+        "[2x+3]v4",
+        "[2x+4]v(4t+1/2)",
+        "[2x+4]v4(t+1/2)",
+        "xy^{2x}z",
+        "(xy)^{2x}z",
+        "x[2x]vyz",
+        "x[2x]v(yz)"
     };
 
     vector<vector<string>> operandsPerExp;

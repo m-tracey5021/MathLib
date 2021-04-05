@@ -24,9 +24,8 @@ enum class ScopeType {
     Summation,
     Multiplication,
     Division,
-    Exponent,
-    Radical,
-    Atomic
+    Atomic,
+    None
 
 };
 
@@ -36,9 +35,23 @@ struct OpInfo {
 
     pair<int, int> between;
 
-    OpInfo(){}
+    OpInfo(): op('~'), between{0, 0}{}
 
     OpInfo(char op, int lhsBetween, int rhsBetween): op(op), between{lhsBetween, rhsBetween}{}
+
+};
+
+struct AuxOpInfo {
+
+    char op;
+
+    int start;
+
+    int end;
+
+    AuxOpInfo(): op('~'), start(0), end(0){}
+
+    AuxOpInfo(char op, int start, int end): op(op), start(start), end(end){}
 
 };
 
@@ -48,11 +61,13 @@ struct Scope {
 
     vector<OpInfo> ops;
 
+    vector<AuxOpInfo> auxOps;
+
     int start;
 
     int end;
 
-    Scope(): start(0), end(0){}
+    Scope(): type(ScopeType::None), start(0), end(0){}
 
     Scope(int start, int end): start(start), end(end){}
 
@@ -61,7 +76,15 @@ struct Scope {
         ops.push_back(opWithinScope);
     }
 
+    void addAuxillary(char op, int start, int end){
+        AuxOpInfo auxillary(op, start, end);
+        auxOps.push_back(auxillary);
+    }
+    
+
 };
+
+
 
 
 
@@ -85,6 +108,10 @@ class MParser {
 
         void parseFunction(string function);
 
+        bool isConstant(string expression);
+        
+        int findAuxOpApplicability(int auxOpStart, int auxOpEnd, int expressionMinMax, bool& cont);
+
         int findMatchingBracket(int i, string expression);
 
         Scope scopeExpression(int i, string expression);
@@ -93,13 +120,19 @@ class MParser {
 
         Scope scopeRational(int i, string expression);
 
-        Scope scopeAuxOp(int i, string expression);
+        // Scope scopeAuxOp(int i, string expression);
+
+        
 
         Scope scopeConstant(int i, string expression);
 
         Scope findScope(int i, string expression);
 
         Scope findMainScope(string expression);
+
+        vector<AuxOpInfo> scopeAuxOp(int i, string expression);
+
+        vector<AuxOpInfo> scopeAuxOp(Scope parentScope, string expression);
 
         vector<string> separateOperands(Scope& scope, string expression);
         
