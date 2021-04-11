@@ -32,4 +32,10 @@ class Operation : public Symbol {
 
         void appendChild(unique_ptr<Symbol>& child) override;
 
+        void appendChild(Symbol* child) override;
+
+        virtual unique_ptr<Symbol> copy() = 0;
+
+        virtual string toString() = 0;
+
 };

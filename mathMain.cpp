@@ -67,7 +67,9 @@ int main(){
 
     bool findScopePassed = testFindScope();
 
-    bool separateOPerandsPassed = testSeparateOperands();
+    bool separateOperandsPassed = testSeparateOperands();
+
+    bool parseExpressionPassed = testParseExpression();
 
     int elements1[] = {3, 4, 5};
     char elements2[] = {'a', 'b', 'c'};

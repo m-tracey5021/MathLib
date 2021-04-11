@@ -1,4 +1,5 @@
 #include "mParser.h"
+#include <typeinfo>
 
 // #define RB ')'
 // #define LB '('
@@ -48,6 +49,37 @@
 
 MParser::MParser(){}
 
+Expression MParser::getParseTree(){
+    return move(parseTree);
+}
+
+unique_ptr<Symbol> MParser::buildAtom(string s){
+    if (s.size() == 1 && isalpha(s[0])){
+        unique_ptr<Variable> variable = make_unique<Variable>(s[0]);
+        return variable;
+    }else{
+        int num = std::stoi(s);
+        unique_ptr<Constant> constant = make_unique<Constant>(num);
+        return constant;
+    }
+}
+
+unique_ptr<Operation> MParser::buildOperation(ScopeType type){
+    
+    if (type == ScopeType::Summation){
+        unique_ptr<SumOp> sumOp = make_unique<SumOp>();
+        return sumOp;
+    }else if (type == ScopeType::Multiplication){
+        unique_ptr<MulOp> mulOp = make_unique<MulOp>();
+        return mulOp;
+    }else if (type == ScopeType::Division){
+        unique_ptr<DivOp> divOp = make_unique<DivOp>();
+        return divOp;
+    }else{
+        // throw
+    }
+}
+
 unique_ptr<Operation> MParser::buildOperation(char c){
     
     if (c == '+' || c == '-'){
@@ -66,31 +98,67 @@ unique_ptr<Operation> MParser::buildOperation(char c){
 
 unique_ptr<AuxOp> MParser::buildAuxOperation(char c){
     if (c == '^'){
-        unique_ptr<AuxOp> exponent = make_unique<AuxOp>();
+        unique_ptr<AuxOp> exponent = make_unique<Exponent>();
     }else if (c == 'v'){
         unique_ptr<AuxOp> root = make_unique<Root>();
     }else if (c == 'f'){
-        unique_ptr<AuxOp> function = make_unique<AuxOp>();
+        unique_ptr<AuxOp> function = make_unique<Function>();
     }else{
         // throw
     }
 }
 
-void MParser::parseExpression(unique_ptr<Symbol>& parentSymbol, string expression){
+bool MParser::insertNewSymbol(unique_ptr<Symbol>& child, unique_ptr<Symbol>& parent){
+    if (parent == nullptr){
+        parent = move(child);
+        return false;
+    }else{
+        parent->appendChild(child);
+        return true;
+    }
+}
 
+void MParser::parseExpression(string expression){
+    parseTree = Expression();
+    unique_ptr<Symbol> root = unique_ptr<Symbol>();
+    parseExpression(root, expression);
+    parseTree.setRoot(root);
+}
+
+void MParser::parseExpression(unique_ptr<Symbol>& parent, string expression){
+
+    unique_ptr<Symbol> child;
     Scope mainScope = findMainScope(expression);
 
+    bool emptyTree;
+    parent == nullptr ? emptyTree = true : emptyTree = false;
+    
     if (mainScope.type == ScopeType::Atomic){
+        child = buildAtom(expression);
         
+        vector<string> auxillaries = separateAuxillaries(mainScope, expression);
+
+        if (emptyTree){
+            parent = move(child);
+        }else{
+            parent->appendChild(child);
+        }
+
+        return;
     }else{
 
-        unique_ptr<Symbol> mainOp = buildOperation(mainScope.ops[0].op);
-        parentSymbol->appendChild(mainOp);
+        child = buildOperation(mainScope.type);
 
-        vector<string> operands = separateOperands(mainScope, expression);    
+        vector<string> operands = separateOperands(mainScope, expression);
+        vector<string> auxillaries = separateAuxillaries(mainScope, expression);  
 
         for (string operand : operands){
-            parseExpression(mainOp, operand);
+            parseExpression(child, operand);
+        }
+        if (emptyTree){
+            parent = move(child);
+        }else{
+            parent->appendChild(child);
         }
     }  
 }
@@ -325,7 +393,7 @@ Scope MParser::scopeTerm(int i, string expression){ // applies to * and atoms
                 j ++;
             }else if (isdigit(expression[j])){
                 j = scopeConstant(j, expression).end;
-                operandCount ++;
+                // operandCount ++;
             }else if (expression[j] == '('){
                 scope.appendOperator('*', j - 1, j);
                 j = findMatchingBracket(j, expression) + 1;
@@ -382,7 +450,7 @@ Scope MParser::scopeTerm(int i, string expression){ // applies to * and atoms
                 k --;
             }else if (isdigit(expression[k])){
                 k = scopeConstant(k, expression).start;
-                operandCount ++;
+                // operandCount ++;
             }else if (expression[k] == ')'){
                 scope.appendOperator('*', k, k + 1);
                 k = findMatchingBracket(k, expression) - 1;
@@ -763,22 +831,51 @@ vector<string> MParser::separateOperands(Scope& scope, string expression){
     
     vector<string> operands;
 
-    for (int i = 0; i <= scope.ops.size(); i ++){
-        int j;
-        int k;
-        if (i == 0){
-            j = 0;
-            k = scope.ops[i].between.first + 1;
-        }else if (i == scope.ops.size()){
-            j = scope.ops[i - 1].between.second;
-            k = expression.size() - j;
-        }else{
-            j = scope.ops[i - 1].between.second;
-            k = scope.ops[i].between.first + 1 - j;
+    if (scope.type == ScopeType::Atomic){
+        operands.push_back(expression);
+        return operands;
+    }else{
+        for (int i = 0; i <= scope.ops.size(); i ++){
+            int j;
+            int k;
+            if (i == 0){
+                j = 0;
+                k = scope.ops[i].between.first + 1;
+            }else if (i == scope.ops.size()){
+                j = scope.ops[i - 1].between.second;
+                k = expression.size() - j;
+            }else{
+                j = scope.ops[i - 1].between.second;
+                k = scope.ops[i].between.first + 1 - j;
+            }
+            
+            string newOperand = expression.substr(j, k);
+            if (newOperand[0] == '('){
+                j ++;
+                newOperand = expression.substr(j, k);
+            }
+            if (newOperand[newOperand.size() - 1] == ')'){
+                k --;
+                newOperand = expression.substr(j, k);
+            }
+            operands.push_back(newOperand);
         }
-        string newOperand = expression.substr(j, k);
-        operands.push_back(newOperand);
+        return operands;
     }
-    return operands;
+
+    
+}
+
+vector<string> MParser::separateAuxillaries(Scope& scope, string expression){
+
+    vector<string> auxillaries;
+
+    for (int i = 0; i < scope.auxOps.size(); i ++){
+        AuxOpInfo currentInfo = scope.auxOps[i];
+        string auxillary = expression.substr(currentInfo.start + 1, (currentInfo.end - 1) - (currentInfo.start + 1));
+        auxillaries.push_back(auxillary);
+    }
+
+    return auxillaries;
 }
 

@@ -14,3 +14,12 @@ Operation::Operation(char op, bool sign, unique_ptr<AuxOp>& auxOp, vector<unique
 
 void Operation::appendChild(unique_ptr<Symbol>& child){operands.push_back(move(child));}
 
+void Operation::appendChild(Symbol* child){
+    unique_ptr<Symbol> toAdd = unique_ptr<Symbol>(child);
+    operands.push_back(move(toAdd));
+}
+
+unique_ptr<Symbol> Operation::copy(){}
+
+string Operation::toString(){return "";}
+

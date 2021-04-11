@@ -98,17 +98,25 @@ class MParser {
 
         MParser();
 
+        Expression getParseTree();
+
+        unique_ptr<Symbol> buildAtom(string s);
+
+        unique_ptr<Operation> buildOperation(ScopeType type);
+
         unique_ptr<Operation> buildOperation(char c);
 
         unique_ptr<AuxOp> buildAuxOperation(char c);
+
+        bool insertNewSymbol(unique_ptr<Symbol>& child, unique_ptr<Symbol>& parent);
+
+        void parseExpression(string expression);
 
         void parseExpression(unique_ptr<Symbol>& parentSymbol, string expression);
 
         void parseEquation(string equation);
 
         void parseFunction(string function);
-
-        bool isConstant(string expression);
         
         int findAuxOpApplicability(int auxOpStart, int auxOpEnd, int expressionMinMax, bool& cont);
 
@@ -119,10 +127,6 @@ class MParser {
         Scope scopeTerm(int i, string expression);
 
         Scope scopeRational(int i, string expression);
-
-        // Scope scopeAuxOp(int i, string expression);
-
-        
 
         Scope scopeConstant(int i, string expression);
 
@@ -135,5 +139,7 @@ class MParser {
         vector<AuxOpInfo> scopeAuxOp(Scope parentScope, string expression);
 
         vector<string> separateOperands(Scope& scope, string expression);
+
+        vector<string> separateAuxillaries(Scope& scope, string expression);
         
 };

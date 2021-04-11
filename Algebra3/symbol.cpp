@@ -13,3 +13,7 @@ Symbol::Symbol(char symbol, bool sign, unique_ptr<AuxOp>& auxOp): symbol(symbol)
 Symbol::~Symbol() = default;
 
 void Symbol::appendChild(unique_ptr<Symbol>& child){}
+
+unique_ptr<Symbol> Symbol::copy(){}
+
+string Symbol::toString(){return "";}
