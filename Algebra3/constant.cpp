@@ -6,7 +6,12 @@ Constant::Constant(int value): Symbol(value), value(value){}
 
 void Constant::appendChild(unique_ptr<Symbol>& child){}
 
-void Constant::appendChild(Symbol* child){}
+unique_ptr<Symbol>& Constant::getNthChild(int n){
+    unique_ptr<Symbol> null;
+    return null;
+}
+
+vector<unique_ptr<Symbol>>& Constant::getAllChildren(){}
 
 unique_ptr<Symbol> Constant::copy(){
     unique_ptr<Symbol> copy = make_unique<Constant>(value);

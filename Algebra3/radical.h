@@ -3,15 +3,15 @@
 #include "auxOp.h"
 #include "symbol.h"
 
-class Root : public AuxOp {
+class Radical : public AuxOp {
 
     private:
 
     public:
 
-        Root();
+        Radical();
 
-        Root(unique_ptr<Symbol>& rootSymbol);
+        Radical(unique_ptr<Symbol>& root);
 
         unique_ptr<AuxOp> copy() override;
 

@@ -14,9 +14,12 @@ Operation::Operation(char op, bool sign, unique_ptr<AuxOp>& auxOp, vector<unique
 
 void Operation::appendChild(unique_ptr<Symbol>& child){operands.push_back(move(child));}
 
-void Operation::appendChild(Symbol* child){
-    unique_ptr<Symbol> toAdd = unique_ptr<Symbol>(child);
-    operands.push_back(move(toAdd));
+unique_ptr<Symbol>& Operation::getNthChild(int n){
+    return operands[n];
+}
+
+vector<unique_ptr<Symbol>>& Operation::getAllChildren(){
+    return operands;
 }
 
 unique_ptr<Symbol> Operation::copy(){}

@@ -13,9 +13,9 @@ class Function : public AuxOp {
 
         Function();
 
-        Function(unique_ptr<Symbol>& rootSymbol);
+        Function(unique_ptr<Symbol>& root);
 
-        Function(unique_ptr<Symbol>& rootSymbol, unique_ptr<Symbol>& definition);
+        Function(unique_ptr<Symbol>& root, unique_ptr<Symbol>& definition);
 
         unique_ptr<AuxOp> copy() override;
 

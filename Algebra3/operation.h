@@ -32,7 +32,9 @@ class Operation : public Symbol {
 
         void appendChild(unique_ptr<Symbol>& child) override;
 
-        void appendChild(Symbol* child) override;
+        unique_ptr<Symbol>& getNthChild(int n) override;
+
+        vector<unique_ptr<Symbol>>& getAllChildren() override;
 
         virtual unique_ptr<Symbol> copy() = 0;
 

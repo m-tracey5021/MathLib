@@ -81,7 +81,6 @@ unique_ptr<Operation> MParser::buildOperation(ScopeType type){
 }
 
 unique_ptr<Operation> MParser::buildOperation(char c){
-    
     if (c == '+' || c == '-'){
         unique_ptr<SumOp> sumOp = make_unique<SumOp>();
         return sumOp;
@@ -96,16 +95,46 @@ unique_ptr<Operation> MParser::buildOperation(char c){
     }
 }
 
-unique_ptr<AuxOp> MParser::buildAuxOperation(char c){
+unique_ptr<AuxOp> MParser::buildAuxOperation(char c, string expression){
+    unique_ptr<Symbol> root = unique_ptr<Symbol>();
+    parseExpression(root, expression);
     if (c == '^'){
-        unique_ptr<AuxOp> exponent = make_unique<Exponent>();
+        unique_ptr<AuxOp> exponent = make_unique<Exponent>(root);
+        return exponent;
     }else if (c == 'v'){
-        unique_ptr<AuxOp> root = make_unique<Root>();
+        unique_ptr<AuxOp> radical = make_unique<Radical>(root);
+        return radical;
     }else if (c == 'f'){
-        unique_ptr<AuxOp> function = make_unique<Function>();
+        unique_ptr<AuxOp> function = make_unique<Function>(root);
+        return function;
     }else{
         // throw
     }
+}
+
+unique_ptr<AuxOp> MParser::buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression){
+
+    // make sure that somewhere further up the chain there is a 
+    // check that makes it impossible to both take a radical and 
+    // an exponent at the same time
+
+    unique_ptr<AuxOp> rootAuxOp;
+
+    unique_ptr<AuxOp> currentAuxOp;
+    unique_ptr<AuxOp> previousAuxOp;
+
+    for (AuxOpInfo auxillary : auxillaries){
+        currentAuxOp = buildAuxOperation(auxillary.op, expression.substr(auxillary.start + 1, (auxillary.end - 1) - (auxillary.start + 1)));
+        if (!rootAuxOp){
+            // root = current;
+            // previous = current;
+        }else{
+            // rootSymbol& = previous->getRoot()
+            // rootSymbol->appendAuxillary(current);
+            // previous = current;
+        }
+    }
+    return rootAuxOp;
 }
 
 bool MParser::insertNewSymbol(unique_ptr<Symbol>& child, unique_ptr<Symbol>& parent){
@@ -125,36 +154,47 @@ void MParser::parseExpression(string expression){
     parseTree.setRoot(root);
 }
 
-void MParser::parseExpression(unique_ptr<Symbol>& parent, string expression){
+void MParser::parseExpression(unique_ptr<Symbol>& parent, string expression){    
+
+    Scope mainScope = findMainScope(expression);
 
     unique_ptr<Symbol> child;
-    Scope mainScope = findMainScope(expression);
+    unique_ptr<AuxOp> auxOp = buildAuxOperationChain(mainScope.auxOps, expression);
 
     bool emptyTree;
     parent == nullptr ? emptyTree = true : emptyTree = false;
-    
+
     if (mainScope.type == ScopeType::Atomic){
         child = buildAtom(expression);
-        
-        vector<string> auxillaries = separateAuxillaries(mainScope, expression);
+        child->appendAuxillary(auxOp);
 
         if (emptyTree){
             parent = move(child);
+            parent->appendAuxillary(auxOp);
         }else{
             parent->appendChild(child);
+            child->appendAuxillary(auxOp);
         }
 
         return;
     }else{
 
         child = buildOperation(mainScope.type);
+        child->appendAuxillary(auxOp);
 
         vector<string> operands = separateOperands(mainScope, expression);
         vector<string> auxillaries = separateAuxillaries(mainScope, expression);  
 
+        for (string auxillary : auxillaries){
+            
+        }
+
         for (string operand : operands){
             parseExpression(child, operand);
         }
+
+
+
         if (emptyTree){
             parent = move(child);
         }else{

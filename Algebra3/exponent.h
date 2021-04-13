@@ -13,7 +13,7 @@ class Exponent : public AuxOp {
 
         Exponent();
 
-        Exponent(unique_ptr<Symbol>& rootSymbol);
+        Exponent(unique_ptr<Symbol>& root);
 
         unique_ptr<AuxOp> copy() override;
 

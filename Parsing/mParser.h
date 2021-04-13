@@ -6,7 +6,7 @@
 #include "../Algebra3/divOp.h"
 #include "../Algebra3/auxOp.h"
 #include "../Algebra3/exponent.h"
-#include "../Algebra3/root.h"
+#include "../Algebra3/radical.h"
 #include "../Algebra3/function.h"
 #include "../Algebra3/constant.h"
 #include "../Algebra3/variable.h"
@@ -106,7 +106,9 @@ class MParser {
 
         unique_ptr<Operation> buildOperation(char c);
 
-        unique_ptr<AuxOp> buildAuxOperation(char c);
+        unique_ptr<AuxOp> buildAuxOperation(char c, string expression);
+
+        unique_ptr<AuxOp> buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression);
 
         bool insertNewSymbol(unique_ptr<Symbol>& child, unique_ptr<Symbol>& parent);
 

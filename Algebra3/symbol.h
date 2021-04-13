@@ -1,6 +1,9 @@
 #pragma once
 
 #include "auxOp.h"
+// #include "exponent.h"
+// #include "radical.h"
+// #include "function.h"
 #include <string>
 #include <vector>
 #include <memory>
@@ -15,6 +18,10 @@ using std::make_unique;
 using std::make_shared;
 using std::pair;
 
+class Exponent;
+class Radical;
+class Function;
+
 class Symbol {
 
     protected:
@@ -22,6 +29,8 @@ class Symbol {
         char symbol;
 
         bool sign;
+
+        unique_ptr<Symbol> parent;
 
         unique_ptr<AuxOp> auxOp;
 
@@ -39,13 +48,19 @@ class Symbol {
 
         ~Symbol();
 
+        void setParent(unique_ptr<Symbol>& parent);
+
+        void appendAuxillary(unique_ptr<AuxOp>& auxOp);
+
         virtual void appendChild(unique_ptr<Symbol>& child) = 0;
 
-        virtual void appendChild(Symbol* child) = 0;
+        unique_ptr<Symbol>& getParent();
 
-        // virtual unique_ptr<Symbol> getNthChild(int n) = 0;
+        unique_ptr<AuxOp>& getAuxillary();
 
-        // virtual unique_ptr<Symbol> getParent() = 0;
+        virtual unique_ptr<Symbol>& getNthChild(int n) = 0;
+
+        virtual vector<unique_ptr<Symbol>>& getAllChildren() = 0;
 
         virtual unique_ptr<Symbol> copy() = 0;
 

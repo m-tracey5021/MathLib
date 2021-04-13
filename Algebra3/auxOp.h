@@ -20,16 +20,19 @@ class AuxOp {
 
     protected:
 
-        unique_ptr<Symbol> rootSymbol;
-
+        unique_ptr<Symbol> root;
 
     public:
 
         AuxOp();
 
-        AuxOp(unique_ptr<Symbol>& rootSymbol);
+        AuxOp(unique_ptr<Symbol>& root);
 
         ~AuxOp();
+
+        void setRoot(unique_ptr<Symbol>& root);
+
+        unique_ptr<Symbol>& getRoot();
 
         virtual unique_ptr<AuxOp> copy() = 0;
 
