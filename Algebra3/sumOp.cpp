@@ -11,6 +11,7 @@ SumOp::SumOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Op
 SumOp::SumOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('+', sign, auxOp, operands){}
 
 unique_ptr<Symbol> SumOp::copy(){
+
     vector<unique_ptr<Symbol>> copiedOperands;
     for (int i = 0; i < operands.size(); i ++){
         unique_ptr<Symbol> copied = operands[i]->copy();
@@ -34,6 +35,12 @@ string SumOp::toString(){
         }else{
             ret += operands[i]->toString();
         }
+    }
+    if (parent != nullptr){
+        ret = '(' + ret + ')';
+    }
+    if (auxOp != nullptr){
+        ret = auxOp->toString(ret);
     }
     return ret;
 }

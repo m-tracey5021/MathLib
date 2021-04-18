@@ -10,6 +10,11 @@ unique_ptr<AuxOp> Radical::copy(){
     return copy;
 }
 
-string Radical::toString(){
-    return "";
+string Radical::toString(string target){
+    target = '[' + root->toString() + "]v" + target;
+    unique_ptr<AuxOp>& nextAuxillary = root->getAuxillary();
+    if (nextAuxillary != nullptr){
+        target = nextAuxillary->toString(target);
+    }
+    return target;
 }

@@ -10,4 +10,11 @@ unique_ptr<AuxOp> Exponent::copy(){
     return copy;
 }
 
-string Exponent::toString(){return "";}
+string Exponent::toString(string target){
+    target += "^{" + root->toString() + '}';
+    unique_ptr<AuxOp>& nextAuxillary = root->getAuxillary();
+    if (nextAuxillary != nullptr){
+        target = nextAuxillary->toString(target);
+    }
+    return target;
+}

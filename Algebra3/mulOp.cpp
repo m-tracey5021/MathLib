@@ -11,6 +11,7 @@ MulOp::MulOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Op
 MulOp::MulOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('*', sign, auxOp, operands){}
 
 unique_ptr<Symbol> MulOp::copy(){
+
     vector<unique_ptr<Symbol>> copiedOperands;
     for (int i = 0; i < operands.size(); i ++){
         unique_ptr<Symbol> copied = operands[i]->copy();

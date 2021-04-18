@@ -15,6 +15,6 @@ class Radical : public AuxOp {
 
         unique_ptr<AuxOp> copy() override;
 
-        string toString() override;
+        string toString(string target) override;
         
 };

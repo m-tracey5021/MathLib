@@ -118,33 +118,37 @@ unique_ptr<AuxOp> MParser::buildAuxOperationChain(vector<AuxOpInfo>& auxillaries
     // check that makes it impossible to both take a radical and 
     // an exponent at the same time
 
-    unique_ptr<AuxOp> rootAuxOp;
+    shared_ptr<AuxOp> rootAuxOp;
 
-    unique_ptr<AuxOp> currentAuxOp;
-    unique_ptr<AuxOp> previousAuxOp;
+    shared_ptr<AuxOp> currentAuxOp;
+    shared_ptr<AuxOp> previousAuxOp;
 
     for (AuxOpInfo auxillary : auxillaries){
-        currentAuxOp = buildAuxOperation(auxillary.op, expression.substr(auxillary.start + 1, (auxillary.end - 1) - (auxillary.start + 1)));
+        currentAuxOp = move(buildAuxOperation(auxillary.op, expression.substr(auxillary.start + 1, auxillary.end - (auxillary.start + 1))));
+
         if (!rootAuxOp){
             // root = current;
             // previous = current;
+            rootAuxOp = currentAuxOp;
+            previousAuxOp = currentAuxOp;
         }else{
             // rootSymbol& = previous->getRoot()
             // rootSymbol->appendAuxillary(current);
             // previous = current;
+            unique_ptr<Symbol>& rootSymbol = previousAuxOp->getRoot();
+            unique_ptr<AuxOp> copiedCurrent = currentAuxOp->copy();
+            rootSymbol->appendAuxillary(copiedCurrent);
+            previousAuxOp = currentAuxOp;
+
         }
     }
-    return rootAuxOp;
-}
-
-bool MParser::insertNewSymbol(unique_ptr<Symbol>& child, unique_ptr<Symbol>& parent){
-    if (parent == nullptr){
-        parent = move(child);
-        return false;
+    if (rootAuxOp != nullptr){
+        unique_ptr<AuxOp> copiedRoot = rootAuxOp->copy();
+        return copiedRoot;
     }else{
-        parent->appendChild(child);
-        return true;
+        // return nullptr kinda deal
     }
+    
 }
 
 void MParser::parseExpression(string expression){

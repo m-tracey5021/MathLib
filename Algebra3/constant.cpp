@@ -14,6 +14,7 @@ unique_ptr<Symbol>& Constant::getNthChild(int n){
 vector<unique_ptr<Symbol>>& Constant::getAllChildren(){}
 
 unique_ptr<Symbol> Constant::copy(){
+
     unique_ptr<Symbol> copy = make_unique<Constant>(value);
     return copy;
 }

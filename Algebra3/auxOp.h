@@ -36,6 +36,6 @@ class AuxOp {
 
         virtual unique_ptr<AuxOp> copy() = 0;
 
-        virtual string toString() = 0;
+        virtual string toString(string target) = 0;
 
 };

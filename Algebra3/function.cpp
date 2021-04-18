@@ -13,4 +13,4 @@ unique_ptr<AuxOp> Function::copy(){
     return copy;
 }
 
-string Function::toString(){return "";}
+string Function::toString(string target){return "";}

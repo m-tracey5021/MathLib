@@ -110,8 +110,6 @@ class MParser {
 
         unique_ptr<AuxOp> buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression);
 
-        bool insertNewSymbol(unique_ptr<Symbol>& child, unique_ptr<Symbol>& parent);
-
         void parseExpression(string expression);
 
         void parseExpression(unique_ptr<Symbol>& parentSymbol, string expression);

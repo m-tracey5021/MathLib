@@ -12,8 +12,8 @@ Symbol::Symbol(char symbol, bool sign, unique_ptr<AuxOp>& auxOp): symbol(symbol)
 
 Symbol::~Symbol() = default;
 
-void Symbol::setParent(unique_ptr<Symbol>& parent){
-    this->parent = move(parent);
+void Symbol::setParent(shared_ptr<Symbol>& parent){
+    this->parent = parent;
 }
 
 void Symbol::appendAuxillary(unique_ptr<AuxOp>& auxOp){
@@ -22,7 +22,7 @@ void Symbol::appendAuxillary(unique_ptr<AuxOp>& auxOp){
 
 void Symbol::appendChild(unique_ptr<Symbol>& child){}
 
-unique_ptr<Symbol>& Symbol::getParent(){
+shared_ptr<Symbol>& Symbol::getParent(){
     return parent;
 }
 
