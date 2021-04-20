@@ -14,6 +14,12 @@ class Constant : public Symbol {
 
         Constant(int value);
 
+        Constant(bool sign, int value);
+
+        Constant(unique_ptr<AuxOp>& auxOp, int value);
+
+        Constant(bool sign, unique_ptr<AuxOp>& auxOp, int value);
+
         void appendChild(unique_ptr<Symbol>& child) override;
 
         unique_ptr<Symbol>& getNthChild(int n) override;
@@ -22,6 +28,6 @@ class Constant : public Symbol {
 
         unique_ptr<Symbol> copy() override;
 
-        string toString() override;
+        string toString(bool includeAuxilliaries) override;
         
 };

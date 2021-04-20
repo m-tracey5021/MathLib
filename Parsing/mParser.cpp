@@ -146,6 +146,8 @@ unique_ptr<AuxOp> MParser::buildAuxOperationChain(vector<AuxOpInfo>& auxillaries
         unique_ptr<AuxOp> copiedRoot = rootAuxOp->copy();
         return copiedRoot;
     }else{
+        unique_ptr<AuxOp> null = unique_ptr<AuxOp>();
+        return null;
         // return nullptr kinda deal
     }
     
@@ -169,15 +171,13 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, string expression){
     parent == nullptr ? emptyTree = true : emptyTree = false;
 
     if (mainScope.type == ScopeType::Atomic){
-        child = buildAtom(expression);
+        child = buildAtom(expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1));
         child->appendAuxillary(auxOp);
 
         if (emptyTree){
             parent = move(child);
-            parent->appendAuxillary(auxOp);
         }else{
             parent->appendChild(child);
-            child->appendAuxillary(auxOp);
         }
 
         return;

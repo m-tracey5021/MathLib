@@ -36,4 +36,4 @@ vector<unique_ptr<Symbol>>& Symbol::getAllChildren(){}
 
 unique_ptr<Symbol> Symbol::copy(){}
 
-string Symbol::toString(){return "";}
+string Symbol::toString(bool includeAuxilliaries){return "";}

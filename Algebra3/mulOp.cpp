@@ -27,10 +27,16 @@ unique_ptr<Symbol> MulOp::copy(){
     return copy;
 }
 
-string MulOp::toString(){
+string MulOp::toString(bool includeAuxilliaries){
     string ret = "";
     for (int i = 0; i < operands.size(); i ++){
-        ret += operands[i]->toString();
+        ret += operands[i]->toString(true);
+    }
+    if (parent != nullptr){
+        ret = '(' + ret + ')';
+    }
+    if (auxOp != nullptr && includeAuxilliaries){
+        ret = auxOp->toString(ret);
     }
     return ret;
 }

@@ -27,14 +27,20 @@ unique_ptr<Symbol> DivOp::copy(){
     return copy;
 }
 
-string DivOp::toString(){
+string DivOp::toString(bool includeAuxilliaries){
     string ret = "";
     for (int i = 0; i < operands.size(); i ++){
         if (i < operands.size() - 1){
-            ret += operands[i]->toString() + '/';
+            ret += operands[i]->toString(true) + '/';
         }else{
-            ret += operands[i]->toString();
+            ret += operands[i]->toString(true);
         }
+    }
+    if (parent != nullptr){
+        ret = '(' + ret + ')';
+    }
+    if (auxOp != nullptr && includeAuxilliaries){
+        ret = auxOp->toString(ret);
     }
     return ret;
 }

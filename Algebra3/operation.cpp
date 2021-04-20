@@ -28,5 +28,5 @@ vector<unique_ptr<Symbol>>& Operation::getAllChildren(){
 
 unique_ptr<Symbol> Operation::copy(){}
 
-string Operation::toString(){return "";}
+string Operation::toString(bool includeAuxilliaries){return "";}
 

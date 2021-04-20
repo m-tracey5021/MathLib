@@ -11,7 +11,7 @@ unique_ptr<AuxOp> Exponent::copy(){
 }
 
 string Exponent::toString(string target){
-    target += "^{" + root->toString() + '}';
+    target += "^{" + root->toString(false) + '}';
     unique_ptr<AuxOp>& nextAuxillary = root->getAuxillary();
     if (nextAuxillary != nullptr){
         target = nextAuxillary->toString(target);

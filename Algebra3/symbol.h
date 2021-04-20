@@ -64,7 +64,7 @@ class Symbol {
 
         virtual unique_ptr<Symbol> copy() = 0;
 
-        virtual string toString() = 0;
+        virtual string toString(bool includeAuxilliaries) = 0;
 
         
 

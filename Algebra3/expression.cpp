@@ -15,5 +15,5 @@ void Expression::setRoot(Symbol* symbol){
 }
 
 string Expression::toString(){
-    return root->toString();
+    return root->toString(true);
 }

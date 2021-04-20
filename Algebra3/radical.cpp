@@ -11,7 +11,7 @@ unique_ptr<AuxOp> Radical::copy(){
 }
 
 string Radical::toString(string target){
-    target = '[' + root->toString() + "]v" + target;
+    target = '[' + root->toString(false) + "]v" + target;
     unique_ptr<AuxOp>& nextAuxillary = root->getAuxillary();
     if (nextAuxillary != nullptr){
         target = nextAuxillary->toString(target);

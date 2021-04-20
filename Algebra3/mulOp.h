@@ -20,6 +20,6 @@ class MulOp : public Operation {
 
         unique_ptr<Symbol> copy() override;
 
-        string toString() override;
+        string toString(bool includeAuxilliaries) override;
 
 };

@@ -14,6 +14,12 @@ class Variable : public Symbol {
 
         Variable(char value);
 
+        Variable(bool sign, char value);
+
+        Variable(unique_ptr<AuxOp>& auxOp, char value);
+
+        Variable(bool sign, unique_ptr<AuxOp>& auxOp, char value);
+
         void appendChild(unique_ptr<Symbol>& child) override;
 
         unique_ptr<Symbol>& getNthChild(int n) override;
@@ -22,5 +28,5 @@ class Variable : public Symbol {
 
         unique_ptr<Symbol> copy() override;
 
-        string toString() override;
+        string toString(bool includeAuxilliaries) override;
 };
