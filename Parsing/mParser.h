@@ -24,6 +24,8 @@ enum class ScopeType {
     Summation,
     Multiplication,
     Division,
+    Exponent,
+    Radical,
     Atomic,
     None
 
@@ -61,7 +63,7 @@ struct Scope {
 
     vector<OpInfo> ops;
 
-    vector<AuxOpInfo> auxOps;
+    // vector<AuxOpInfo> auxOps;
 
     int start;
 
@@ -76,10 +78,10 @@ struct Scope {
         ops.push_back(opWithinScope);
     }
 
-    void addAuxillary(char op, int start, int end){
-        AuxOpInfo auxillary(op, start, end);
-        auxOps.push_back(auxillary);
-    }
+    // void addAuxillary(char op, int start, int end){
+    //     AuxOpInfo auxillary(op, start, end);
+    //     auxOps.push_back(auxillary);
+    // }
     
 
 };
@@ -99,6 +101,10 @@ class MParser {
         MParser();
 
         Expression getParseTree();
+
+        bool isOpeningBracket(char bracket);
+
+        bool isClosingBracket(char bracket);
 
         unique_ptr<Symbol> buildAtom(string s);
 
@@ -134,12 +140,14 @@ class MParser {
 
         Scope findMainScope(string expression);
 
-        vector<AuxOpInfo> scopeAuxOp(int i, string expression);
+        Scope scopeAuxOp(int i, string expression);
 
-        vector<AuxOpInfo> scopeAuxOp(Scope parentScope, string expression);
+        // vector<AuxOpInfo> scopeAuxOp(int i, string expression);
+
+        // vector<AuxOpInfo> scopeAuxOp(Scope parentScope, string expression);
 
         vector<string> separateOperands(Scope& scope, string expression);
 
-        vector<string> separateAuxillaries(Scope& scope, string expression);
+        pair<string, vector<string>> separateAuxillaries(Scope& scope, string expression);
         
 };
