@@ -73,6 +73,30 @@ bool MParser::isClosingBracket(char bracket){
     }
 }
 
+unique_ptr<Symbol> MParser::buildSymbol(ScopeType type, string expression){
+    if (type == ScopeType::Atomic){
+        if (expression.size() == 1 && isalpha(expression[0])){
+            unique_ptr<Variable> variable = make_unique<Variable>(expression[0]);
+            return variable;
+        }else{
+            int num = std::stoi(expression);
+            unique_ptr<Constant> constant = make_unique<Constant>(num);
+            return constant;
+        }
+    }else if (type == ScopeType::Summation){
+        unique_ptr<SumOp> sumOp = make_unique<SumOp>();
+        return sumOp;
+    }else if (type == ScopeType::Multiplication){
+        unique_ptr<MulOp> mulOp = make_unique<MulOp>();
+        return mulOp;
+    }else if (type == ScopeType::Division){
+        unique_ptr<DivOp> divOp = make_unique<DivOp>();
+        return divOp;
+    }else{
+        // throw error
+    }
+}
+
 unique_ptr<Symbol> MParser::buildAtom(string s){
     if (s.size() == 1 && isalpha(s[0])){
         unique_ptr<Variable> variable = make_unique<Variable>(s[0]);
@@ -191,8 +215,11 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, string expression){
     parent == nullptr ? emptyTree = true : emptyTree = false;
 
     if (mainScope.type == ScopeType::Atomic){
-        child = buildAtom(expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1));
+        // child = buildAtom(expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1));
         // child->appendAuxillary(auxOp);
+
+        string atom = expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1);
+        child = buildSymbol(mainScope.type, atom);
 
         if (emptyTree){
             parent = move(child);
@@ -201,18 +228,29 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, string expression){
         }
 
         return;
+        
     }else if (mainScope.type == ScopeType::Exponent || mainScope.type == ScopeType::Radical) {
 
         pair<string, vector<string>> auxillaryPair = separateAuxillaries(mainScope, expression);
 
         Scope targetScope = findMainScope(auxillaryPair.first);
 
+        child = buildSymbol(targetScope.type, auxillaryPair.first);
+
         parseExpression(parent, auxillaryPair.first);
+
+        if (emptyTree){
+            parent = move(child);
+        }else{
+            parent->appendChild(child);
+        }
 
     }else{
 
-        child = buildOperation(mainScope.type);
+        // child = buildOperation(mainScope.type);
         // child->appendAuxillary(auxOp);
+
+        child = buildSymbol(mainScope.type, expression);
 
         vector<string> operands = separateOperands(mainScope, expression);
         // vector<string> auxillaries = separateAuxillaries(mainScope, expression);  

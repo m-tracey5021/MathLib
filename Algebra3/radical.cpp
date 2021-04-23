@@ -1,20 +1,67 @@
+// #include "radical.h"
+
+// Radical::Radical(): AuxOp(){}
+
+// Radical::Radical(unique_ptr<Symbol>& root): AuxOp(root){}
+
+// unique_ptr<AuxOp> Radical::copy(){
+//     unique_ptr<Symbol> copiedRoot = root->copy();
+//     unique_ptr<AuxOp> copy = make_unique<Radical>(copiedRoot);
+//     return copy;
+// }
+
+// string Radical::toString(string target){
+//     target = '[' + root->toString(false) + "]v" + target;
+//     unique_ptr<AuxOp>& nextAuxillary = root->getAuxillary();
+//     if (nextAuxillary != nullptr){
+//         target = nextAuxillary->toString(target);
+//     }
+//     return target;
+// }
+
 #include "radical.h"
 
-Radical::Radical(): AuxOp(){}
+Radical::Radical(): Operation('v'){}
 
-Radical::Radical(unique_ptr<Symbol>& root): AuxOp(root){}
+Radical::Radical(bool sign): Operation('v', sign){}
 
-unique_ptr<AuxOp> Radical::copy(){
-    unique_ptr<Symbol> copiedRoot = root->copy();
-    unique_ptr<AuxOp> copy = make_unique<Radical>(copiedRoot);
+Radical::Radical(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('v', sign, operands){}
+
+Radical::Radical(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('v', true, auxOp, operands){}
+
+Radical::Radical(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('v', sign, auxOp, operands){}
+
+unique_ptr<Symbol> Radical::copy(){
+
+    vector<unique_ptr<Symbol>> copiedOperands;
+    for (int i = 0; i < operands.size(); i ++){
+        unique_ptr<Symbol> copied = operands[i]->copy();
+        copiedOperands.push_back(move(copied));
+    }
+    unique_ptr<Symbol> copy;
+    if (auxOp.get() == nullptr){
+        copy = make_unique<Radical>(sign, copiedOperands);
+    }else{
+        unique_ptr<AuxOp> copiedAuxOp = auxOp->copy();
+        copy = make_unique<Radical>(sign, copiedAuxOp, copiedOperands);
+    }
     return copy;
 }
 
-string Radical::toString(string target){
-    target = '[' + root->toString(false) + "]v" + target;
-    unique_ptr<AuxOp>& nextAuxillary = root->getAuxillary();
-    if (nextAuxillary != nullptr){
-        target = nextAuxillary->toString(target);
+string Radical::toString(bool includeAuxilliaries){
+    string ret = "";
+    for (int i = 0; i < operands.size(); i ++){
+        if (i < operands.size() - 1){
+            ret += operands[i]->toString(true) + '/';
+        }else{
+            ret += operands[i]->toString(true);
+        }
     }
-    return target;
+    if (parent != nullptr){
+        ret = '(' + ret + ')';
+    }
+    if (auxOp != nullptr && includeAuxilliaries){
+        ret = auxOp->toString(ret);
+    }
+    return ret;
 }
