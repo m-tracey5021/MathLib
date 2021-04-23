@@ -138,4 +138,6 @@ bool testParseExpression(){
         string parseTreeStr = parser.getParseTree().toString();
     }
     
+    return false;
+    
 }
