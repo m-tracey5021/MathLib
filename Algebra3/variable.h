@@ -16,9 +16,9 @@ class Variable : public Symbol {
 
         Variable(bool sign, char value);
 
-        Variable(unique_ptr<AuxOp>& auxOp, char value);
+        // Variable(unique_ptr<AuxOp>& auxOp, char value);
 
-        Variable(bool sign, unique_ptr<AuxOp>& auxOp, char value);
+        // Variable(bool sign, unique_ptr<AuxOp>& auxOp, char value);
 
         void appendChild(unique_ptr<Symbol>& child) override;
 

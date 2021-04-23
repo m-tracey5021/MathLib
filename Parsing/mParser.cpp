@@ -92,6 +92,12 @@ unique_ptr<Symbol> MParser::buildSymbol(ScopeType type, string expression){
     }else if (type == ScopeType::Division){
         unique_ptr<DivOp> divOp = make_unique<DivOp>();
         return divOp;
+    }else if (type == ScopeType::Exponent){
+        unique_ptr<Exponent> exponent = make_unique<Exponent>();
+        return exponent;
+    }else if (type == ScopeType::Radical){
+        unique_ptr<Radical> radical = make_unique<Radical>();
+        return radical;
     }else{
         // throw error
     }
@@ -108,6 +114,22 @@ unique_ptr<Symbol> MParser::buildAtom(string s){
     }
 }
 
+// unique_ptr<Operation> MParser::buildOperation(ScopeType type){
+    
+//     if (type == ScopeType::Summation){
+//         unique_ptr<SumOp> sumOp = make_unique<SumOp>();
+//         return sumOp;
+//     }else if (type == ScopeType::Multiplication){
+//         unique_ptr<MulOp> mulOp = make_unique<MulOp>();
+//         return mulOp;
+//     }else if (type == ScopeType::Division){
+//         unique_ptr<DivOp> divOp = make_unique<DivOp>();
+//         return divOp;
+//     }else{
+//         // throw
+//     }
+// }
+
 unique_ptr<Operation> MParser::buildOperation(ScopeType type){
     
     if (type == ScopeType::Summation){
@@ -119,6 +141,12 @@ unique_ptr<Operation> MParser::buildOperation(ScopeType type){
     }else if (type == ScopeType::Division){
         unique_ptr<DivOp> divOp = make_unique<DivOp>();
         return divOp;
+    }else if (type == ScopeType::Exponent){
+        unique_ptr<Exponent> exponent = make_unique<Exponent>();
+        return exponent;
+    }else if (type == ScopeType::Radical){
+        unique_ptr<Radical> radical = make_unique<Radical>();
+        return radical;
     }else{
         // throw
     }
@@ -139,63 +167,63 @@ unique_ptr<Operation> MParser::buildOperation(char c){
     }
 }
 
-unique_ptr<AuxOp> MParser::buildAuxOperation(char c, string expression){
-    unique_ptr<Symbol> root = unique_ptr<Symbol>();
-    parseExpression(root, expression);
-    if (c == '^'){
-        unique_ptr<AuxOp> exponent = make_unique<Exponent>(root);
-        return exponent;
-    }else if (c == 'v'){
-        unique_ptr<AuxOp> radical = make_unique<Radical>(root);
-        return radical;
-    }else if (c == 'f'){
-        unique_ptr<AuxOp> function = make_unique<Function>(root);
-        return function;
-    }else{
-        // throw
-    }
-}
+// unique_ptr<AuxOp> MParser::buildAuxOperation(char c, string expression){
+//     unique_ptr<Symbol> root = unique_ptr<Symbol>();
+//     parseExpression(root, expression);
+//     if (c == '^'){
+//         unique_ptr<AuxOp> exponent = make_unique<Exponent>(root);
+//         return exponent;
+//     }else if (c == 'v'){
+//         unique_ptr<AuxOp> radical = make_unique<Radical>(root);
+//         return radical;
+//     }else if (c == 'f'){
+//         unique_ptr<AuxOp> function = make_unique<Function>(root);
+//         return function;
+//     }else{
+//         // throw
+//     }
+// }
 
-unique_ptr<AuxOp> MParser::buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression){
+// unique_ptr<AuxOp> MParser::buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression){
 
-    // make sure that somewhere further up the chain there is a 
-    // check that makes it impossible to both take a radical and 
-    // an exponent at the same time
+//     // make sure that somewhere further up the chain there is a 
+//     // check that makes it impossible to both take a radical and 
+//     // an exponent at the same time
 
-    shared_ptr<AuxOp> rootAuxOp;
+//     shared_ptr<AuxOp> rootAuxOp;
 
-    shared_ptr<AuxOp> currentAuxOp;
-    shared_ptr<AuxOp> previousAuxOp;
+//     shared_ptr<AuxOp> currentAuxOp;
+//     shared_ptr<AuxOp> previousAuxOp;
 
-    for (AuxOpInfo auxillary : auxillaries){
-        currentAuxOp = move(buildAuxOperation(auxillary.op, expression.substr(auxillary.start + 1, auxillary.end - (auxillary.start + 1))));
+//     for (AuxOpInfo auxillary : auxillaries){
+//         currentAuxOp = move(buildAuxOperation(auxillary.op, expression.substr(auxillary.start + 1, auxillary.end - (auxillary.start + 1))));
 
-        if (!rootAuxOp){
-            // root = current;
-            // previous = current;
-            rootAuxOp = currentAuxOp;
-            previousAuxOp = currentAuxOp;
-        }else{
-            // rootSymbol& = previous->getRoot()
-            // rootSymbol->appendAuxillary(current);
-            // previous = current;
-            unique_ptr<Symbol>& rootSymbol = previousAuxOp->getRoot();
-            unique_ptr<AuxOp> copiedCurrent = currentAuxOp->copy();
-            rootSymbol->appendAuxillary(copiedCurrent);
-            previousAuxOp = currentAuxOp;
+//         if (!rootAuxOp){
+//             // root = current;
+//             // previous = current;
+//             rootAuxOp = currentAuxOp;
+//             previousAuxOp = currentAuxOp;
+//         }else{
+//             // rootSymbol& = previous->getRoot()
+//             // rootSymbol->appendAuxillary(current);
+//             // previous = current;
+//             unique_ptr<Symbol>& rootSymbol = previousAuxOp->getRoot();
+//             unique_ptr<AuxOp> copiedCurrent = currentAuxOp->copy();
+//             rootSymbol->appendAuxillary(copiedCurrent);
+//             previousAuxOp = currentAuxOp;
 
-        }
-    }
-    if (rootAuxOp != nullptr){
-        unique_ptr<AuxOp> copiedRoot = rootAuxOp->copy();
-        return copiedRoot;
-    }else{
-        unique_ptr<AuxOp> null = unique_ptr<AuxOp>();
-        return null;
-        // return nullptr kinda deal
-    }
+//         }
+//     }
+//     if (rootAuxOp != nullptr){
+//         unique_ptr<AuxOp> copiedRoot = rootAuxOp->copy();
+//         return copiedRoot;
+//     }else{
+//         unique_ptr<AuxOp> null = unique_ptr<AuxOp>();
+//         return null;
+//         // return nullptr kinda deal
+//     }
     
-}
+// }
 
 void MParser::parseExpression(string expression){
     parseTree = Expression();
@@ -229,22 +257,6 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, string expression){
 
         return;
         
-    }else if (mainScope.type == ScopeType::Exponent || mainScope.type == ScopeType::Radical) {
-
-        pair<string, vector<string>> auxillaryPair = separateAuxillaries(mainScope, expression);
-
-        Scope targetScope = findMainScope(auxillaryPair.first);
-
-        child = buildSymbol(targetScope.type, auxillaryPair.first);
-
-        parseExpression(parent, auxillaryPair.first);
-
-        if (emptyTree){
-            parent = move(child);
-        }else{
-            parent->appendChild(child);
-        }
-
     }else{
 
         // child = buildOperation(mainScope.type);
@@ -631,7 +643,7 @@ Scope MParser::scopeAuxOp(int i, string expression){
 
     if (expression[i] == '^'){
         scope.type = ScopeType::Exponent;
-        scope.appendOperator('^', i - 1, i + 1);
+        scope.appendOperator('^', i - 1, i + 2);
         j = findMatchingBracket(j, expression) + 1;
         if (isalpha(expression[k]) || isdigit(expression[k])){
             k --;
@@ -641,12 +653,12 @@ Scope MParser::scopeAuxOp(int i, string expression){
             // throw
         }
         while(expression[j] == '^'){
-            scope.appendOperator('^', j - 1, j + 1);
+            scope.appendOperator('^', j - 1, j + 2);
             j = findMatchingBracket(j + 1, expression) + 1;
         }
     }else if (expression[i] == 'v'){
         scope.type = ScopeType::Radical;
-        scope.appendOperator('v', i - 1, i + 1);
+        scope.appendOperator('v', i - 2, i + 1);
         k = findMatchingBracket(k, expression) - 1;
         if (isalpha(expression[j]) || isdigit(expression[j])){
             j ++;
@@ -656,7 +668,7 @@ Scope MParser::scopeAuxOp(int i, string expression){
             // throw
         }
         while(expression[k] == 'v'){
-            scope.appendOperator('v', k - 1, k + 1);
+            scope.appendOperator('v', k - 2, k + 1);
             k = findMatchingBracket(k - 1, expression) - 1;
         }
 

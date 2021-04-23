@@ -32,7 +32,7 @@ class Symbol {
 
         shared_ptr<Symbol> parent;
 
-        unique_ptr<AuxOp> auxOp;
+        // unique_ptr<AuxOp> auxOp;
 
     public:
 
@@ -42,21 +42,21 @@ class Symbol {
 
         Symbol(char symbol, bool sign);
 
-        Symbol(char symbol, unique_ptr<AuxOp>& auxOp);
+        // Symbol(char symbol, unique_ptr<AuxOp>& auxOp);
 
-        Symbol(char symbol, bool sign, unique_ptr<AuxOp>& auxOp);
+        // Symbol(char symbol, bool sign, unique_ptr<AuxOp>& auxOp);
 
         ~Symbol();
 
         void setParent(shared_ptr<Symbol>& parent);
 
-        void appendAuxillary(unique_ptr<AuxOp>& auxOp);
+        // void appendAuxillary(unique_ptr<AuxOp>& auxOp);
 
         virtual void appendChild(unique_ptr<Symbol>& child) = 0;
 
         shared_ptr<Symbol>& getParent();
 
-        unique_ptr<AuxOp>& getAuxillary();
+        // unique_ptr<AuxOp>& getAuxillary();
 
         virtual unique_ptr<Symbol>& getNthChild(int n) = 0;
 

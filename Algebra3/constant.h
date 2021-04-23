@@ -16,9 +16,9 @@ class Constant : public Symbol {
 
         Constant(bool sign, int value);
 
-        Constant(unique_ptr<AuxOp>& auxOp, int value);
+        // Constant(unique_ptr<AuxOp>& auxOp, int value);
 
-        Constant(bool sign, unique_ptr<AuxOp>& auxOp, int value);
+        // Constant(bool sign, unique_ptr<AuxOp>& auxOp, int value);
 
         void appendChild(unique_ptr<Symbol>& child) override;
 

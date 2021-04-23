@@ -35,9 +35,9 @@ class Radical : public Operation {
 
         Radical(bool sign, vector<unique_ptr<Symbol>>& operands);
 
-        Radical(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        // Radical(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
 
-        Radical(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        // Radical(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
 
         unique_ptr<Symbol> copy() override;
 

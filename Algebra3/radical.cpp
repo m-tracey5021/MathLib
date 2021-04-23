@@ -27,9 +27,9 @@ Radical::Radical(bool sign): Operation('v', sign){}
 
 Radical::Radical(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('v', sign, operands){}
 
-Radical::Radical(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('v', true, auxOp, operands){}
+// Radical::Radical(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('v', true, auxOp, operands){}
 
-Radical::Radical(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('v', sign, auxOp, operands){}
+// Radical::Radical(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('v', sign, auxOp, operands){}
 
 unique_ptr<Symbol> Radical::copy(){
 
@@ -38,18 +38,20 @@ unique_ptr<Symbol> Radical::copy(){
         unique_ptr<Symbol> copied = operands[i]->copy();
         copiedOperands.push_back(move(copied));
     }
-    unique_ptr<Symbol> copy;
-    if (auxOp.get() == nullptr){
-        copy = make_unique<Radical>(sign, copiedOperands);
-    }else{
-        unique_ptr<AuxOp> copiedAuxOp = auxOp->copy();
-        copy = make_unique<Radical>(sign, copiedAuxOp, copiedOperands);
-    }
+    // unique_ptr<Symbol> copy;
+    // if (auxOp.get() == nullptr){
+    //     copy = make_unique<Radical>(sign, copiedOperands);
+    // }else{
+    //     unique_ptr<AuxOp> copiedAuxOp = auxOp->copy();
+    //     copy = make_unique<Radical>(sign, copiedAuxOp, copiedOperands);
+    // }
+    unique_ptr<Symbol> copy = make_unique<Radical>(sign, copiedOperands);
     return copy;
 }
 
 string Radical::toString(bool includeAuxilliaries){
     string ret = "";
+    // REDO
     for (int i = 0; i < operands.size(); i ++){
         if (i < operands.size() - 1){
             ret += operands[i]->toString(true) + '/';
@@ -60,8 +62,8 @@ string Radical::toString(bool includeAuxilliaries){
     if (parent != nullptr){
         ret = '(' + ret + ')';
     }
-    if (auxOp != nullptr && includeAuxilliaries){
-        ret = auxOp->toString(ret);
-    }
+    // if (auxOp != nullptr && includeAuxilliaries){
+    //     ret = auxOp->toString(ret);
+    // }
     return ret;
 }

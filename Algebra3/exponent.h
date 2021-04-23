@@ -37,9 +37,9 @@ class Exponent : public Operation {
 
         Exponent(bool sign, vector<unique_ptr<Symbol>>& operands);
 
-        Exponent(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        // Exponent(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
 
-        Exponent(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        // Exponent(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
 
         unique_ptr<Symbol> copy() override;
 
