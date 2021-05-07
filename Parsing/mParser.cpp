@@ -225,6 +225,41 @@ unique_ptr<Operation> MParser::buildOperation(char c){
     
 // }
 
+string MParser::sanitise(string expression){
+    if (isOpeningBracket(expression[0])){
+        char openingBracket = expression[0];
+        int closingBracket = findMatchingBracket(0, expression);
+        if (openingBracket == '('){
+            if (closingBracket == expression.size() - 1){
+                return expression.substr(1, closingBracket - 1);
+            }else{
+                return expression;
+            }
+        }else if (openingBracket == '{'){
+            if (expression[closingBracket + 1] == '^'){
+                bool replace = false;
+                for(int i = 1; i < closingBracket; i ++){
+                    if (!isdigit(expression[i])){
+                        replace = true;
+                    }
+                }
+                if (replace){
+                    return '(' + expression.substr(1, closingBracket - 1) + ')' + expression.substr(closingBracket + 1, expression.size() - closingBracket);
+                }else{
+                    return expression.substr(1, closingBracket - 1) + expression.substr(closingBracket + 1, expression.size() - closingBracket);
+                }
+            }else{
+                return expression.substr(1, closingBracket - 1);
+            }
+        }else{
+
+        }
+        
+    }else{
+        return expression;
+    }
+}
+
 void MParser::parseExpression(string expression){
     parseTree = Expression();
     unique_ptr<Symbol> root = unique_ptr<Symbol>();
@@ -474,21 +509,17 @@ Scope MParser::scopeTerm(int i, string expression){ // applies to * and atoms
                 }
             }else if (expression[j] == '^'){
 
-                int tmp = findMatchingBracket(j + 1, expression);
-                if (tmp + 1 > expression.size() || isClosingBracket(expression[tmp + 1])){
+                int tmp = j;
+                while (expression[tmp] == '^'){
+                    tmp = findMatchingBracket(tmp + 1, expression) + 1;
+                }
+                if (tmp >= expression.size() || isClosingBracket(expression[tmp])){
                     forwards = false;
                 }else{
-                    j = tmp + 1;
+                    j = tmp;
                 }
 
-                // vector<AuxOpInfo> auxOps = scopeAuxOp(j, expression);
-                // int terminatingIndex = auxOps.back().end;
-                // if (terminatingIndex + 1 >= expression.size() || isClosingBracket(expression[terminatingIndex])){
-                //     forwards = false;
-                //     scope.auxOps = auxOps;
-                // }else{
-                //     j = terminatingIndex;
-                // }
+
             }else{
                 forwards = false;
             }
@@ -523,22 +554,16 @@ Scope MParser::scopeTerm(int i, string expression){ // applies to * and atoms
                     operandCount ++;
                 }
             }else if (expression[k] == 'v'){
-
-                int tmp = findMatchingBracket(k - 1, expression);
-                if (tmp - 1 < 0 || isOpeningBracket(expression[tmp - 1])){
-                    forwards = false;
+                int tmp = j;
+                while(expression[tmp] == 'v'){
+                    tmp = findMatchingBracket(tmp - 1, expression) - 1;
+                }
+                if (tmp < 0 || isOpeningBracket(expression[tmp])){
+                    backwards = false;
                 }else{
-                    k = tmp - 1;
+                    k = tmp;
                 }
 
-                // vector<AuxOpInfo> auxOps = scopeAuxOp(k, expression);
-                // int terminatingIndex = auxOps.back().start;
-                // if (terminatingIndex - 1 < 0 || isOpeningBracket(expression[terminatingIndex])){
-                //     backwards = false;
-                //     scope.auxOps = auxOps;
-                // }else{
-                //     k = terminatingIndex;
-                // }
             }else{
                 backwards = false;
             }
@@ -643,7 +668,7 @@ Scope MParser::scopeAuxOp(int i, string expression){
 
     if (expression[i] == '^'){
         scope.type = ScopeType::Exponent;
-        scope.appendOperator('^', i - 1, i + 2);
+        scope.appendOperator('^', i - 1, i + 1);
         j = findMatchingBracket(j, expression) + 1;
         if (isalpha(expression[k]) || isdigit(expression[k])){
             k --;
@@ -653,12 +678,12 @@ Scope MParser::scopeAuxOp(int i, string expression){
             // throw
         }
         while(expression[j] == '^'){
-            scope.appendOperator('^', j - 1, j + 2);
+            //scope.appendOperator('^', j - 1, j + 1);
             j = findMatchingBracket(j + 1, expression) + 1;
         }
     }else if (expression[i] == 'v'){
         scope.type = ScopeType::Radical;
-        scope.appendOperator('v', i - 2, i + 1);
+        scope.appendOperator('v', i - 1, i + 1);
         k = findMatchingBracket(k, expression) - 1;
         if (isalpha(expression[j]) || isdigit(expression[j])){
             j ++;
@@ -668,7 +693,7 @@ Scope MParser::scopeAuxOp(int i, string expression){
             // throw
         }
         while(expression[k] == 'v'){
-            scope.appendOperator('v', k - 2, k + 1);
+            //scope.appendOperator('v', k - 1, k + 1);
             k = findMatchingBracket(k - 1, expression) - 1;
         }
 
@@ -861,15 +886,16 @@ vector<string> MParser::separateOperands(Scope& scope, string expression){
             }
             
             string newOperand = expression.substr(j, k);
-            if (newOperand[0] == '('){
-                j ++;
-                newOperand = expression.substr(j, k);
-            }
-            if (newOperand[newOperand.size() - 1] == ')'){
-                k --;
-                newOperand = expression.substr(j, k);
-            }
-            operands.push_back(newOperand);
+            // if (isOpeningBracket(newOperand[0]) && isClosingBracket(newOperand[newOperand.size() - 1])){
+            //     j += 1;
+            //     k -= 2;
+            //     newOperand = expression.substr(j, k);
+            // }
+            // if (isClosingBracket(newOperand[newOperand.size() - 1])){
+            //     k --;
+            //     newOperand = expression.substr(j, k);
+            // }
+            operands.push_back(sanitise(newOperand));
         }
         return operands;
     }

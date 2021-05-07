@@ -13,9 +13,9 @@ Operation::Operation(char op, bool sign, vector<unique_ptr<Symbol>>& operands): 
 // Operation::Operation(char op, bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Symbol(op, sign, auxOp), operands(move(operands)){}
 
 void Operation::appendChild(unique_ptr<Symbol>& child){
-    operands.push_back(move(child));
     shared_ptr<Symbol> parent = shared_ptr<Symbol>(this);
     child->setParent(parent);
+    operands.push_back(move(child));
 }
 
 unique_ptr<Symbol>& Operation::getNthChild(int n){

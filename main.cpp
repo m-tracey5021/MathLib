@@ -23,25 +23,26 @@
 using namespace std;
 
 int main(){
-    BitString bits = addDecimalToBin(23, 43);
-    int toDec = convertToDecimal(bits);
-    BitString bits1Reversed = reverseBits(bits);
+    cout << "hello";
+    // BitString bits = addDecimalToBin(23, 43);
+    // int toDec = convertToDecimal(bits);
+    // BitString bits1Reversed = reverseBits(bits);
 
-    /*
-    Operator* op = new Operator(OperatorType::Addition, false, "operator");
-    StaticOperand* operand = new StaticOperand(13, "operand");
-    */
+    // /*
+    // Operator* op = new Operator(OperatorType::Addition, false, "operator");
+    // StaticOperand* operand = new StaticOperand(13, "operand");
+    // */
    
-    //tree.insertMainFunctionLeft(op, operand);
-    //BinaryNode* removed = tree2.removeMainFunctionLeft();
+    // //tree.insertMainFunctionLeft(op, operand);
+    // //BinaryNode* removed = tree2.removeMainFunctionLeft();
 
 
-    //std::set<int> ints1 = {1, 2, 3, 3, 4, 5};
-    //std::set<int> ints2 = {4, 5, 5, 9, 10};
+    // //std::set<int> ints1 = {1, 2, 3, 3, 4, 5};
+    // //std::set<int> ints2 = {4, 5, 5, 9, 10};
 
-    //std::set<int> diff = stdSet::setDifference(ints1, ints2);
+    // //std::set<int> diff = stdSet::setDifference(ints1, ints2);
 
-    // bool treeStructurePassed = testTreeStructure();
+    // // bool treeStructurePassed = testTreeStructure();
 
     bool setDiffPassed = testSetDifference();
 

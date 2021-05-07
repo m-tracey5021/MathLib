@@ -106,6 +106,8 @@ class MParser {
 
         bool isClosingBracket(char bracket);
 
+        string sanitise(string expression);
+
         unique_ptr<Symbol> buildSymbol(ScopeType scope, string expression);
 
         unique_ptr<Symbol> buildAtom(string s);
