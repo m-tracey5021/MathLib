@@ -30,6 +30,10 @@ class Symbol {
 
         bool sign;
 
+        bool isExponent;
+
+        bool isRadical;
+
         shared_ptr<Symbol> parent;
 
         // unique_ptr<AuxOp> auxOp;
@@ -48,23 +52,41 @@ class Symbol {
 
         ~Symbol();
 
+        void setAsExponent(bool isExponent);
+
+        void setAsRadical(bool isRadical);
+
         void setParent(shared_ptr<Symbol>& parent);
 
         // void appendAuxillary(unique_ptr<AuxOp>& auxOp);
 
-        virtual void appendChild(unique_ptr<Symbol>& child) = 0;
+        
+
+        
 
         shared_ptr<Symbol>& getParent();
 
+        virtual int getValue() = 0;
+
         // unique_ptr<AuxOp>& getAuxillary();
+
+        virtual void appendChild(unique_ptr<Symbol>& child) = 0;
 
         virtual unique_ptr<Symbol>& getNthChild(int n) = 0;
 
         virtual vector<unique_ptr<Symbol>>& getAllChildren() = 0;
 
+        virtual vector<unique_ptr<Symbol>> duplicateChildren() = 0;  
+
+        virtual vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) = 0;      
+
+        virtual unique_ptr<Symbol>& expandExponent() = 0;
+
+        virtual unique_ptr<Symbol>& expandAsExponent(unique_ptr<Symbol>& base) = 0;
+
         virtual unique_ptr<Symbol> copy() = 0;
 
-        virtual string toString(bool includeAuxilliaries) = 0;
+        virtual string toString() = 0;
 
         
 

@@ -10,6 +10,12 @@ SumOp::SumOp(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('+', si
 
 // SumOp::SumOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('+', sign, auxOp, operands){}
 
+int SumOp::getValue(){return 0;}
+
+unique_ptr<Symbol>& SumOp::expandExponent(){}
+
+unique_ptr<Symbol>& SumOp::expandAsExponent(unique_ptr<Symbol>& base){}
+
 unique_ptr<Symbol> SumOp::copy(){
 
     vector<unique_ptr<Symbol>> copiedOperands;
@@ -28,17 +34,24 @@ unique_ptr<Symbol> SumOp::copy(){
     return copy;
 }
 
-string SumOp::toString(bool includeAuxilliaries){
+string SumOp::toString(){
     string ret = "";
     for (int i = 0; i < operands.size(); i ++){
         if (i < operands.size() - 1){
-            ret += operands[i]->toString(true) + '+';
+            ret += operands[i]->toString() + '+';
         }else{
-            ret += operands[i]->toString(true);
+            ret += operands[i]->toString();
         }
     }
     if (parent != nullptr){
-        ret = '(' + ret + ')';
+        if (isExponent){
+            ret = '{' + ret + '}';
+        }else if(isRadical){
+            ret = '[' + ret + ']';
+        }else{
+            ret = '(' + ret + ')';
+        }
+        
     }
     // if (auxOp != nullptr && includeAuxilliaries){
     //     ret = auxOp->toString(ret);

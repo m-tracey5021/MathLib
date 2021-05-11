@@ -114,22 +114,6 @@ unique_ptr<Symbol> MParser::buildAtom(string s){
     }
 }
 
-// unique_ptr<Operation> MParser::buildOperation(ScopeType type){
-    
-//     if (type == ScopeType::Summation){
-//         unique_ptr<SumOp> sumOp = make_unique<SumOp>();
-//         return sumOp;
-//     }else if (type == ScopeType::Multiplication){
-//         unique_ptr<MulOp> mulOp = make_unique<MulOp>();
-//         return mulOp;
-//     }else if (type == ScopeType::Division){
-//         unique_ptr<DivOp> divOp = make_unique<DivOp>();
-//         return divOp;
-//     }else{
-//         // throw
-//     }
-// }
-
 unique_ptr<Operation> MParser::buildOperation(ScopeType type){
     
     if (type == ScopeType::Summation){
@@ -226,69 +210,141 @@ unique_ptr<Operation> MParser::buildOperation(char c){
 // }
 
 string MParser::sanitise(string expression){
-    if (isOpeningBracket(expression[0])){
-        char openingBracket = expression[0];
-        int closingBracket = findMatchingBracket(0, expression);
-        if (openingBracket == '('){
-            if (closingBracket == expression.size() - 1){
-                return expression.substr(1, closingBracket - 1);
-            }else{
-                return expression;
-            }
-        }else if (openingBracket == '{'){
-            if (expression[closingBracket + 1] == '^'){
-                bool replace = false;
-                for(int i = 1; i < closingBracket; i ++){
-                    if (!isdigit(expression[i])){
-                        replace = true;
-                    }
-                }
-                if (replace){
-                    return '(' + expression.substr(1, closingBracket - 1) + ')' + expression.substr(closingBracket + 1, expression.size() - closingBracket);
-                }else{
-                    return expression.substr(1, closingBracket - 1) + expression.substr(closingBracket + 1, expression.size() - closingBracket);
-                }
-            }else{
-                return expression.substr(1, closingBracket - 1);
-            }
-        }else{
+    // char firstChar = expression[0];
+    // char lastChar = expression[expression.size() - 1];
+    // int closingBracket = findMatchingBracket(0, expression);
+    // int openingBracket = findMatchingBracket(expression.size() - 1, expression);
+    // if (firstChar == '('){
+    //     if (closingBracket == expression.size() - 1){
+    //         return expression.substr(1, closingBracket - 1);
+    //     }else{
+    //         return expression;
+    //     }
+    // }else if (firstChar == '{'){
+    //     if (expression[closingBracket + 1] == '^'){
+    //         bool replace = false;
+    //         for(int i = 1; i < closingBracket; i ++){
+    //             if (!isdigit(expression[i])){
+    //                 replace = true;
+    //             }
+    //         }
+    //         if (replace){
+    //             return '(' + expression.substr(1, closingBracket - 1) + ')' + expression.substr(closingBracket + 1, expression.size() - closingBracket);
+    //         }else{
+    //             return expression.substr(1, closingBracket - 1) + expression.substr(closingBracket + 1, expression.size() - closingBracket);
+    //         }
+    //     }else{
+    //         return expression.substr(1, closingBracket - 1);
+    //     }
+    // }
+    // if (lastChar == ']'){
+    //     if (expression[openingBracket - 1] == 'v'){
+    //         bool replace = false;
+    //         for(int i = openingBracket + 1; i < expression.size() - 1; i ++){
+    //             if (!isdigit(expression[i])){
+    //                 replace = true;
+    //             }
+    //         }
+    //         if (replace){
+    //             return expression.substr(0, openingBracket) + '(' + expression.substr(openingBracket + 1, expression.size() - 2 - openingBracket) + ')';
+    //         }else{
+    //             return expression.substr(0, openingBracket) + expression.substr(openingBracket + 1, expression.size() - 2 - openingBracket);
+    //         }
+    //     }else{
+    //         return expression.substr(openingBracket + 1, expression.size() - 1 - openingBracket);
+    //     }
+    // }
 
+    if (isOpeningBracket(expression[0])){
+        int closingBracket = findMatchingBracket(0, expression);
+        if (closingBracket == expression.size() - 1){
+            return expression.substr(1, closingBracket - 1);
+        }else{
+            return expression;
         }
-        
     }else{
         return expression;
     }
+    
 }
+
+void MParser::setSymbolAsAuxillary(unique_ptr<Symbol>& symbol, ScopeType type){
+    if (type == ScopeType::Exponent){
+        symbol->setAsExponent(true);
+    }else if (type == ScopeType::Radical){
+        symbol->setAsRadical(true);
+    }else{
+        return;
+    }
+}
+
+// void MParser::parseExpression(string expression){
+//     parseTree = Expression();
+//     unique_ptr<Symbol> root = unique_ptr<Symbol>();
+//     parseExpression(root, expression);
+//     parseTree.setRoot(root);
+// }
 
 void MParser::parseExpression(string expression){
     parseTree = Expression();
-    unique_ptr<Symbol> root = unique_ptr<Symbol>();
-    parseExpression(root, expression);
-    parseTree.setRoot(root);
+    
+    Scope mainScope = findMainScope(expression);
+
+
+    if (mainScope.type == ScopeType::Atomic){
+
+        string atom = expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1);
+        unique_ptr<Symbol> child = buildAtom(atom);
+
+        parseTree.setRoot(child);
+
+        return;
+        
+    }else{
+
+        unique_ptr<Symbol> child = buildOperation(mainScope.type);
+
+        vector<string> operands = separateOperands(mainScope, expression);
+
+        for (int i = 0; i < operands.size(); i ++){
+            if ((i == 0 && mainScope.type == ScopeType::Radical) || 
+                (i == 1 && mainScope.type == ScopeType::Exponent)){
+                parseExpression(child, mainScope.type, operands[i]);
+            }else{
+                parseExpression(child, ScopeType::None, operands[i]);
+            }
+        }
+
+        parseTree.setRoot(child);
+    }  
 }
 
-void MParser::parseExpression(unique_ptr<Symbol>& parent, string expression){    
+void MParser::parseExpression(unique_ptr<Symbol>& parent, ScopeType parentScopeType, string expression){    
 
     Scope mainScope = findMainScope(expression);
 
-    unique_ptr<Symbol> child;
+
     // unique_ptr<AuxOp> auxOp = buildAuxOperationChain(mainScope.auxOps, expression);
 
-    bool emptyTree;
-    parent == nullptr ? emptyTree = true : emptyTree = false;
+    // bool emptyTree;
+    // parent == nullptr ? emptyTree = true : emptyTree = false;
 
     if (mainScope.type == ScopeType::Atomic){
         // child = buildAtom(expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1));
         // child->appendAuxillary(auxOp);
 
         string atom = expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1);
-        child = buildSymbol(mainScope.type, atom);
+        unique_ptr<Symbol> child = buildAtom(atom);
 
-        if (emptyTree){
-            parent = move(child);
-        }else{
-            parent->appendChild(child);
-        }
+        setSymbolAsAuxillary(child, parentScopeType);
+
+        // if (emptyTree){
+        //     parent = move(child);
+        // }else{
+        //     parent->appendChild(child);
+        // }
+
+        parent->appendChild(child);
 
         return;
         
@@ -297,26 +353,34 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, string expression){
         // child = buildOperation(mainScope.type);
         // child->appendAuxillary(auxOp);
 
-        child = buildSymbol(mainScope.type, expression);
+        unique_ptr<Symbol> child = buildOperation(mainScope.type);
 
         vector<string> operands = separateOperands(mainScope, expression);
+
+        setSymbolAsAuxillary(child, parentScopeType);
         // vector<string> auxillaries = separateAuxillaries(mainScope, expression);  
 
         // for (string auxillary : auxillaries){
             
         // }
-
-        for (string operand : operands){
-            parseExpression(child, operand);
+        
+        for (int i = 0; i < operands.size(); i ++){
+            if ((i == 0 && mainScope.type == ScopeType::Radical) || 
+                (i == 1 && mainScope.type == ScopeType::Exponent)){
+                parseExpression(child, mainScope.type, operands[i]);
+            }else{
+                parseExpression(child, ScopeType::None, operands[i]);
+            }
         }
 
 
 
-        if (emptyTree){
-            parent = move(child);
-        }else{
-            parent->appendChild(child);
-        }
+        // if (emptyTree){
+        //     parent = move(child);
+        // }else{
+        //     parent->appendChild(child);
+        // }
+        parent->appendChild(child);
     }  
 }
 
@@ -509,16 +573,18 @@ Scope MParser::scopeTerm(int i, string expression){ // applies to * and atoms
                 }
             }else if (expression[j] == '^'){
 
-                int tmp = j;
-                while (expression[tmp] == '^'){
-                    tmp = findMatchingBracket(tmp + 1, expression) + 1;
-                }
-                if (tmp >= expression.size() || isClosingBracket(expression[tmp])){
-                    forwards = false;
-                }else{
-                    j = tmp;
-                }
+                // int tmp = j;
+                // while (expression[tmp] == '^'){
+                //     tmp = findMatchingBracket(tmp + 1, expression) + 1;
+                // }
+                // if (tmp >= expression.size() || isClosingBracket(expression[tmp])){
+                //     forwards = false;
+                // }else{
+                //     j = tmp;
+                // }
 
+                j = findMatchingBracket(j + 1, expression) + 1;
+                operandCount ++;
 
             }else{
                 forwards = false;
@@ -554,15 +620,17 @@ Scope MParser::scopeTerm(int i, string expression){ // applies to * and atoms
                     operandCount ++;
                 }
             }else if (expression[k] == 'v'){
-                int tmp = j;
-                while(expression[tmp] == 'v'){
-                    tmp = findMatchingBracket(tmp - 1, expression) - 1;
-                }
-                if (tmp < 0 || isOpeningBracket(expression[tmp])){
-                    backwards = false;
-                }else{
-                    k = tmp;
-                }
+                // int tmp = j;
+                // while(expression[tmp] == 'v'){
+                //     tmp = findMatchingBracket(tmp - 1, expression) - 1;
+                // }
+                // if (tmp < 0 || isOpeningBracket(expression[tmp])){
+                //     backwards = false;
+                // }else{
+                //     k = tmp;
+                // }
+                k = findMatchingBracket(k - 1, expression);
+                operandCount ++;
 
             }else{
                 backwards = false;
@@ -677,10 +745,9 @@ Scope MParser::scopeAuxOp(int i, string expression){
         }else{
             // throw
         }
-        while(expression[j] == '^'){
-            //scope.appendOperator('^', j - 1, j + 1);
-            j = findMatchingBracket(j + 1, expression) + 1;
-        }
+        // while(expression[j] == '^'){
+        //     j = findMatchingBracket(j + 1, expression) + 1;
+        // }
     }else if (expression[i] == 'v'){
         scope.type = ScopeType::Radical;
         scope.appendOperator('v', i - 1, i + 1);
@@ -692,10 +759,9 @@ Scope MParser::scopeAuxOp(int i, string expression){
         }else{
             // throw
         }
-        while(expression[k] == 'v'){
-            //scope.appendOperator('v', k - 1, k + 1);
-            k = findMatchingBracket(k - 1, expression) - 1;
-        }
+        // while(expression[k] == 'v'){
+        //     k = findMatchingBracket(k - 1, expression) - 1;
+        // }
 
     }
 

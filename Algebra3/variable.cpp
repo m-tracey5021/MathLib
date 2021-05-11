@@ -10,14 +10,23 @@ Variable::Variable(bool sign, char value): Symbol(value, sign), value(value){}
 
 // Variable::Variable(bool sign, unique_ptr<AuxOp>& auxOp, char value): Symbol(value, sign, auxOp), value(value){}
 
+
+
+int Variable::getValue(){return 0;}
+
 void Variable::appendChild(unique_ptr<Symbol>& child){}
 
-unique_ptr<Symbol>& Variable::getNthChild(int n){
-    unique_ptr<Symbol> null;
-    return null;
-}
+unique_ptr<Symbol>& Variable::getNthChild(int n){}
 
 vector<unique_ptr<Symbol>>& Variable::getAllChildren(){}
+
+vector<unique_ptr<Symbol>> Variable::duplicateChildren(){}
+
+vector<unique_ptr<Symbol>> Variable::duplicateChildren(int start, int end){}
+
+unique_ptr<Symbol>& Variable::expandExponent(){}
+
+unique_ptr<Symbol>& Variable::expandAsExponent(unique_ptr<Symbol>& base){}
 
 unique_ptr<Symbol> Variable::copy(){
     
@@ -32,9 +41,14 @@ unique_ptr<Symbol> Variable::copy(){
     return copy;
 }
 
-string Variable::toString(bool includeAuxilliaries){
+string Variable::toString(){
     string ret = "";
     ret += value;
+    if (isExponent){
+        ret = '{' + ret + '}';
+    }else if(isRadical){
+        ret = '[' + ret + ']';
+    }
     // if (auxOp != nullptr && includeAuxilliaries){
     //     ret = auxOp->toString(ret);
     // }

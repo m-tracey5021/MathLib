@@ -10,6 +10,36 @@ MulOp::MulOp(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('*', si
 
 // MulOp::MulOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('*', sign, auxOp, operands){}
 
+int MulOp::getCoeff(){
+    int coeff = 0;
+    for (int i = 0; i < operands.size(); i ++){
+        int val = operands[i]->getValue();
+        if (val){
+            if (!coeff){
+                coeff = val;
+            }else{
+                coeff = coeff * val;
+            }
+        }
+    }
+    return coeff;
+}
+
+int MulOp::getValue(){return 0;}
+
+unique_ptr<Symbol>& MulOp::expandExponent(){}
+
+unique_ptr<Symbol>& MulOp::expandAsExponent(unique_ptr<Symbol>& base){
+    unique_ptr<Symbol> newRoot = make_unique<MulOp>();
+    unique_ptr<Symbol> exponent = make_unique<Exponent>();
+    
+    int coeff = getCoeff();
+    for (int i = 0; i < coeff; i ++){
+
+    }
+    
+}
+
 unique_ptr<Symbol> MulOp::copy(){
 
     vector<unique_ptr<Symbol>> copiedOperands;
@@ -28,14 +58,19 @@ unique_ptr<Symbol> MulOp::copy(){
     return copy;
 }
 
-string MulOp::toString(bool includeAuxilliaries){
+string MulOp::toString(){
     string ret = "";
     for (int i = 0; i < operands.size(); i ++){
-        ret += operands[i]->toString(true);
+        ret += operands[i]->toString();
     }
-    if (parent != nullptr){
-        ret = '(' + ret + ')';
+    if (isExponent){
+        ret = '{' + ret + '}';
+    }else if(isRadical){
+        ret = '[' + ret + ']';
     }
+    // if (parent != nullptr){
+    //     ret = '(' + ret + ')';
+    // }
     // if (auxOp != nullptr && includeAuxilliaries){
     //     ret = auxOp->toString(ret);
     // }

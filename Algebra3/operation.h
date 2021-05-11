@@ -26,18 +26,36 @@ class Operation : public Symbol {
 
         Operation(char op, bool sign, vector<unique_ptr<Symbol>>& operands);
 
+        ~Operation();
+
         // Operation(char op, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
 
         // Operation(char op, bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
 
+        
+
+        
+
         void appendChild(unique_ptr<Symbol>& child) override;
+
+        // void appendChild(unique_ptr<Operation>& child);
 
         unique_ptr<Symbol>& getNthChild(int n) override;
 
         vector<unique_ptr<Symbol>>& getAllChildren() override;
 
-        virtual unique_ptr<Symbol> copy() = 0;
+        vector<unique_ptr<Symbol>> duplicateChildren() override;
 
-        virtual string toString(bool includeAuxilliaries) = 0;
+        vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) override;
+
+        int getValue() override;
+
+        unique_ptr<Symbol>& expandExponent() override;
+
+        unique_ptr<Symbol>& expandAsExponent(unique_ptr<Symbol>& base) override;
+
+        unique_ptr<Symbol> copy() override;
+
+        string toString() override;
 
 };

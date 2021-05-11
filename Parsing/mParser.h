@@ -120,9 +120,11 @@ class MParser {
 
         unique_ptr<AuxOp> buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression);
 
+        void setSymbolAsAuxillary(unique_ptr<Symbol>& symbol, ScopeType type);
+
         void parseExpression(string expression);
 
-        void parseExpression(unique_ptr<Symbol>& parentSymbol, string expression);
+        void parseExpression(unique_ptr<Symbol>& parent, ScopeType parentScopeType, string expression);
 
         void parseEquation(string equation);
 

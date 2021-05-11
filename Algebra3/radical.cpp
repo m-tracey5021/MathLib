@@ -31,6 +31,12 @@ Radical::Radical(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('v'
 
 // Radical::Radical(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('v', sign, auxOp, operands){}
 
+int Radical::getValue(){return 0;}
+
+unique_ptr<Symbol>& Radical::expandExponent(){}
+
+unique_ptr<Symbol>& Radical::expandAsExponent(unique_ptr<Symbol>& base){}
+
 unique_ptr<Symbol> Radical::copy(){
 
     vector<unique_ptr<Symbol>> copiedOperands;
@@ -49,19 +55,24 @@ unique_ptr<Symbol> Radical::copy(){
     return copy;
 }
 
-string Radical::toString(bool includeAuxilliaries){
+string Radical::toString(){
     string ret = "";
     // REDO
     for (int i = 0; i < operands.size(); i ++){
         if (i < operands.size() - 1){
-            ret += operands[i]->toString(true) + '/';
+            ret += operands[i]->toString() + 'v';
         }else{
-            ret += operands[i]->toString(true);
+            ret += operands[i]->toString();
         }
     }
-    if (parent != nullptr){
-        ret = '(' + ret + ')';
+    if (isExponent){
+        ret = '{' + ret + '}';
+    }else if(isRadical){
+        ret = '[' + ret + ']';
     }
+    // if (parent != nullptr){
+    //     ret = '(' + ret + ')';
+    // }
     // if (auxOp != nullptr && includeAuxilliaries){
     //     ret = auxOp->toString(ret);
     // }
