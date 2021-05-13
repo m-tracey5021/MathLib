@@ -31,6 +31,13 @@ enum class ScopeType {
 
 };
 
+enum class AuxilliaryRelation {
+    Target,
+    Exponent,
+    Radical,
+    None
+};
+
 struct OpInfo {
 
     char op;
@@ -64,14 +71,16 @@ struct Scope {
     vector<OpInfo> ops;
 
     // vector<AuxOpInfo> auxOps;
+    
+    bool sign;
 
     int start;
 
     int end;
 
-    Scope(): type(ScopeType::None), start(0), end(0){}
+    Scope(): type(ScopeType::None), sign(true), start(0), end(0){}
 
-    Scope(int start, int end): start(start), end(end){}
+    Scope(int start, int end): sign(true), start(start), end(end){}
 
     void appendOperator(char op, int lhs, int rhs){
         OpInfo opWithinScope(op, lhs, rhs);
@@ -108,7 +117,7 @@ class MParser {
 
         string sanitise(string expression);
 
-        unique_ptr<Symbol> buildSymbol(ScopeType scope, string expression);
+        unique_ptr<Symbol> buildSymbol(Scope scope, string expression);
 
         unique_ptr<Symbol> buildAtom(string s);
 
@@ -120,11 +129,11 @@ class MParser {
 
         unique_ptr<AuxOp> buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression);
 
-        void setSymbolAsAuxillary(unique_ptr<Symbol>& symbol, ScopeType type);
+        void setSymbolAsAuxillary(unique_ptr<Symbol>& symbol, AuxilliaryRelation relation);
 
         void parseExpression(string expression);
 
-        void parseExpression(unique_ptr<Symbol>& parent, ScopeType parentScopeType, string expression);
+        void parseExpression(unique_ptr<Symbol>& parent, AuxilliaryRelation parentRelation, string expression);
 
         void parseEquation(string equation);
 

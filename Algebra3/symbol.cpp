@@ -2,15 +2,41 @@
 
 Symbol::Symbol(){}
 
-Symbol::Symbol(char symbol): symbol(symbol), sign(true), isExponent(false), isRadical(false){}
+Symbol::Symbol(char symbol): symbol(symbol), sign(true), isTarget(false), isExponent(false), isRadical(false){}
 
-Symbol::Symbol(char symbol, bool sign): symbol(symbol), sign(sign), isExponent(false), isRadical(false){}
+Symbol::Symbol(char symbol, bool sign): symbol(symbol), sign(sign), isTarget(false), isExponent(false), isRadical(false){}
 
 // Symbol::Symbol(char symbol, unique_ptr<AuxOp>& auxOp): symbol(symbol), sign(true), auxOp(move(auxOp)){}
 
 // Symbol::Symbol(char symbol, bool sign, unique_ptr<AuxOp>& auxOp): symbol(symbol), sign(sign), auxOp(move(auxOp)){}
 
 Symbol::~Symbol() = default;
+
+char Symbol::getSymbol(){return symbol;}
+
+bool Symbol::getSign(){return sign;}
+
+bool Symbol::getIsTarget(){return isTarget;}
+
+bool Symbol::getIsExponent(){return isExponent;}
+
+bool Symbol::getIsRadical(){return isRadical;}
+
+shared_ptr<Symbol>& Symbol::getParent(){
+    return parent;
+}
+
+void Symbol::setSymbol(char symbol){
+    this->symbol = symbol;
+}
+
+void Symbol::setSign(bool sign){
+    this->sign = sign;
+}
+
+void Symbol::setAsTarget(bool isTarget){
+    this->isTarget = isTarget;
+}
 
 void Symbol::setAsExponent(bool isExponent){
     this->isExponent = isExponent;
@@ -30,9 +56,7 @@ void Symbol::setParent(shared_ptr<Symbol>& parent){
 
 
 
-shared_ptr<Symbol>& Symbol::getParent(){
-    return parent;
-}
+
 
 int Symbol::getValue(){}
 

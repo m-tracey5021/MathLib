@@ -38,21 +38,29 @@ string SumOp::toString(){
     string ret = "";
     for (int i = 0; i < operands.size(); i ++){
         if (i < operands.size() - 1){
-            ret += operands[i]->toString() + '+';
+            if (operands[i]->getSign()){
+                ret += operands[i]->toString() + '+';
+            }else{
+                ret += operands[i]->toString();
+            }
+            
         }else{
             ret += operands[i]->toString();
         }
     }
-    if (parent != nullptr){
-        if (isExponent){
-            ret = '{' + ret + '}';
-        }else if(isRadical){
-            ret = '[' + ret + ']';
-        }else{
+    if (!sign){
+        ret = "-(" + ret + ')';
+    }else{
+        if (parent != nullptr){
             ret = '(' + ret + ')';
         }
-        
     }
+    if (isExponent){
+        ret = '{' + ret + '}';
+    }else if(isRadical){
+        ret = '[' + ret + ']';
+    }
+
     // if (auxOp != nullptr && includeAuxilliaries){
     //     ret = auxOp->toString(ret);
     // }

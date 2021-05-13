@@ -30,6 +30,8 @@ class Symbol {
 
         bool sign;
 
+        bool isTarget;
+
         bool isExponent;
 
         bool isRadical;
@@ -52,19 +54,36 @@ class Symbol {
 
         ~Symbol();
 
+        
+
+        // void appendAuxillary(unique_ptr<AuxOp>& auxOp);
+
+        
+        char getSymbol();
+        
+        bool getSign();
+
+        bool getIsTarget();
+
+        bool getIsExponent();
+
+        bool getIsRadical();
+
+        shared_ptr<Symbol>& getParent();
+
+
+        void setSymbol(char symbol);
+
+        void setSign(bool sign);
+
+        void setAsTarget(bool isTarget);
+
         void setAsExponent(bool isExponent);
 
         void setAsRadical(bool isRadical);
 
         void setParent(shared_ptr<Symbol>& parent);
 
-        // void appendAuxillary(unique_ptr<AuxOp>& auxOp);
-
-        
-
-        
-
-        shared_ptr<Symbol>& getParent();
 
         virtual int getValue() = 0;
 

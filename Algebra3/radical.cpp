@@ -65,10 +65,15 @@ string Radical::toString(){
             ret += operands[i]->toString();
         }
     }
+    if (!sign){
+        ret = "-(" + ret + ')';
+    }
     if (isExponent){
         ret = '{' + ret + '}';
     }else if(isRadical){
         ret = '[' + ret + ']';
+    }else if(isTarget){
+        ret = '(' + ret + ')';
     }
     // if (parent != nullptr){
     //     ret = '(' + ret + ')';

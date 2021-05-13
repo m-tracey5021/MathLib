@@ -44,6 +44,9 @@ unique_ptr<Symbol> Variable::copy(){
 string Variable::toString(){
     string ret = "";
     ret += value;
+    if (!sign){
+        ret = '-' + ret;
+    }
     if (isExponent){
         ret = '{' + ret + '}';
     }else if(isRadical){

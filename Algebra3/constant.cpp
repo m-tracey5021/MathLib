@@ -43,6 +43,9 @@ unique_ptr<Symbol> Constant::copy(){
 
 string Constant::toString(){
     string ret = std::to_string(value);
+    if (!sign){
+        ret = '-' + ret;
+    }
     if (isExponent){
         ret = '{' + ret + '}';
     }else if(isRadical){
