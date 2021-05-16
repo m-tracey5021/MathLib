@@ -210,7 +210,44 @@ unique_ptr<Operation> MParser::buildOperation(char c){
     
 // }
 
-string MParser::sanitise(string expression){
+bool MParser::isVariable(string expression, int start, int end){
+    return false;
+}
+
+bool MParser::isConstant(string expression, int start, int end){
+    for (int i = start; i <= end; i ++){
+        if (!isdigit(expression[i])){
+            return false;
+        }
+    }
+    return true;
+}
+
+bool MParser::isAtomic(string expression, int start, int end){
+    bool hasDigit = false;
+    bool hasChar = false;
+    for (int i = start; i <= end; i ++){
+        if (isalpha(expression[i])){
+            if (hasChar){
+                return false;
+            }else{
+                hasChar = true;
+            }
+            
+        }else if (isdigit(expression[i])){
+            hasDigit = true;
+        }else{
+            return false;
+        }
+    }
+    if ((hasDigit && !hasChar) || (hasChar && !hasDigit)){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+string MParser::sanitise(string expression, string expressionType){
     if (isOpeningBracket(expression[0])){
         int closingBracket = findMatchingBracket(0, expression);
         if (closingBracket == expression.size() - 1){
@@ -218,16 +255,34 @@ string MParser::sanitise(string expression){
         }else{
             return expression;
         }
-    }else{
+    }
+    
+    
+    if (expressionType == "operation"){
         if (expression[0] == '-' && expression[1] == '('){
-            return expression.substr(2, expression.size() - 3);
+            if (findMatchingBracket(1, expression) == expression.size() - 1){
+                return expression.substr(2, expression.size() - 3);
+            }else{
+                return expression;
+            }
+            
+        }else if (expression[0] == '-'){
+            if (isAtomic(expression, 1, expression.size() - 1)){
+                return expression.substr(1, expression.size() - 1);
+            }else{
+                return expression;
+            }
+            
         }else{
             return expression;
         }
-        
     }
+    return expression;
+    
+    
     
 }
+
 
 void MParser::setSymbolAsAuxillary(unique_ptr<Symbol>& symbol, AuxilliaryRelation relation){
     if (relation == AuxilliaryRelation::Exponent){
@@ -450,13 +505,18 @@ Scope MParser::scopeExpression(int i, string expression){ // applies to + and -
 
     Scope scope;
     scope.type = ScopeType::Summation;
+
+    int lastBreakF, lastBreakB;
     if (expression[i] == '+'){
         scope.appendOperator(expression[i], i - 1, i + 1);
+        lastBreakF = i + 1;
+        lastBreakB = i - 1;
     }else if (expression[i] == '-'){
         scope.appendOperator(expression[i], i - 1, i);
+        lastBreakF = i;
+        lastBreakB = i;
     }
     
-
 
     bool forwards = true;
     bool backwards = true;
@@ -470,9 +530,13 @@ Scope MParser::scopeExpression(int i, string expression){ // applies to + and -
     while (true){
         
         if (j >= expression.size()){
+            string operand = expression.substr(lastBreakF, j - lastBreakF);
+            scope.operands.push_back(operand);
             forwards = false;
         }
         if (k < 0){
+            string operand = expression.substr(k + 1, lastBreakB - k - 1);
+            scope.operands.insert(scope.operands.begin(), operand);
             backwards = false;
         }
         if (!forwards && !backwards){
@@ -481,9 +545,15 @@ Scope MParser::scopeExpression(int i, string expression){ // applies to + and -
 
         if (forwards){
             if (expression[j] == '+'){
+                string operand = expression.substr(lastBreakF, j - lastBreakF);
+                scope.operands.push_back(operand);
+                lastBreakF = j + 1;
                 scope.appendOperator(expression[j], j - 1, j + 1);
                 j ++;
             }else if (expression[j] == '-'){
+                string operand = expression.substr(lastBreakF, j - lastBreakF);
+                scope.operands.push_back(operand);
+                lastBreakF = j;
                 scope.appendOperator(expression[j], j - 1, j);
                 j ++;
             }else if (expression[j] == '(' || 
@@ -500,9 +570,15 @@ Scope MParser::scopeExpression(int i, string expression){ // applies to + and -
         }
         if (backwards){
             if (expression[k] == '+'){
+                string operand = expression.substr(k + 1, lastBreakB - k - 1);
+                scope.operands.insert(scope.operands.begin(), operand);
+                lastBreakB = k - 1;
                 scope.appendOperator(expression[k], k - 1, k + 1);
                 k --;
             }else if (expression[k] == '-'){
+                string operand = expression.substr(k, lastBreakB - k); // (k, lastBreakB - k)
+                scope.operands.insert(scope.operands.begin(), operand);
+                lastBreakB = k;
                 scope.appendOperator(expression[k], k - 1, k);
                 k --;
             }else if (expression[k] == ')' || 
@@ -990,7 +1066,7 @@ vector<string> MParser::separateOperands(Scope& scope, string expression){
     
     vector<string> operands;
 
-    string sanitised = sanitise(expression);
+    string sanitised = sanitise(expression, "operation"); // remove negative sign of main operation, but not negative sign of operands
     if (sanitised != expression){
         scope = findMainScope(sanitised);
         expression = sanitised;
@@ -998,6 +1074,7 @@ vector<string> MParser::separateOperands(Scope& scope, string expression){
     
 
     if (scope.type == ScopeType::Atomic){
+
         operands.push_back(expression);
         return operands;
     
@@ -1039,7 +1116,7 @@ vector<string> MParser::separateOperands(Scope& scope, string expression){
                 k = scope.ops[i + offset1].between.first + 1 - j;
             }
             string newOperand = expression.substr(j, k);
-            operands.push_back(sanitise(newOperand));
+            operands.push_back(sanitise(newOperand, "operand"));
         }
 
 

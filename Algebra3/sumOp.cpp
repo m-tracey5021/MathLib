@@ -37,9 +37,9 @@ unique_ptr<Symbol> SumOp::copy(){
 string SumOp::toString(){
     string ret = "";
     for (int i = 0; i < operands.size(); i ++){
-        if (i < operands.size() - 1){
+        if (i != 0){
             if (operands[i]->getSign()){
-                ret += operands[i]->toString() + '+';
+                ret += '+' + operands[i]->toString();
             }else{
                 ret += operands[i]->toString();
             }

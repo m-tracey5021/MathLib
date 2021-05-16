@@ -70,7 +70,7 @@ struct Scope {
 
     vector<OpInfo> ops;
 
-    // vector<AuxOpInfo> auxOps;
+    vector<string> operands;
     
     bool sign;
 
@@ -115,7 +115,13 @@ class MParser {
 
         bool isClosingBracket(char bracket);
 
-        string sanitise(string expression);
+        bool isVariable(string expression, int start, int end);
+
+        bool isConstant(string expression, int start, int end);
+
+        bool isAtomic(string expression, int start, int end);
+
+        string sanitise(string expression, string expressionType);
 
         unique_ptr<Symbol> buildSymbol(Scope scope, string expression);
 
