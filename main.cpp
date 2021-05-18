@@ -66,9 +66,9 @@ int main(){
 
     // bool equalityPassed = testEquality();
 
-    bool findScopePassed = testFindScope();
+    // bool findScopePassed = testFindScope();
 
-    bool separateOperandsPassed = testSeparateOperands();
+    // bool separateOperandsPassed = testSeparateOperands();
 
     bool parseExpressionPassed = testParseExpression();
 

@@ -38,15 +38,23 @@ enum class AuxilliaryRelation {
     None
 };
 
+bool isOpeningBracket(char bracket);
+
+bool isClosingBracket(char bracket);  
+
+int findMatchingBracket(int i, string expression);
+
+string sanitise(string expression);
+
 struct OpInfo {
 
     char op;
 
     pair<int, int> between;
 
-    OpInfo(): op('~'), between{0, 0}{}
+    OpInfo();
 
-    OpInfo(char op, int lhsBetween, int rhsBetween): op(op), between{lhsBetween, rhsBetween}{}
+    OpInfo(char op, int lhsBetween, int rhsBetween);
 
 };
 
@@ -78,20 +86,14 @@ struct Scope {
 
     int end;
 
-    Scope(): type(ScopeType::None), sign(true), start(0), end(0){}
+    Scope();
 
-    Scope(int start, int end): sign(true), start(start), end(end){}
+    Scope(int start, int end);
 
-    void appendOperator(char op, int lhs, int rhs){
-        OpInfo opWithinScope(op, lhs, rhs);
-        ops.push_back(opWithinScope);
-    }
+    void appendOperator(char op, int lhs, int rhs);
 
-    // void addAuxillary(char op, int start, int end){
-    //     AuxOpInfo auxillary(op, start, end);
-    //     auxOps.push_back(auxillary);
-    // }
-    
+    void appendOperand(string expression, int start, int end, bool pushBack);
+
 
 };
 
@@ -111,17 +113,15 @@ class MParser {
 
         Expression getParseTree();
 
-        bool isOpeningBracket(char bracket);
-
-        bool isClosingBracket(char bracket);
-
-        bool isVariable(string expression, int start, int end);
+              
 
         bool isConstant(string expression, int start, int end);
 
         bool isAtomic(string expression, int start, int end);
 
-        string sanitise(string expression, string expressionType);
+        bool isMultiplied(string expression, int start, int end);
+
+        
 
         unique_ptr<Symbol> buildSymbol(Scope scope, string expression);
 
@@ -147,11 +147,11 @@ class MParser {
         
         int findAuxOpApplicability(int auxOpStart, int auxOpEnd, int expressionMinMax, bool& cont);
 
-        int findMatchingBracket(int i, string expression);
+        
 
         Scope scopeExpression(int i, string expression);
 
-        Scope scopeTerm(int i, string expression);
+        Scope scopeTerm(int lhs, int rhs, string expression);
 
         Scope scopeRational(int i, string expression);
 

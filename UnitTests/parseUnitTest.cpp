@@ -101,37 +101,43 @@ bool testParseExpression(){
 
     MParser parser;
     vector<string> expressions = {
-        // "2",
-        // "-2",
-        // "235",
-        // "2xyz",
-        // "2x+3y",
-        // "2x-3y",
+        "2",
+        "-2",
+        "235",
+        "2xyz",
+        "2x+3y",
+        "2x-3y",
         "-2x-3y",
-        // "2x+376",
-        // "2x+7",
-        // "x+y",
-        "-(x+y)",
-        // "x+y+z",
-        // "x+(y+z)",
-        // "x-3(y+z)",
-        // "x+(y+z+a)",
+        "2x+376",
+        "2x+7",
+        "x+y",
+        "-(x+y)", // still includes the first -, this is not intended
+        "x+y+z",
+        "x(3+7)",
+        "3(x+7)",
+        "x+(y+z)",
+        "x-3(y+z)",
+        "x+(y+z+a)",
         "x-(yz+a)+10",
-        // "xy+z",
-        // "2(x+y+z-1/2)",
-        // "xy/pq",
-        // "(t+2r)/3er",
-        // "-(t+2r)/3er",
+        "xy+z",
+        "2(x+y+z-1/2)",
+        "xy/pq",
+        "(t+2r)/3er",
+        "-(t+2r)/3er",
         "-t+2r/3er",
         "-t+(2r/3)er",
         "2(2+3t)/4r",
         "c^{2}",
         "x+t^{2}",
         "(x+t)^{2}",
+        "2(xy^{2})",
+        "2(x(yz)^{2})",
+        "2(x(yz)^{2}t)",
         "[2]v3",
         "[[3]v2]v7",
         "[[3]v(2x)]v7",
         "[[3]v2x]v7",
+        "[ab[3]v2x]v7",
         "[2]v2x",
         "[2]v(2x)",
         "[2x+3]v4",
@@ -148,9 +154,13 @@ bool testParseExpression(){
         "(2x+t)^{3x^{4r-2t}}"
     };
 
+    string m = "michael";
+    string sub1 = m.substr(1, 1);
+    string sub2 = m.substr(1, 2);
+
     for (string exp : expressions){
         parser.parseExpression(exp);
-        string parseTreeStr = parser.getParseTree().toString();
+        // string parseTreeStr = parser.getParseTree().toString();
     }
     
     return false;
