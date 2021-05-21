@@ -21,3 +21,7 @@ void Expression::setRoot(Symbol* symbol){
 string Expression::toString(){
     return root->toString();
 }
+
+string Expression::toString(int offset){
+    return root->toString(1, offset);
+}

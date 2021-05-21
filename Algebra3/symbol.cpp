@@ -83,3 +83,5 @@ unique_ptr<Symbol>& Symbol::expandAsExponent(unique_ptr<Symbol>& base){}
 unique_ptr<Symbol> Symbol::copy(){}
 
 string Symbol::toString(){return "";}
+
+string Symbol::toString(int depth, int offset){return "";}

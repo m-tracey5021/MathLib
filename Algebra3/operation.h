@@ -58,4 +58,6 @@ class Operation : public Symbol {
 
         string toString() override;
 
+        string toString(int depth, int offset) override;
+
 };

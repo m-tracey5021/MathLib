@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include <utility>
+#include <iostream>
 
 using std::string;
 using std::vector;
@@ -106,6 +107,8 @@ class Symbol {
         virtual unique_ptr<Symbol> copy() = 0;
 
         virtual string toString() = 0;
+
+        virtual string toString(int depth, int offset) = 0;
 
         
 

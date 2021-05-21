@@ -111,7 +111,7 @@ class MParser {
 
         MParser();
 
-        Expression getParseTree();
+        Expression& getParseTree();
 
               
 

@@ -32,4 +32,6 @@ class MulOp : public Operation {
 
         string toString() override;
 
+        // string toString(int& depth, int offset) override;
+
 };

@@ -66,3 +66,25 @@ string SumOp::toString(){
     // }
     return ret;
 }
+
+// string SumOp::toString(int& depth, int offset){
+//     str += '\n';
+
+//     int spaces = depth * offset;
+//     for (int i = 0; i < spaces; i ++){
+//         str += ' ';
+//     }
+//     if (!sign){
+//         str += "-(+)";
+//     }else{
+//         str += '+';
+//     }
+//     depth ++;
+//     for (int i = 0; i < operands.size(); i ++){
+//         str += operands[i]->toString(str, depth, offset);
+//     }
+    
+//     return str;
+//     return "";
+
+// }

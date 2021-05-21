@@ -24,4 +24,6 @@ class Expression {
         void setRoot(Symbol* symbol);
 
         string toString();
+
+        string toString(int offset);
 };

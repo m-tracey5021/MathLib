@@ -41,4 +41,6 @@ class Variable : public Symbol {
         unique_ptr<Symbol> copy() override;
 
         string toString() override;
+
+        string toString(int depth, int offset) override;
 };

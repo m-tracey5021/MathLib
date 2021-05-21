@@ -57,3 +57,21 @@ string Variable::toString(){
     // }
     return ret;
 }
+
+string Variable::toString(int depth, int offset){
+
+    string str = "";
+    int spaces = depth * offset;
+    for (int i = 0; i < spaces; i ++){
+        str += ' ';
+    }
+    if (!sign){
+        str += '-' + value;
+    }else{
+        str += value;
+    }
+    
+    return str;
+
+
+}

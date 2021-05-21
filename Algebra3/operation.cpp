@@ -64,3 +64,32 @@ unique_ptr<Symbol> Operation::copy(){}
 
 string Operation::toString(){return "";}
 
+string Operation::toString(int depth, int offset){
+    
+    string str = "";
+    int spaces = depth * offset;
+    if (!sign){
+        spaces -= 2;
+    }
+    for (int i = 0; i < spaces; i ++){
+        str += ' ';
+    }
+    if (!sign){
+        str += "-(";
+        str += symbol;
+        str += ')';
+    }else{
+        str += symbol;
+    }
+    
+    depth ++;
+    for (int i = 0; i < operands.size(); i ++){
+        str += '\n';
+        str += operands[i]->toString(depth, offset);
+    }
+    
+    return str;
+
+
+}
+

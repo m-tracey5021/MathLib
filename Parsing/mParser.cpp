@@ -153,8 +153,8 @@ void Scope::appendOperand(string expression, int start, int end, bool pushBack){
 
 MParser::MParser(){}
 
-Expression MParser::getParseTree(){
-    return move(parseTree);
+Expression& MParser::getParseTree(){
+    return parseTree;
 }
 
 
@@ -376,12 +376,10 @@ void MParser::parseExpression(string expression){
     
     Scope mainScope = findMainScope(expression);
 
-    
-    return;
-
     if (mainScope.type == ScopeType::Atomic){
 
-        string atom = expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1);
+        // string atom = expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1);
+        string atom = mainScope.operands[0];
         unique_ptr<Symbol> child = buildSymbol(mainScope, atom);
 
         parseTree.setRoot(child);
@@ -393,24 +391,24 @@ void MParser::parseExpression(string expression){
         unique_ptr<Symbol> child = buildSymbol(mainScope, expression);
 
         // vector<string> operands = separateOperands(mainScope, expression);
-        vector<string> operands = mainScope.operands;
+        // vector<string> operands = mainScope.operands;
 
-        for (int i = 0; i < operands.size(); i ++){
+        for (int i = 0; i < mainScope.operands.size(); i ++){
             if (mainScope.type == ScopeType::Radical){
                 if (i == 0){
-                    parseExpression(child, AuxilliaryRelation::Radical, operands[i]);
+                    parseExpression(child, AuxilliaryRelation::Radical, mainScope.operands[i]);
                 }else{
-                    parseExpression(child, AuxilliaryRelation::Target, operands[i]);
+                    parseExpression(child, AuxilliaryRelation::Target, mainScope.operands[i]);
                 }
                 
             }else if (mainScope.type == ScopeType::Exponent){
                 if (i == 0){
-                    parseExpression(child, AuxilliaryRelation::Target, operands[i]);
+                    parseExpression(child, AuxilliaryRelation::Target, mainScope.operands[i]);
                 }else{
-                    parseExpression(child, AuxilliaryRelation::Exponent, operands[i]);
+                    parseExpression(child, AuxilliaryRelation::Exponent, mainScope.operands[i]);
                 }
             }else{
-                parseExpression(child, AuxilliaryRelation::None, operands[i]);
+                parseExpression(child, AuxilliaryRelation::None, mainScope.operands[i]);
             }
         }
 
@@ -432,8 +430,9 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, AuxilliaryRelation par
         // child = buildAtom(expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1));
         // child->appendAuxillary(auxOp);
 
-        string atom = expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1);
-        unique_ptr<Symbol> child = buildSymbol(mainScope, expression);
+        // string atom = expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1);
+        string atom = mainScope.operands[0];
+        unique_ptr<Symbol> child = buildSymbol(mainScope, atom);
 
         setSymbolAsAuxillary(child, parentRelation);
 
@@ -455,7 +454,7 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, AuxilliaryRelation par
         unique_ptr<Symbol> child = buildSymbol(mainScope, expression);
 
         // vector<string> operands = separateOperands(mainScope, expression);
-        vector<string> operands = mainScope.operands;
+        // vector<string> operands = mainScope.operands;
 
         setSymbolAsAuxillary(child, parentRelation);
         // vector<string> auxillaries = separateAuxillaries(mainScope, expression);  
@@ -464,22 +463,22 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, AuxilliaryRelation par
             
         // }
         
-        for (int i = 0; i < operands.size(); i ++){
+        for (int i = 0; i < mainScope.operands.size(); i ++){
             if (mainScope.type == ScopeType::Radical){
                 if (i == 0){
-                    parseExpression(child, AuxilliaryRelation::Radical, operands[i]);
+                    parseExpression(child, AuxilliaryRelation::Radical, mainScope.operands[i]);
                 }else{
-                    parseExpression(child, AuxilliaryRelation::Target, operands[i]);
+                    parseExpression(child, AuxilliaryRelation::Target, mainScope.operands[i]);
                 }
                 
             }else if (mainScope.type == ScopeType::Exponent){
                 if (i == 0){
-                    parseExpression(child, AuxilliaryRelation::Target, operands[i]);
+                    parseExpression(child, AuxilliaryRelation::Target, mainScope.operands[i]);
                 }else{
-                    parseExpression(child, AuxilliaryRelation::Exponent, operands[i]);
+                    parseExpression(child, AuxilliaryRelation::Exponent, mainScope.operands[i]);
                 }
             }else{
-                parseExpression(child, AuxilliaryRelation::None, operands[i]);
+                parseExpression(child, AuxilliaryRelation::None, mainScope.operands[i]);
             }
         }
 
@@ -630,13 +629,14 @@ Scope MParser::scopeExpression(int i, string expression){ // applies to + and -
         
     }
     
-    if (scope.ops.size() == 1 && scope.ops[0].between.second == k + 1){
+    if (scope.operands.size() == 1 || scope.operands.size() == 0){
         Scope emptyScope;
         return emptyScope;
     }
 
     scope.start = k;
     scope.end = j;
+    
     // scope.auxOps = scopeAuxOp(scope, expression);
     return scope;
 }
@@ -882,7 +882,7 @@ Scope MParser::scopeTerm(int lhs, int rhs, string expression){ // applies to * a
                         j = findMatchingBracket(j + 2, expression);
                     }
                     
-                }else if (expression[j] == '+' || expression[j] == '-' || j >= expression.size()){
+                }else if (expression[j] == '+' || expression[j] == '-' || expression[j] == '/' || j >= expression.size()){
                     scope.appendOperand(expression, breakF, j - 1, true);
                     forwards = false;
                 }else{
@@ -916,7 +916,7 @@ Scope MParser::scopeTerm(int lhs, int rhs, string expression){ // applies to * a
                         k = findMatchingBracket(k - 2, expression);
                     }
                     
-                }else if (expression[k] == '+' || expression[k] == '-' || k < 0){
+                }else if (expression[k] == '+' || expression[k] == '-' || expression[k] == '/' || k < 0){
                     scope.appendOperand(expression, k + 1, breakB, false);
                     backwards = false;
                 }else{

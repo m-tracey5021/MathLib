@@ -160,7 +160,13 @@ bool testParseExpression(){
 
     for (string exp : expressions){
         parser.parseExpression(exp);
-        // string parseTreeStr = parser.getParseTree().toString();
+        string parsedExpressionStr = parser.getParseTree().toString();
+        string parseTreeStr = parser.getParseTree().toString(4);
+        std::cout << "=======" << std::endl << std::endl;
+        std::cout << parsedExpressionStr << std::endl << std::endl;
+        std::cout << parseTreeStr << std::endl << std::endl;
+        std::cout << "=======" << std::endl << std::endl;
+        int x = 0;
     }
     
     return false;
