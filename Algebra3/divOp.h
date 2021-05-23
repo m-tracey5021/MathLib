@@ -1,6 +1,7 @@
 #pragma once
 
 #include "operation.h"
+#include "expressionComponents.h"
 
 class DivOp : public Operation {
 

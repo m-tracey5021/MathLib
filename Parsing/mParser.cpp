@@ -1006,7 +1006,9 @@ Scope MParser::scopeRational(int i, string expression){
         }
     }
 
-    if (expression[k] == '-'){
+    if (expression[k] == '-' && expression[i + 1] == '-'){
+        scope.sign = true;
+    }else if (expression[k] == '-' || expression[i + 1] == '-'){
         scope.sign = false;
     }
     

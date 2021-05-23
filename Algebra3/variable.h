@@ -1,6 +1,7 @@
 #pragma once
 
 #include "symbol.h"
+#include "expressionComponents.h"
 
 class Variable : public Symbol {
     

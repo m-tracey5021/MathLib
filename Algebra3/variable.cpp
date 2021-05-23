@@ -26,7 +26,20 @@ vector<unique_ptr<Symbol>> Variable::duplicateChildren(int start, int end){}
 
 unique_ptr<Symbol>& Variable::expandExponent(){}
 
-unique_ptr<Symbol>& Variable::expandAsExponent(unique_ptr<Symbol>& base){}
+unique_ptr<Symbol>& Variable::expandAsExponent(unique_ptr<Symbol>& base){
+    // unique_ptr<Symbol> root = make_unique<Exponent>();
+    // unique_ptr<Symbol> target = base->copy();
+    // unique_ptr<Symbol> exponent = this->copy();
+    // target->setAsTarget(true);
+    // exponent->setAsExponent(true);
+    // root->appendChild(target);
+    // root->appendChild(exponent);
+    // return root;
+
+    unique_ptr<Symbol> copy = parent->copy();
+    return copy;
+
+}
 
 unique_ptr<Symbol> Variable::copy(){
     

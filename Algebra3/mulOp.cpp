@@ -6,9 +6,6 @@ MulOp::MulOp(bool sign): Operation('*', sign){}
 
 MulOp::MulOp(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('*', sign, operands){}
 
-// MulOp::MulOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('*', true, auxOp, operands){}
-
-// MulOp::MulOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('*', sign, auxOp, operands){}
 
 int MulOp::getCoeff(){
     int coeff = 0;
@@ -29,14 +26,28 @@ int MulOp::getValue(){return 0;}
 
 unique_ptr<Symbol>& MulOp::expandExponent(){}
 
-unique_ptr<Symbol>& MulOp::expandAsExponent(unique_ptr<Symbol>& base){
-    unique_ptr<Symbol> newRoot = make_unique<MulOp>();
-    unique_ptr<Symbol> exponent = make_unique<Exponent>();
-    
+unique_ptr<Symbol>& MulOp::expandAsExponent(unique_ptr<Symbol>& base){ // x^(2y) x = base 2y = operands y = duplicates
+    unique_ptr<Symbol> root = make_unique<MulOp>();
+    vector<unique_ptr<Symbol>> duplicates = duplicateChildren();
     int coeff = getCoeff();
     for (int i = 0; i < coeff; i ++){
-
+        unique_ptr<Symbol> op = make_unique<Exponent>();
+        unique_ptr<Symbol> target = base->copy();
+        unique_ptr<Symbol> exponent;
+        if (duplicates.size() == 1){
+            exponent = duplicates[0]->copy();
+        }else{
+            exponent = make_unique<MulOp>();
+            for (int j = 0; j < duplicates.size(); j ++){
+                unique_ptr<Symbol> exponentOperand = duplicates[j]->copy();
+                exponent->appendChild(exponentOperand);
+            }
+        }
+        op->appendChild(target);
+        op->appendChild(exponent);
+        root->appendChild(op);
     }
+    return root;
     
 }
 

@@ -14,7 +14,20 @@ int SumOp::getValue(){return 0;}
 
 unique_ptr<Symbol>& SumOp::expandExponent(){}
 
-unique_ptr<Symbol>& SumOp::expandAsExponent(unique_ptr<Symbol>& base){}
+unique_ptr<Symbol>& SumOp::expandAsExponent(unique_ptr<Symbol>& base){
+    unique_ptr<Symbol> root = make_unique<MulOp>();
+    for (int i = 0; i < operands.size(); i ++){
+        unique_ptr<Symbol> op = make_unique<Exponent>();
+        unique_ptr<Symbol> target = base->copy();
+        unique_ptr<Symbol> exponent = operands[i]->copy();
+        target->setAsTarget(true);
+        exponent->setAsExponent(true);
+        op->appendChild(target);
+        op->appendChild(exponent);
+        root->appendChild(op);
+    }
+    return root;
+}
 
 unique_ptr<Symbol> SumOp::copy(){
 

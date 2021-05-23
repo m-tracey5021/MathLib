@@ -1,6 +1,7 @@
 #pragma once
 
 #include "symbol.h"
+#include "expressionComponents.h"
 
 // struct Scope {
 //     vector<pair<char, int>> ops;

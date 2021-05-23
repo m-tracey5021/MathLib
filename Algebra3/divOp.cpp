@@ -12,9 +12,53 @@ DivOp::DivOp(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('/', si
 
 int DivOp::getValue(){return 0;}
 
-unique_ptr<Symbol>& DivOp::expandExponent(){}
+unique_ptr<Symbol>& DivOp::expandExponent(){
+    unique_ptr<Symbol> copy = this->copy();
+    vector<unique_ptr<Symbol>> copiedOperands = copy->getAllChildren();
+    for (int i = 0; i < copiedOperands.size(); i ++){
+        copiedOperands[i] = move(copiedOperands[i]->expandExponent());
+    }
+    
+    return copy;
+}
 
-unique_ptr<Symbol>& DivOp::expandAsExponent(unique_ptr<Symbol>& base){}
+unique_ptr<Symbol>& DivOp::expandAsExponent(unique_ptr<Symbol>& base){
+    unique_ptr<Symbol> root;
+    unique_ptr<Symbol> target;
+    unique_ptr<Symbol> exponent;
+    int numeratorValue = operands[0]->getValue();
+    if (numeratorValue <= 1){
+        // target = base->copy();
+        // exponent = this->copy();
+        // target->setAsTarget(true);
+        // exponent->setAsExponent(true);
+        // root->appendChild(target);
+        // root->appendChild(exponent);
+        // return root;
+        unique_ptr<Symbol> copy = parent->copy();
+        return copy;
+        
+    }else{
+        root = make_unique<MulOp>();
+        for (int i = 0; i < numeratorValue; i ++){
+            unique_ptr<Symbol> numerator = make_unique<Constant>(1);
+            unique_ptr<Symbol> denominator = operands[1]->copy();
+
+            unique_ptr<Symbol> op = make_unique<Exponent>();
+            target = base->copy();
+            exponent = make_unique<DivOp>(sign);
+
+            exponent->appendChild(numerator);
+            exponent->appendChild(denominator);
+            target->setAsTarget(true);
+            exponent->setAsExponent(true);
+            op->appendChild(target);
+            op->appendChild(exponent);
+            root->appendChild(op);
+        }
+        return root;
+    }
+}
 
 unique_ptr<Symbol> DivOp::copy(){
 

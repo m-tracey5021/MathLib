@@ -18,6 +18,10 @@ void Expression::setRoot(Symbol* symbol){
     root = unique_ptr<Symbol>(symbol);
 }
 
+Expression Expression::expandExponents(){
+    return root->expandExponent();
+}
+
 string Expression::toString(){
     return root->toString();
 }

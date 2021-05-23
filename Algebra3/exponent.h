@@ -24,6 +24,7 @@
 #pragma once
 
 #include "operation.h"
+#include "expressionComponents.h"
 
 class Exponent : public Operation {
 

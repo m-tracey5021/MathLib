@@ -1,8 +1,7 @@
 #pragma once
 
 #include "operation.h"
-#include "constant.h"
-#include "exponent.h"
+#include "expressionComponents.h"
 
 class MulOp : public Operation {
 

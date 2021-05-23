@@ -23,6 +23,8 @@ class Expression {
 
         void setRoot(Symbol* symbol);
 
+        Expression expandExponents();
+
         string toString();
 
         string toString(int offset);

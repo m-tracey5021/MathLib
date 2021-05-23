@@ -19,6 +19,11 @@ using std::make_unique;
 using std::make_shared;
 using std::pair;
 
+class SumOp;
+class MulOp;
+class DivOp;
+class Constant;
+class Variable;
 class Exponent;
 class Radical;
 class Function;

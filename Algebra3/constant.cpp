@@ -26,7 +26,14 @@ vector<unique_ptr<Symbol>> Constant::duplicateChildren(int start, int end){}
 
 unique_ptr<Symbol>& Constant::expandExponent(){}
 
-unique_ptr<Symbol>& Constant::expandAsExponent(unique_ptr<Symbol>& base){}
+unique_ptr<Symbol>& Constant::expandAsExponent(unique_ptr<Symbol>& base){
+    unique_ptr<Symbol> root = make_unique<MulOp>();
+    for (int i = 0; i < value; i ++){
+        unique_ptr<Symbol> copy = base->copy();
+        root->appendChild(copy);
+    }
+    return root;
+}
 
 unique_ptr<Symbol> Constant::copy(){
 
