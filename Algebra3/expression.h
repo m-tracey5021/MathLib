@@ -23,7 +23,7 @@ class Expression {
 
         void setRoot(Symbol* symbol);
 
-        Expression expandExponents();
+        void expandExponents();
 
         string toString();
 

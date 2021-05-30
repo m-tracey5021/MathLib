@@ -20,6 +20,7 @@
 // }
 
 #include "exponent.h"
+#include "expressionComponents.h"
 
 Exponent::Exponent(): Operation('^'){}
 
@@ -33,9 +34,30 @@ Exponent::Exponent(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('
 
 int Exponent::getValue(){return 0;}
 
-unique_ptr<Symbol>& Exponent::expandExponent(){}
+unique_ptr<Symbol> Exponent::expandExponent(){
+    // unique_ptr<Symbol>& target = getChild(0);
+    // unique_ptr<Symbol>& exponent = getChild(1);
+    // unique_ptr<Symbol> root = exponent->expandAsExponent(target);
+    
+    return getChild(1)->expandAsExponent(getChild(0));
+    // if (parent){
+    //     parent->appendChild(root);
+    //     parent->removeChild(index);
+    // }else{
+       
+    // }
+    // return;
+    
+    
+}
 
-unique_ptr<Symbol>& Exponent::expandAsExponent(unique_ptr<Symbol>& base){}
+unique_ptr<Symbol> Exponent::expandAsExponent(unique_ptr<Symbol>& base){
+    for (int i = 0; i < operands.size(); i ++){
+        operands[i]->expandExponent();
+    }
+    unique_ptr<Symbol> copy = parent->copy();
+    return copy;
+}
 
 unique_ptr<Symbol> Exponent::copy(){
 
@@ -66,6 +88,10 @@ string Exponent::toString(){
     }
     if (!sign){
         ret = "-(" + ret + ')';
+    }else{
+        if (parent != nullptr && !operands[0]->isAtomic()){
+            ret = '(' + ret + ')';
+        }
     }
     if (isExponent){
         ret = '{' + ret + '}';

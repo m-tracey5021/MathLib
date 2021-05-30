@@ -18,8 +18,8 @@ void Expression::setRoot(Symbol* symbol){
     root = unique_ptr<Symbol>(symbol);
 }
 
-Expression Expression::expandExponents(){
-    return root->expandExponent();
+void Expression::expandExponents(){
+    root = move(root->expandExponent());
 }
 
 string Expression::toString(){

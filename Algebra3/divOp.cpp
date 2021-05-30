@@ -1,4 +1,5 @@
 #include "divOp.h"
+#include "expressionComponents.h"
 
 DivOp::DivOp(): Operation('/'){}
 
@@ -12,17 +13,19 @@ DivOp::DivOp(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('/', si
 
 int DivOp::getValue(){return 0;}
 
-unique_ptr<Symbol>& DivOp::expandExponent(){
+unique_ptr<Symbol> DivOp::expandExponent(){
     unique_ptr<Symbol> copy = this->copy();
-    vector<unique_ptr<Symbol>> copiedOperands = copy->getAllChildren();
+    vector<unique_ptr<Symbol>>& copiedOperands = copy->getAllChildren();
     for (int i = 0; i < copiedOperands.size(); i ++){
         copiedOperands[i] = move(copiedOperands[i]->expandExponent());
     }
-    
     return copy;
 }
 
-unique_ptr<Symbol>& DivOp::expandAsExponent(unique_ptr<Symbol>& base){
+unique_ptr<Symbol> DivOp::expandAsExponent(unique_ptr<Symbol>& base){
+    for (int i = 0; i < operands.size(); i ++){
+        operands[i]->expandExponent();
+    }
     unique_ptr<Symbol> root;
     unique_ptr<Symbol> target;
     unique_ptr<Symbol> exponent;

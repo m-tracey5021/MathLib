@@ -1,4 +1,5 @@
 #include "variable.h"
+#include "expressionComponents.h"
 
 Variable::Variable(): Symbol(){}
 
@@ -14,9 +15,15 @@ Variable::Variable(bool sign, char value): Symbol(value, sign), value(value){}
 
 int Variable::getValue(){return 0;}
 
-void Variable::appendChild(unique_ptr<Symbol>& child){}
+bool Variable::isAtomic(){return true;}
 
-unique_ptr<Symbol>& Variable::getNthChild(int n){}
+void Variable::appendChild(unique_ptr<Symbol>& child){return;}
+
+void Variable::removeChild(unique_ptr<Symbol>& child){return;}
+
+void Variable::removeChild(int n){return;}
+
+unique_ptr<Symbol>& Variable::getChild(int n){}
 
 vector<unique_ptr<Symbol>>& Variable::getAllChildren(){}
 
@@ -24,9 +31,12 @@ vector<unique_ptr<Symbol>> Variable::duplicateChildren(){}
 
 vector<unique_ptr<Symbol>> Variable::duplicateChildren(int start, int end){}
 
-unique_ptr<Symbol>& Variable::expandExponent(){}
+unique_ptr<Symbol> Variable::expandExponent(){
+    unique_ptr<Symbol> copy = this->copy();
+    return copy;
+}
 
-unique_ptr<Symbol>& Variable::expandAsExponent(unique_ptr<Symbol>& base){
+unique_ptr<Symbol> Variable::expandAsExponent(unique_ptr<Symbol>& base){
     // unique_ptr<Symbol> root = make_unique<Exponent>();
     // unique_ptr<Symbol> target = base->copy();
     // unique_ptr<Symbol> exponent = this->copy();

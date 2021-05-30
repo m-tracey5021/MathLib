@@ -62,15 +62,19 @@ int main(){
 
     // bool expressionParsePassed = testExpressionParse();
 
-    // bool expandPassed = testExpand();
+    
 
-    // bool equalityPassed = testEquality();
+    
 
     // bool findScopePassed = testFindScope();
 
     // bool separateOperandsPassed = testSeparateOperands();
 
     bool parseExpressionPassed = testParseExpression();
+
+    bool expandPassed = testExpand();
+
+    // bool equalityPassed = testEquality();
 
     int elements1[] = {3, 4, 5};
     char elements2[] = {'a', 'b', 'c'};

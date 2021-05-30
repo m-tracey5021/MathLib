@@ -1,4 +1,5 @@
 #include "sumOp.h"
+#include "expressionComponents.h"
 
 SumOp::SumOp(): Operation('+'){}
 
@@ -12,9 +13,16 @@ SumOp::SumOp(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('+', si
 
 int SumOp::getValue(){return 0;}
 
-unique_ptr<Symbol>& SumOp::expandExponent(){}
+unique_ptr<Symbol> SumOp::expandExponent(){
+    unique_ptr<Symbol> copy = this->copy();
+    vector<unique_ptr<Symbol>>& copiedOperands = copy->getAllChildren();
+    for (int i = 0; i < copiedOperands.size(); i ++){
+        copiedOperands[i] = move(copiedOperands[i]->expandExponent());
+    }
+    return copy;
+}
 
-unique_ptr<Symbol>& SumOp::expandAsExponent(unique_ptr<Symbol>& base){
+unique_ptr<Symbol> SumOp::expandAsExponent(unique_ptr<Symbol>& base){
     unique_ptr<Symbol> root = make_unique<MulOp>();
     for (int i = 0; i < operands.size(); i ++){
         unique_ptr<Symbol> op = make_unique<Exponent>();

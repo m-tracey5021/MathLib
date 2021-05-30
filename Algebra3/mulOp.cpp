@@ -1,4 +1,5 @@
 #include "mulOp.h"
+#include "expressionComponents.h"
 
 MulOp::MulOp(): Operation('*'){}
 
@@ -7,39 +8,65 @@ MulOp::MulOp(bool sign): Operation('*', sign){}
 MulOp::MulOp(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('*', sign, operands){}
 
 
-int MulOp::getCoeff(){
-    int coeff = 0;
+// int MulOp::getCoeff(){
+//     int coeff = 0;
+//     for (int i = 0; i < operands.size(); i ++){
+//         int val = operands[i]->getValue();
+//         if (val){
+//             if (!coeff){
+//                 coeff = val;
+//             }else{
+//                 coeff = coeff * val;
+//             }
+//         }
+//     }
+//     return coeff;
+// }
+
+unique_ptr<Symbol> MulOp::extractCoeff(){
+    int coeffVal = 1;
     for (int i = 0; i < operands.size(); i ++){
         int val = operands[i]->getValue();
-        if (val){
-            if (!coeff){
-                coeff = val;
-            }else{
-                coeff = coeff * val;
-            }
+        if (val > 0 && operands[i]->isAtomic() && !operands[i]->getIsTarget()){
+            
+            coeffVal = coeffVal * val;
+            removeChild(i);
         }
     }
+    unique_ptr<Symbol> coeff = make_unique<Constant>(coeffVal);
     return coeff;
 }
 
 int MulOp::getValue(){return 0;}
 
-unique_ptr<Symbol>& MulOp::expandExponent(){}
+unique_ptr<Symbol> MulOp::expandExponent(){
+    unique_ptr<Symbol> copy = this->copy();
+    vector<unique_ptr<Symbol>>& copiedOperands = copy->getAllChildren();
+    for (int i = 0; i < copiedOperands.size(); i ++){
+        copiedOperands[i] = move(copiedOperands[i]->expandExponent());
+    }
+    return copy;
+}
 
-unique_ptr<Symbol>& MulOp::expandAsExponent(unique_ptr<Symbol>& base){ // x^(2y) x = base 2y = operands y = duplicates
+unique_ptr<Symbol> MulOp::expandAsExponent(unique_ptr<Symbol>& base){ // x^(2y) x = base 2y = operands y = duplicates
     unique_ptr<Symbol> root = make_unique<MulOp>();
-    vector<unique_ptr<Symbol>> duplicates = duplicateChildren();
-    int coeff = getCoeff();
-    for (int i = 0; i < coeff; i ++){
+    // if (parent->getParent()->getSymbol() == '*'){
+
+    // }else{
+        
+    // }
+    
+    unique_ptr<Symbol> coeff = extractCoeff();
+    for (int i = 0; i < coeff->getValue(); i ++){
         unique_ptr<Symbol> op = make_unique<Exponent>();
         unique_ptr<Symbol> target = base->copy();
         unique_ptr<Symbol> exponent;
-        if (duplicates.size() == 1){
-            exponent = duplicates[0]->copy();
+        if (operands.size() == 1){
+            exponent = operands[0]->copy();
         }else{
             exponent = make_unique<MulOp>();
-            for (int j = 0; j < duplicates.size(); j ++){
-                unique_ptr<Symbol> exponentOperand = duplicates[j]->copy();
+            for (int j = 0; j < operands.size(); j ++){
+                unique_ptr<Symbol> exponentOperand = operands[j]->copy();
                 exponent->appendChild(exponentOperand);
             }
         }

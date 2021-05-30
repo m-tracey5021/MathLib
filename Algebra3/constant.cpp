@@ -1,4 +1,5 @@
 #include "constant.h"
+#include "expressionComponents.h"
 
 Constant::Constant(): Symbol(){}
 
@@ -14,9 +15,15 @@ Constant::Constant(bool sign, int value): Symbol(value, sign), value(value){}
 
 int Constant::getValue(){return value;}
 
-void Constant::appendChild(unique_ptr<Symbol>& child){}
+bool Constant::isAtomic(){return true;}
 
-unique_ptr<Symbol>& Constant::getNthChild(int n){}
+void Constant::appendChild(unique_ptr<Symbol>& child){return;}
+
+void Constant::removeChild(unique_ptr<Symbol>& child){return;}
+
+void Constant::removeChild(int n){return;}
+
+unique_ptr<Symbol>& Constant::getChild(int n){}
 
 vector<unique_ptr<Symbol>>& Constant::getAllChildren(){}
 
@@ -24,9 +31,12 @@ vector<unique_ptr<Symbol>> Constant::duplicateChildren(){}
 
 vector<unique_ptr<Symbol>> Constant::duplicateChildren(int start, int end){}
 
-unique_ptr<Symbol>& Constant::expandExponent(){}
+unique_ptr<Symbol> Constant::expandExponent(){
+    unique_ptr<Symbol> copy = this->copy();
+    return copy;
+}
 
-unique_ptr<Symbol>& Constant::expandAsExponent(unique_ptr<Symbol>& base){
+unique_ptr<Symbol> Constant::expandAsExponent(unique_ptr<Symbol>& base){
     unique_ptr<Symbol> root = make_unique<MulOp>();
     for (int i = 0; i < value; i ++){
         unique_ptr<Symbol> copy = base->copy();

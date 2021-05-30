@@ -1,7 +1,6 @@
 #pragma once
 
 #include "operation.h"
-#include "expressionComponents.h"
 
 class MulOp : public Operation {
 
@@ -19,13 +18,13 @@ class MulOp : public Operation {
 
         // MulOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
 
-        int getCoeff();
+        unique_ptr<Symbol> extractCoeff();
 
         int getValue() override;
 
-        unique_ptr<Symbol>& expandExponent() override;
+        unique_ptr<Symbol> expandExponent() override;
 
-        unique_ptr<Symbol>& expandAsExponent(unique_ptr<Symbol>& base) override;
+        unique_ptr<Symbol> expandAsExponent(unique_ptr<Symbol>& base) override;
 
         unique_ptr<Symbol> copy() override;
 

@@ -24,7 +24,6 @@
 #pragma once
 
 #include "operation.h"
-#include "expressionComponents.h"
 
 class Exponent : public Operation {
 
@@ -45,9 +44,9 @@ class Exponent : public Operation {
 
         int getValue() override;
 
-        unique_ptr<Symbol>& expandExponent() override;
+        unique_ptr<Symbol> expandExponent() override;
 
-        unique_ptr<Symbol>& expandAsExponent(unique_ptr<Symbol>& base) override;
+        unique_ptr<Symbol> expandAsExponent(unique_ptr<Symbol>& base) override;
 
         unique_ptr<Symbol> copy() override;
 

@@ -44,6 +44,8 @@ class Symbol {
 
         shared_ptr<Symbol> parent;
 
+        int index;
+
         // unique_ptr<AuxOp> auxOp;
 
     public:
@@ -77,6 +79,7 @@ class Symbol {
 
         shared_ptr<Symbol>& getParent();
 
+        int getIndex();
 
         void setSymbol(char symbol);
 
@@ -90,14 +93,28 @@ class Symbol {
 
         void setParent(shared_ptr<Symbol>& parent);
 
+        void setIndex(int index);
+
+        void remove();
+
+        void replace(unique_ptr<Symbol> other);
+
 
         virtual int getValue() = 0;
+
+        virtual bool isAtomic() = 0;
 
         // unique_ptr<AuxOp>& getAuxillary();
 
         virtual void appendChild(unique_ptr<Symbol>& child) = 0;
 
-        virtual unique_ptr<Symbol>& getNthChild(int n) = 0;
+        virtual void removeChild(unique_ptr<Symbol>& child) = 0;
+
+        virtual void removeChild(int n) = 0;
+
+        
+
+        virtual unique_ptr<Symbol>& getChild(int n) = 0;
 
         virtual vector<unique_ptr<Symbol>>& getAllChildren() = 0;
 
@@ -105,9 +122,9 @@ class Symbol {
 
         virtual vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) = 0;      
 
-        virtual unique_ptr<Symbol>& expandExponent() = 0;
+        virtual unique_ptr<Symbol> expandExponent() = 0;
 
-        virtual unique_ptr<Symbol>& expandAsExponent(unique_ptr<Symbol>& base) = 0;
+        virtual unique_ptr<Symbol> expandAsExponent(unique_ptr<Symbol>& base) = 0;
 
         virtual unique_ptr<Symbol> copy() = 0;
 

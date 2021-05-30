@@ -1,10 +1,10 @@
 #include "symbol.h"
 
-Symbol::Symbol(){}
+Symbol::Symbol(): index(-1){}
 
-Symbol::Symbol(char symbol): symbol(symbol), sign(true), isTarget(false), isExponent(false), isRadical(false){}
+Symbol::Symbol(char symbol): symbol(symbol), sign(true), isTarget(false), isExponent(false), isRadical(false), index(-1){}
 
-Symbol::Symbol(char symbol, bool sign): symbol(symbol), sign(sign), isTarget(false), isExponent(false), isRadical(false){}
+Symbol::Symbol(char symbol, bool sign): symbol(symbol), sign(sign), isTarget(false), isExponent(false), isRadical(false), index(-1){}
 
 // Symbol::Symbol(char symbol, unique_ptr<AuxOp>& auxOp): symbol(symbol), sign(true), auxOp(move(auxOp)){}
 
@@ -22,9 +22,9 @@ bool Symbol::getIsExponent(){return isExponent;}
 
 bool Symbol::getIsRadical(){return isRadical;}
 
-shared_ptr<Symbol>& Symbol::getParent(){
-    return parent;
-}
+shared_ptr<Symbol>& Symbol::getParent(){return parent;}
+
+int Symbol::getIndex(){return index;}
 
 void Symbol::setSymbol(char symbol){
     this->symbol = symbol;
@@ -50,10 +50,23 @@ void Symbol::setParent(shared_ptr<Symbol>& parent){
     this->parent = parent;
 }
 
+void Symbol::setIndex(int index){
+    this->index = index;
+}
 // void Symbol::appendAuxillary(unique_ptr<AuxOp>& auxOp){
 //     this->auxOp = move(auxOp);
 // }
 
+void Symbol::remove(){
+    if (parent){
+        vector<unique_ptr<Symbol>>& children = parent->getAllChildren();
+        for (int i = 0; i < children.size(); i ++){
+            if (children[i].get() == this){
+                parent->removeChild(i);
+            }
+        }
+    }
+}
 
 
 
@@ -68,7 +81,7 @@ int Symbol::getValue(){}
 
 void Symbol::appendChild(unique_ptr<Symbol>& child){}
 
-unique_ptr<Symbol>& Symbol::getNthChild(int n){}
+unique_ptr<Symbol>& Symbol::getChild(int n){}
 
 vector<unique_ptr<Symbol>>& Symbol::getAllChildren(){}
 
@@ -76,9 +89,9 @@ vector<unique_ptr<Symbol>> Symbol::duplicateChildren(){}
 
 vector<unique_ptr<Symbol>> Symbol::duplicateChildren(int start, int end){}
 
-unique_ptr<Symbol>& Symbol::expandExponent(){}
+unique_ptr<Symbol> Symbol::expandExponent(){}
 
-unique_ptr<Symbol>& Symbol::expandAsExponent(unique_ptr<Symbol>& base){}
+unique_ptr<Symbol> Symbol::expandAsExponent(unique_ptr<Symbol>& base){}
 
 unique_ptr<Symbol> Symbol::copy(){}
 

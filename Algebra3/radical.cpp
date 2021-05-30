@@ -20,6 +20,7 @@
 // }
 
 #include "radical.h"
+#include "expressionComponents.h"
 
 Radical::Radical(): Operation('v'){}
 
@@ -33,9 +34,9 @@ Radical::Radical(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('v'
 
 int Radical::getValue(){return 0;}
 
-unique_ptr<Symbol>& Radical::expandExponent(){}
+unique_ptr<Symbol> Radical::expandExponent(){}
 
-unique_ptr<Symbol>& Radical::expandAsExponent(unique_ptr<Symbol>& base){}
+unique_ptr<Symbol> Radical::expandAsExponent(unique_ptr<Symbol>& base){}
 
 unique_ptr<Symbol> Radical::copy(){
 
@@ -67,6 +68,10 @@ string Radical::toString(){
     }
     if (!sign){
         ret = "-(" + ret + ')';
+    }else{
+        if (parent != nullptr && !operands[1]->isAtomic()){
+            ret = '(' + ret + ')';
+        }
     }
     if (isExponent){
         ret = '{' + ret + '}';

@@ -1,4 +1,5 @@
 #include "operation.h"
+#include "expressionComponents.h"
 
 Operation::Operation(): Symbol(){}
 
@@ -18,19 +19,31 @@ Operation::~Operation() = default;
 
 int Operation::getValue(){return 0;}
 
+bool Operation::isAtomic(){return false;}
+
 void Operation::appendChild(unique_ptr<Symbol>& child){
+    child->setIndex(operands.size());
     shared_ptr<Symbol> parent = shared_ptr<Symbol>(this);
     child->setParent(parent);
     operands.push_back(move(child));
 }
 
-// void Operation::appendChild(unique_ptr<Operation>& child){
-//     shared_ptr<Symbol> parent = shared_ptr<Symbol>(this);
-//     child->setParent(parent);
-//     operands.push_back(move(child));
-// }
+void Operation::removeChild(unique_ptr<Symbol>& child){
+    child->setIndex(-1);
+    for (int i = 0; i < operands.size(); i ++){
+        if (operands[i] == child){
+            operands.erase(operands.begin() + i);
+            return;
+        }
+    }
+}
 
-unique_ptr<Symbol>& Operation::getNthChild(int n){
+void Operation::removeChild(int n){
+    operands[n]->setIndex(-1);
+    operands.erase(operands.begin() + n);
+}
+
+unique_ptr<Symbol>& Operation::getChild(int n){
     return operands[n];
 }
 
@@ -56,9 +69,9 @@ vector<unique_ptr<Symbol>> Operation::duplicateChildren(int start, int end){
     return duplicates;
 }
 
-unique_ptr<Symbol>& Operation::expandExponent(){}
+unique_ptr<Symbol> Operation::expandExponent(){}
 
-unique_ptr<Symbol>& Operation::expandAsExponent(unique_ptr<Symbol>& base){}
+unique_ptr<Symbol> Operation::expandAsExponent(unique_ptr<Symbol>& base){}
 
 unique_ptr<Symbol> Operation::copy(){}
 

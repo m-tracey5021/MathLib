@@ -1,7 +1,6 @@
 #pragma once
 
 #include "symbol.h"
-#include "expressionComponents.h"
 
 // struct Scope {
 //     vector<pair<char, int>> ops;
@@ -35,13 +34,19 @@ class Operation : public Symbol {
 
         
 
-        
+        int getValue() override;
+
+        bool isAtomic() override;
 
         void appendChild(unique_ptr<Symbol>& child) override;
 
-        // void appendChild(unique_ptr<Operation>& child);
+        void removeChild(unique_ptr<Symbol>& child) override;
 
-        unique_ptr<Symbol>& getNthChild(int n) override;
+        void removeChild(int n) override;
+
+        
+
+        unique_ptr<Symbol>& getChild(int n) override;
 
         vector<unique_ptr<Symbol>>& getAllChildren() override;
 
@@ -49,11 +54,11 @@ class Operation : public Symbol {
 
         vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) override;
 
-        int getValue() override;
+        
 
-        unique_ptr<Symbol>& expandExponent() override;
+        unique_ptr<Symbol> expandExponent() override;
 
-        unique_ptr<Symbol>& expandAsExponent(unique_ptr<Symbol>& base) override;
+        unique_ptr<Symbol> expandAsExponent(unique_ptr<Symbol>& base) override;
 
         unique_ptr<Symbol> copy() override;
 
