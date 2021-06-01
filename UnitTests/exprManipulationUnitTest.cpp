@@ -37,9 +37,9 @@ bool testExpand(){
         // "(x+t)^{2}",
         // "2x(y^{2})",
         // "2((xy)^{2})",
-        "xy^{2x}z",
-        "xy^{2+x}z",
-        "xy^{2/x}z",
+        "xy^{2t}z",
+        "xy^{2+t}z",
+        "xy^{2/t}z",
         "(xy)^{2x}z",
         "x^{2^{3}}",
         "x^{2x^{3}}",
@@ -57,9 +57,9 @@ bool testExpand(){
         std::cout << parsedExpressionStr << std::endl << std::endl;
         std::cout << parseTreeStr << std::endl << std::endl;
         std::cout << "===== compact =====" << std::endl << std::endl;
-        expression.expandExponents();
-        string expandedExpressionStr = expression.toString();
-        string expandedTreeStr = expression.toString(4);
+        Expression expanded = expression.expandExponents();
+        string expandedExpressionStr = expanded.toString();
+        string expandedTreeStr = expanded.toString(4);
         std::cout << "===== expanded =====" << std::endl << std::endl;
         std::cout << expandedExpressionStr << std::endl << std::endl;
         std::cout << expandedTreeStr << std::endl << std::endl;

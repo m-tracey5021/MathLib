@@ -42,7 +42,7 @@ class Symbol {
 
         bool isRadical;
 
-        shared_ptr<Symbol> parent;
+        // shared_ptr<Symbol> parent;
 
         int index;
 
@@ -77,7 +77,7 @@ class Symbol {
 
         bool getIsRadical();
 
-        shared_ptr<Symbol>& getParent();
+        // shared_ptr<Symbol>& getParent();
 
         int getIndex();
 
@@ -91,13 +91,15 @@ class Symbol {
 
         void setAsRadical(bool isRadical);
 
-        void setParent(shared_ptr<Symbol>& parent);
+        // void setParent(shared_ptr<Symbol>& parent);
+
+        // void setParent(Symbol* parent);
 
         void setIndex(int index);
 
-        void remove();
+        // void remove();
 
-        void replace(unique_ptr<Symbol> other);
+        // void replace(unique_ptr<Symbol> other);
 
 
         virtual int getValue() = 0;
@@ -108,9 +110,19 @@ class Symbol {
 
         virtual void appendChild(unique_ptr<Symbol>& child) = 0;
 
+        virtual void appendChildren(vector<unique_ptr<Symbol>>& children) = 0;
+
+        virtual void appendChildren(vector<unique_ptr<Symbol>>& children, int n) = 0;
+
+        virtual void replaceChild(unique_ptr<Symbol>& child, int n) = 0;
+
         virtual void removeChild(unique_ptr<Symbol>& child) = 0;
 
         virtual void removeChild(int n) = 0;
+
+        
+
+        
 
         
 
@@ -122,13 +134,13 @@ class Symbol {
 
         virtual vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) = 0;      
 
-        virtual unique_ptr<Symbol> expandExponent() = 0;
+        virtual void expandExponent(Symbol* parent) = 0;
 
-        virtual unique_ptr<Symbol> expandAsExponent(unique_ptr<Symbol>& base) = 0;
+        virtual void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) = 0;
 
         virtual unique_ptr<Symbol> copy() = 0;
 
-        virtual string toString() = 0;
+        virtual string toString(bool hasParent) = 0;
 
         virtual string toString(int depth, int offset) = 0;
 

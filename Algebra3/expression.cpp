@@ -18,12 +18,15 @@ void Expression::setRoot(Symbol* symbol){
     root = unique_ptr<Symbol>(symbol);
 }
 
-void Expression::expandExponents(){
-    root = move(root->expandExponent());
+Expression Expression::expandExponents(){
+    unique_ptr<Symbol> copy = root->copy();
+    copy->expandExponent(nullptr);
+    Expression expanded = Expression(copy);
+    return expanded;
 }
 
 string Expression::toString(){
-    return root->toString();
+    return root->toString(false);
 }
 
 string Expression::toString(int offset){

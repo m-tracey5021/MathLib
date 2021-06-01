@@ -19,9 +19,17 @@ bool Variable::isAtomic(){return true;}
 
 void Variable::appendChild(unique_ptr<Symbol>& child){return;}
 
+void Variable::appendChildren(vector<unique_ptr<Symbol>>& children){return;}
+
+void Variable::appendChildren(vector<unique_ptr<Symbol>>& children, int n){return;}
+
+void Variable::replaceChild(unique_ptr<Symbol>& child, int n){return;}
+
 void Variable::removeChild(unique_ptr<Symbol>& child){return;}
 
 void Variable::removeChild(int n){return;}
+
+
 
 unique_ptr<Symbol>& Variable::getChild(int n){}
 
@@ -31,23 +39,17 @@ vector<unique_ptr<Symbol>> Variable::duplicateChildren(){}
 
 vector<unique_ptr<Symbol>> Variable::duplicateChildren(int start, int end){}
 
-unique_ptr<Symbol> Variable::expandExponent(){
-    unique_ptr<Symbol> copy = this->copy();
-    return copy;
+void Variable::expandExponent(Symbol* parent){
+    // unique_ptr<Symbol> copy = this->copy();
+    // return copy;
+    return;
 }
 
-unique_ptr<Symbol> Variable::expandAsExponent(unique_ptr<Symbol>& base){
-    // unique_ptr<Symbol> root = make_unique<Exponent>();
-    // unique_ptr<Symbol> target = base->copy();
-    // unique_ptr<Symbol> exponent = this->copy();
-    // target->setAsTarget(true);
-    // exponent->setAsExponent(true);
-    // root->appendChild(target);
-    // root->appendChild(exponent);
-    // return root;
+void Variable::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
 
-    unique_ptr<Symbol> copy = parent->copy();
-    return copy;
+    // unique_ptr<Symbol> copy = parent->copy();
+    // return copy;
+    return;
 
 }
 
@@ -61,10 +63,11 @@ unique_ptr<Symbol> Variable::copy(){
     //     copy = make_unique<Variable>(sign, copiedAuxOp, value);
     // }
     unique_ptr<Symbol> copy = make_unique<Variable>(sign, value);
+    copy->setIndex(index);
     return copy;
 }
 
-string Variable::toString(){
+string Variable::toString(bool hasParent){
     string ret = "";
     ret += value;
     if (!sign){

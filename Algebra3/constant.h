@@ -28,6 +28,12 @@ class Constant : public Symbol {
 
         void appendChild(unique_ptr<Symbol>& child) override;
 
+        void appendChildren(vector<unique_ptr<Symbol>>& children) override;
+
+        void appendChildren(vector<unique_ptr<Symbol>>& children, int n) override;
+
+        void replaceChild(unique_ptr<Symbol>& child, int n) override;
+
         void removeChild(unique_ptr<Symbol>& child) override;
 
         void removeChild(int n) override;
@@ -40,13 +46,13 @@ class Constant : public Symbol {
 
         vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) override;
 
-        unique_ptr<Symbol> expandExponent() override;
+        void expandExponent(Symbol* parent) override;
 
-        unique_ptr<Symbol> expandAsExponent(unique_ptr<Symbol>& base) override;
+        void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) override;
 
         unique_ptr<Symbol> copy() override;
 
-        string toString() override;
+        string toString(bool hasParent) override;
 
         string toString(int depth, int offset) override;
         

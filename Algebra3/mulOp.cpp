@@ -39,27 +39,27 @@ unique_ptr<Symbol> MulOp::extractCoeff(){
 
 int MulOp::getValue(){return 0;}
 
-unique_ptr<Symbol> MulOp::expandExponent(){
-    unique_ptr<Symbol> copy = this->copy();
-    vector<unique_ptr<Symbol>>& copiedOperands = copy->getAllChildren();
-    for (int i = 0; i < copiedOperands.size(); i ++){
-        copiedOperands[i] = move(copiedOperands[i]->expandExponent());
+void MulOp::expandExponent(Symbol* parent){
+    // unique_ptr<Symbol> copy = this->copy();
+    // vector<unique_ptr<Symbol>>& copiedOperands = copy->getAllChildren();
+    // for (int i = 0; i < copiedOperands.size(); i ++){
+    //     copiedOperands[i] = move(copiedOperands[i]->expandExponent(this));
+    // }
+    // return copy;
+    for (int i = 0; i < operands.size(); i ++){
+        operands[i]->expandExponent(this);
     }
-    return copy;
+    return;
 }
 
-unique_ptr<Symbol> MulOp::expandAsExponent(unique_ptr<Symbol>& base){ // x^(2y) x = base 2y = operands y = duplicates
-    unique_ptr<Symbol> root = make_unique<MulOp>();
-    // if (parent->getParent()->getSymbol() == '*'){
-
-    // }else{
-        
-    // }
+void MulOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){ // x^(2y) x = base 2y = operands y = duplicates
     
+
+    vector<unique_ptr<Symbol>> ops;
     unique_ptr<Symbol> coeff = extractCoeff();
     for (int i = 0; i < coeff->getValue(); i ++){
         unique_ptr<Symbol> op = make_unique<Exponent>();
-        unique_ptr<Symbol> target = base->copy();
+        unique_ptr<Symbol> target = base.copy();
         unique_ptr<Symbol> exponent;
         if (operands.size() == 1){
             exponent = operands[0]->copy();
@@ -72,9 +72,25 @@ unique_ptr<Symbol> MulOp::expandAsExponent(unique_ptr<Symbol>& base){ // x^(2y) 
         }
         op->appendChild(target);
         op->appendChild(exponent);
-        root->appendChild(op);
+        ops.push_back(move(op));
+        //root->appendChild(op);
     }
-    return root;
+    if (grandparent->getSymbol() == '*'){
+        int index = parent->getIndex();
+        grandparent->removeChild(index);
+        grandparent->appendChildren(ops, index);
+        
+        // unique_ptr<Symbol> null;
+        // return null;
+        return;
+    
+    }else{
+        unique_ptr<Symbol> root = make_unique<MulOp>();
+        root->appendChildren(ops);
+        // return root;
+        grandparent->replaceChild(root, parent->getIndex());
+        return;
+    }
     
 }
 
@@ -93,13 +109,14 @@ unique_ptr<Symbol> MulOp::copy(){
     //     copy = make_unique<MulOp>(sign, copiedAuxOp, copiedOperands);
     // }
     unique_ptr<Symbol> copy = make_unique<MulOp>(sign, copiedOperands);
+    copy->setIndex(index);
     return copy;
 }
 
-string MulOp::toString(){
+string MulOp::toString(bool hasParent){
     string ret = "";
     for (int i = 0; i < operands.size(); i ++){
-        ret += operands[i]->toString();
+        ret += operands[i]->toString(true);
     }
     if (!sign){
         ret = '-' + ret;

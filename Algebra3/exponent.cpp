@@ -34,29 +34,28 @@ Exponent::Exponent(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('
 
 int Exponent::getValue(){return 0;}
 
-unique_ptr<Symbol> Exponent::expandExponent(){
-    // unique_ptr<Symbol>& target = getChild(0);
-    // unique_ptr<Symbol>& exponent = getChild(1);
-    // unique_ptr<Symbol> root = exponent->expandAsExponent(target);
+void Exponent::expandExponent(Symbol* parent){
+
     
-    return getChild(1)->expandAsExponent(getChild(0));
-    // if (parent){
-    //     parent->appendChild(root);
-    //     parent->removeChild(index);
+    // unique_ptr<Symbol> expanded = getChild(1)->expandAsExponent(*getChild(0), this, parent);
+    // if (expanded.get() != nullptr){
+    //     return expanded;
     // }else{
-       
+    //     return this->copy();
     // }
-    // return;
-    
-    
+    getChild(1)->expandAsExponent(*getChild(0), this, parent);
+    return;
 }
 
-unique_ptr<Symbol> Exponent::expandAsExponent(unique_ptr<Symbol>& base){
+
+void Exponent::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     for (int i = 0; i < operands.size(); i ++){
-        operands[i]->expandExponent();
+        operands[i]->expandExponent(this);
     }
-    unique_ptr<Symbol> copy = parent->copy();
-    return copy;
+    // unique_ptr<Symbol> copy = parent->copy(); // return null and copy symbol in function which calls this
+    // unique_ptr<Symbol> null;
+    // return null;
+    return;
 }
 
 unique_ptr<Symbol> Exponent::copy(){
@@ -74,22 +73,23 @@ unique_ptr<Symbol> Exponent::copy(){
     //     copy = make_unique<Exponent>(sign, copiedAuxOp, copiedOperands);
     // }
     unique_ptr<Symbol> copy = make_unique<Exponent>(sign, copiedOperands);
+    copy->setIndex(index);
     return copy;
 }
 
-string Exponent::toString(){
+string Exponent::toString(bool hasParent){
     string ret = "";
     for (int i = 0; i < operands.size(); i ++){
         if (i < operands.size() - 1){
-            ret += operands[i]->toString() + '^';
+            ret += operands[i]->toString(true) + '^';
         }else{
-            ret += operands[i]->toString();
+            ret += operands[i]->toString(true);
         }
     }
     if (!sign){
         ret = "-(" + ret + ')';
     }else{
-        if (parent != nullptr && !operands[0]->isAtomic()){
+        if (hasParent && !operands[0]->isAtomic()){
             ret = '(' + ret + ')';
         }
     }

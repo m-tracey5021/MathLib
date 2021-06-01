@@ -44,13 +44,13 @@ class Exponent : public Operation {
 
         int getValue() override;
 
-        unique_ptr<Symbol> expandExponent() override;
+        void expandExponent(Symbol* parent) override;
 
-        unique_ptr<Symbol> expandAsExponent(unique_ptr<Symbol>& base) override;
+        void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) override;
 
         unique_ptr<Symbol> copy() override;
 
-        string toString() override;
+        string toString(bool hasParent) override;
 
         // string toString(int& depth, int offset) override;
 

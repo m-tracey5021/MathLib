@@ -22,7 +22,7 @@ bool Symbol::getIsExponent(){return isExponent;}
 
 bool Symbol::getIsRadical(){return isRadical;}
 
-shared_ptr<Symbol>& Symbol::getParent(){return parent;}
+// shared_ptr<Symbol>& Symbol::getParent(){return parent;}
 
 int Symbol::getIndex(){return index;}
 
@@ -46,9 +46,14 @@ void Symbol::setAsRadical(bool isRadical){
     this->isRadical = isRadical;
 }
 
-void Symbol::setParent(shared_ptr<Symbol>& parent){
-    this->parent = parent;
-}
+// void Symbol::setParent(shared_ptr<Symbol>& parent){
+//     this->parent = parent;
+// }
+
+// void Symbol::setParent(Symbol* parent){
+//     shared_ptr<Symbol> shared = shared_ptr<Symbol>(parent);
+//     this->parent = shared;
+// }
 
 void Symbol::setIndex(int index){
     this->index = index;
@@ -57,44 +62,38 @@ void Symbol::setIndex(int index){
 //     this->auxOp = move(auxOp);
 // }
 
-void Symbol::remove(){
-    if (parent){
-        vector<unique_ptr<Symbol>>& children = parent->getAllChildren();
-        for (int i = 0; i < children.size(); i ++){
-            if (children[i].get() == this){
-                parent->removeChild(i);
-            }
-        }
-    }
-}
-
-
-
-
-int Symbol::getValue(){}
-
-
-
-// unique_ptr<AuxOp>& Symbol::getAuxillary(){
-//     return auxOp;
+// void Symbol::remove(){
+//     if (parent){
+//         vector<unique_ptr<Symbol>>& children = parent->getAllChildren();
+//         for (int i = 0; i < children.size(); i ++){
+//             if (children[i].get() == this){
+//                 parent->removeChild(i);
+//             }
+//         }
+//     }
 // }
 
-void Symbol::appendChild(unique_ptr<Symbol>& child){}
 
-unique_ptr<Symbol>& Symbol::getChild(int n){}
 
-vector<unique_ptr<Symbol>>& Symbol::getAllChildren(){}
 
-vector<unique_ptr<Symbol>> Symbol::duplicateChildren(){}
+// int Symbol::getValue(){}
 
-vector<unique_ptr<Symbol>> Symbol::duplicateChildren(int start, int end){}
+// void Symbol::appendChild(unique_ptr<Symbol>& child){}
 
-unique_ptr<Symbol> Symbol::expandExponent(){}
+// unique_ptr<Symbol>& Symbol::getChild(int n){}
 
-unique_ptr<Symbol> Symbol::expandAsExponent(unique_ptr<Symbol>& base){}
+// vector<unique_ptr<Symbol>>& Symbol::getAllChildren(){}
 
-unique_ptr<Symbol> Symbol::copy(){}
+// vector<unique_ptr<Symbol>> Symbol::duplicateChildren(){}
 
-string Symbol::toString(){return "";}
+// vector<unique_ptr<Symbol>> Symbol::duplicateChildren(int start, int end){}
 
-string Symbol::toString(int depth, int offset){return "";}
+// unique_ptr<Symbol> Symbol::expandExponent(Symbol* parent){}
+
+// unique_ptr<Symbol> Symbol::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){}
+
+// unique_ptr<Symbol> Symbol::copy(){}
+
+// string Symbol::toString(bool hasParent){return "";}
+
+// string Symbol::toString(int depth, int offset){return "";}

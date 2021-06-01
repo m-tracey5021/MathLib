@@ -19,9 +19,17 @@ bool Constant::isAtomic(){return true;}
 
 void Constant::appendChild(unique_ptr<Symbol>& child){return;}
 
+void Constant::appendChildren(vector<unique_ptr<Symbol>>& children){return;}
+
+void Constant::appendChildren(vector<unique_ptr<Symbol>>& children, int n){return;}
+
+void Constant::replaceChild(unique_ptr<Symbol>& child, int n){return;}
+
 void Constant::removeChild(unique_ptr<Symbol>& child){return;}
 
 void Constant::removeChild(int n){return;}
+
+
 
 unique_ptr<Symbol>& Constant::getChild(int n){}
 
@@ -31,18 +39,20 @@ vector<unique_ptr<Symbol>> Constant::duplicateChildren(){}
 
 vector<unique_ptr<Symbol>> Constant::duplicateChildren(int start, int end){}
 
-unique_ptr<Symbol> Constant::expandExponent(){
-    unique_ptr<Symbol> copy = this->copy();
-    return copy;
+void Constant::expandExponent(Symbol* parent){
+    // unique_ptr<Symbol> copy = this->copy();
+    // return copy;
+    return;
 }
 
-unique_ptr<Symbol> Constant::expandAsExponent(unique_ptr<Symbol>& base){
+void Constant::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     unique_ptr<Symbol> root = make_unique<MulOp>();
     for (int i = 0; i < value; i ++){
-        unique_ptr<Symbol> copy = base->copy();
+        unique_ptr<Symbol> copy = base.copy();
         root->appendChild(copy);
     }
-    return root;
+    grandparent->replaceChild(root, parent->getIndex());
+    return;
 }
 
 unique_ptr<Symbol> Constant::copy(){
@@ -55,10 +65,11 @@ unique_ptr<Symbol> Constant::copy(){
     //     copy = make_unique<Constant>(sign, copiedAuxOp, value);
     // }
     unique_ptr<Symbol> copy = make_unique<Constant>(sign, value);
+    copy->setIndex(index);
     return copy;
 }
 
-string Constant::toString(){
+string Constant::toString(bool hasParent){
     string ret = std::to_string(value);
     if (!sign){
         ret = '-' + ret;

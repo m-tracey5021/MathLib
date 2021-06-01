@@ -34,9 +34,9 @@ Radical::Radical(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('v'
 
 int Radical::getValue(){return 0;}
 
-unique_ptr<Symbol> Radical::expandExponent(){}
+void Radical::expandExponent(Symbol* parent){return;}
 
-unique_ptr<Symbol> Radical::expandAsExponent(unique_ptr<Symbol>& base){}
+void Radical::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){return;}
 
 unique_ptr<Symbol> Radical::copy(){
 
@@ -45,31 +45,25 @@ unique_ptr<Symbol> Radical::copy(){
         unique_ptr<Symbol> copied = operands[i]->copy();
         copiedOperands.push_back(move(copied));
     }
-    // unique_ptr<Symbol> copy;
-    // if (auxOp.get() == nullptr){
-    //     copy = make_unique<Radical>(sign, copiedOperands);
-    // }else{
-    //     unique_ptr<AuxOp> copiedAuxOp = auxOp->copy();
-    //     copy = make_unique<Radical>(sign, copiedAuxOp, copiedOperands);
-    // }
     unique_ptr<Symbol> copy = make_unique<Radical>(sign, copiedOperands);
+    copy->setIndex(index);
     return copy;
 }
 
-string Radical::toString(){
+string Radical::toString(bool hasParent){
     string ret = "";
     // REDO
     for (int i = 0; i < operands.size(); i ++){
         if (i < operands.size() - 1){
-            ret += operands[i]->toString() + 'v';
+            ret += operands[i]->toString(true) + 'v';
         }else{
-            ret += operands[i]->toString();
+            ret += operands[i]->toString(true);
         }
     }
     if (!sign){
         ret = "-(" + ret + ')';
     }else{
-        if (parent != nullptr && !operands[1]->isAtomic()){
+        if (hasParent && !operands[1]->isAtomic()){
             ret = '(' + ret + ')';
         }
     }

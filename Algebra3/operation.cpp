@@ -23,9 +23,40 @@ bool Operation::isAtomic(){return false;}
 
 void Operation::appendChild(unique_ptr<Symbol>& child){
     child->setIndex(operands.size());
-    shared_ptr<Symbol> parent = shared_ptr<Symbol>(this);
-    child->setParent(parent);
     operands.push_back(move(child));
+    return;
+}
+
+void Operation::appendChildren(vector<unique_ptr<Symbol>>& children){
+    int currentSize = operands.size();
+    for (int i = 0; i < children.size(); i ++){
+        children[i]->setIndex(currentSize + i);
+        operands.push_back(move(children[i]));
+    }
+    return;
+}
+
+void Operation::appendChildren(vector<unique_ptr<Symbol>>& children, int n){
+    
+    for (unique_ptr<Symbol>& child : children){
+        child->setIndex(n);
+        operands.insert(operands.begin() + n, move(child));
+        n ++;
+    }
+    for (int i = n; i < operands.size(); i ++){
+        operands[i]->setIndex(i);
+    }
+    return;
+}
+
+void Operation::replaceChild(unique_ptr<Symbol>& child, int n){
+    for (int i = 0; i < operands.size(); i ++){
+        if (i == n){
+            operands[i] = move(child);
+            child->setIndex(n);
+        }
+    }
+    return;
 }
 
 void Operation::removeChild(unique_ptr<Symbol>& child){
@@ -36,11 +67,13 @@ void Operation::removeChild(unique_ptr<Symbol>& child){
             return;
         }
     }
+    return;
 }
 
 void Operation::removeChild(int n){
     operands[n]->setIndex(-1);
     operands.erase(operands.begin() + n);
+    return;
 }
 
 unique_ptr<Symbol>& Operation::getChild(int n){
@@ -69,13 +102,13 @@ vector<unique_ptr<Symbol>> Operation::duplicateChildren(int start, int end){
     return duplicates;
 }
 
-unique_ptr<Symbol> Operation::expandExponent(){}
+void Operation::expandExponent(Symbol* parent){}
 
-unique_ptr<Symbol> Operation::expandAsExponent(unique_ptr<Symbol>& base){}
+void Operation::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){}
 
 unique_ptr<Symbol> Operation::copy(){}
 
-string Operation::toString(){return "";}
+string Operation::toString(bool hasParent){return "";}
 
 string Operation::toString(int depth, int offset){
     
