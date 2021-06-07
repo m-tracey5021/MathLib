@@ -1,6 +1,6 @@
 #pragma once
 
-#include "auxOp.h"
+// #include "auxOp.h"
 // #include "exponent.h"
 // #include "radical.h"
 // #include "function.h"
@@ -19,6 +19,7 @@ using std::make_unique;
 using std::make_shared;
 using std::pair;
 
+class Expression;
 class SumOp;
 class MulOp;
 class DivOp;
@@ -27,6 +28,10 @@ class Variable;
 class Exponent;
 class Radical;
 class Function;
+
+// void addToContext(shared_ptr<Symbol>& symbol, shared_ptr<Expression>& parentExpression);
+
+
 
 class Symbol {
 
@@ -42,11 +47,15 @@ class Symbol {
 
         bool isRadical;
 
-        // shared_ptr<Symbol> parent;
-
         int index;
 
-        // unique_ptr<AuxOp> auxOp;
+        // int indexInContext;
+
+        // shared_ptr<Symbol> parent;
+
+        vector<unique_ptr<Symbol>> children;
+
+        shared_ptr<Expression> parentExpression;
 
     public:
 
@@ -56,15 +65,15 @@ class Symbol {
 
         Symbol(char symbol, bool sign);
 
-        // Symbol(char symbol, unique_ptr<AuxOp>& auxOp);
+        Symbol(char symbol, bool sign, vector<unique_ptr<Symbol>>& children);
 
-        // Symbol(char symbol, bool sign, unique_ptr<AuxOp>& auxOp);
+        Symbol(char symbol, bool sign, shared_ptr<Expression>& parentExpression);
+
+        Symbol(char symbol, bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
 
         ~Symbol();
 
-        
-
-        // void appendAuxillary(unique_ptr<AuxOp>& auxOp);
+    
 
         
         char getSymbol();
@@ -77,44 +86,65 @@ class Symbol {
 
         bool getIsRadical();
 
+        int getIndex();
+
+        // int getIndexInContext();
+
         // shared_ptr<Symbol>& getParent();
 
-        int getIndex();
+        // shared_ptr<Symbol>& getParent(int n);
+
+        unique_ptr<Symbol>& getParent();
+
+        shared_ptr<Expression>& getParentExpression();
 
         void setSymbol(char symbol);
 
         void setSign(bool sign);
 
-        void setAsTarget(bool isTarget);
+        void setIsTarget(bool isTarget);
 
-        void setAsExponent(bool isExponent);
+        void setIsExponent(bool isExponent);
 
-        void setAsRadical(bool isRadical);
-
-        // void setParent(shared_ptr<Symbol>& parent);
-
-        // void setParent(Symbol* parent);
+        void setIsRadical(bool isRadical);
 
         void setIndex(int index);
 
-        // void remove();
+        // void setIndexInContext(int index);
 
-        // void replace(unique_ptr<Symbol> other);
+        // void setParent(shared_ptr<Symbol>& parent);
+
+        void setParentExpression(shared_ptr<Expression>& parentExpression);
 
 
         virtual int getValue() = 0;
 
         virtual bool isAtomic() = 0;
 
-        // unique_ptr<AuxOp>& getAuxillary();
+        virtual bool isAtomicExponent() = 0;
+
+        virtual bool isAtomicNumerator() = 0;
+
+        // virtual bool isParentTo(Symbol* symbol) = 0;
+
+        // virtual unique_ptr<Symbol>& searchParent(Symbol* symbol, unique_ptr<Symbol>& parent) = 0;
+
+        virtual void setChildren(vector<unique_ptr<Symbol>>& children) = 0;
 
         virtual void appendChild(unique_ptr<Symbol>& child) = 0;
+        // virtual void appendChild(unique_ptr<SumOp> child) = 0;
+        // virtual void appendChild(unique_ptr<MulOp> child) = 0;
+        // virtual void appendChild(unique_ptr<DivOp> child) = 0;
+        // virtual void appendChild(unique_ptr<Constant> child) = 0;
+        // virtual void appendChild(unique_ptr<Variable> child) = 0;
 
         virtual void appendChildren(vector<unique_ptr<Symbol>>& children) = 0;
 
         virtual void appendChildren(vector<unique_ptr<Symbol>>& children, int n) = 0;
 
         virtual void replaceChild(unique_ptr<Symbol>& child, int n) = 0;
+        virtual void replaceChild(unique_ptr<SumOp>& child, int n) = 0;
+        virtual void replaceChild(unique_ptr<MulOp>& child, int n) = 0;
 
         virtual void removeChild(unique_ptr<Symbol>& child) = 0;
 
@@ -128,7 +158,7 @@ class Symbol {
 
         virtual unique_ptr<Symbol>& getChild(int n) = 0;
 
-        virtual vector<unique_ptr<Symbol>>& getAllChildren() = 0;
+        virtual vector<unique_ptr<Symbol>>& getChildren() = 0;
 
         virtual vector<unique_ptr<Symbol>> duplicateChildren() = 0;  
 
@@ -147,3 +177,4 @@ class Symbol {
         
 
 };
+

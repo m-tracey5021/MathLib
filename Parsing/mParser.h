@@ -1,4 +1,4 @@
-#include "../Algebra3/expressionTree.h"
+// #include "../Algebra3/expressionTree.h"
 #include "../Algebra3/symbol.h"
 #include "../Algebra3/operation.h"
 #include "../Algebra3/sumOp.h"
@@ -105,13 +105,13 @@ class MParser {
 
     private:
 
-        Expression parseTree;
+        shared_ptr<Expression> parseTree;
 
     public:
 
         MParser();
 
-        Expression& getParseTree();
+        shared_ptr<Expression>& getParseTree();
 
               
 

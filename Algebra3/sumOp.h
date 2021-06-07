@@ -12,13 +12,23 @@ class SumOp : public Operation {
 
         SumOp(bool sign);
 
-        SumOp(bool sign, vector<unique_ptr<Symbol>>& operands);
+        SumOp(bool sign, vector<unique_ptr<Symbol>>& children);
+
+        SumOp(bool sign, shared_ptr<Expression>& parentExpression);
+
+        SumOp(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
 
         // SumOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
 
         // SumOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
 
         int getValue() override;
+
+        bool isAtomicExponent() override;
+
+        bool isAtomicNumerator() override;
+
+        void replaceChild(unique_ptr<SumOp>& child, int n) override;
 
         void expandExponent(Symbol* parent) override;
 

@@ -1,69 +1,41 @@
 #include "constant.h"
 #include "expressionComponents.h"
 
-Constant::Constant(): Symbol(){}
+Constant::Constant(): Atom(){}
 
-Constant::Constant(int value): Symbol(value), value(value){}
+Constant::Constant(int value): Atom(value), value(value){}
 
-Constant::Constant(bool sign, int value): Symbol(value, sign), value(value){}
+Constant::Constant(bool sign, int value): Atom(value, sign), value(value){}
 
-// Constant::Constant(unique_ptr<AuxOp>& auxOp, int value): Symbol(value, auxOp), value(value){}
-
-// Constant::Constant(bool sign, unique_ptr<AuxOp>& auxOp, int value): Symbol(value, sign, auxOp), value(value){}
-
-
+Constant::Constant(bool sign, int value, shared_ptr<Expression>& parentExpression): Atom(value, sign, parentExpression), value(value){}
 
 int Constant::getValue(){return value;}
 
 bool Constant::isAtomic(){return true;}
 
-void Constant::appendChild(unique_ptr<Symbol>& child){return;}
+bool Constant::isAtomicExponent(){return false;}
 
-void Constant::appendChildren(vector<unique_ptr<Symbol>>& children){return;}
-
-void Constant::appendChildren(vector<unique_ptr<Symbol>>& children, int n){return;}
-
-void Constant::replaceChild(unique_ptr<Symbol>& child, int n){return;}
-
-void Constant::removeChild(unique_ptr<Symbol>& child){return;}
-
-void Constant::removeChild(int n){return;}
-
-
-
-unique_ptr<Symbol>& Constant::getChild(int n){}
-
-vector<unique_ptr<Symbol>>& Constant::getAllChildren(){}
-
-vector<unique_ptr<Symbol>> Constant::duplicateChildren(){}
-
-vector<unique_ptr<Symbol>> Constant::duplicateChildren(int start, int end){}
-
-void Constant::expandExponent(Symbol* parent){
-    // unique_ptr<Symbol> copy = this->copy();
-    // return copy;
-    return;
+bool Constant::isAtomicNumerator(){
+    if (value == 1){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 void Constant::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     unique_ptr<Symbol> root = make_unique<MulOp>();
+    vector<unique_ptr<Symbol>> ops;
     for (int i = 0; i < value; i ++){
         unique_ptr<Symbol> copy = base.copy();
         root->appendChild(copy);
     }
-    grandparent->replaceChild(root, parent->getIndex());
-    return;
+    // return root;
+    parentExpression->replaceNode(parent, root);
 }
 
 unique_ptr<Symbol> Constant::copy(){
 
-    // unique_ptr<Symbol> copy;
-    // if (auxOp.get() == nullptr){
-    //     copy = make_unique<Constant>(sign, value);
-    // }else{
-    //     unique_ptr<AuxOp> copiedAuxOp = auxOp->copy();
-    //     copy = make_unique<Constant>(sign, copiedAuxOp, value);
-    // }
     unique_ptr<Symbol> copy = make_unique<Constant>(sign, value);
     copy->setIndex(index);
     return copy;

@@ -1,23 +1,3 @@
-// #include "exponent.h"
-
-// Exponent::Exponent(): AuxOp(){}
-
-// Exponent::Exponent(unique_ptr<Symbol>& root): AuxOp(root){}
-
-// unique_ptr<AuxOp> Exponent::copy(){
-//     unique_ptr<Symbol> copiedRoot = root->copy();
-//     unique_ptr<AuxOp> copy = make_unique<Exponent>(copiedRoot);
-//     return copy;
-// }
-
-// string Exponent::toString(string target){
-//     target += "^{" + root->toString(false) + '}';
-//     unique_ptr<AuxOp>& nextAuxillary = root->getAuxillary();
-//     if (nextAuxillary != nullptr){
-//         target = nextAuxillary->toString(target);
-//     }
-//     return target;
-// }
 
 #include "exponent.h"
 #include "expressionComponents.h"
@@ -26,72 +6,86 @@ Exponent::Exponent(): Operation('^'){}
 
 Exponent::Exponent(bool sign): Operation('^', sign){}
 
-Exponent::Exponent(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('^', sign, operands){}
+Exponent::Exponent(bool sign, vector<unique_ptr<Symbol>>& children): Operation('^', sign, children){}
 
-// Exponent::Exponent(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('^', true, auxOp, operands){}
+Exponent::Exponent(bool sign, shared_ptr<Expression>& parentExpression): Operation('^', sign, parentExpression){}
 
-// Exponent::Exponent(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('^', sign, auxOp, operands){}
+Exponent::Exponent(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('^', sign, children, parentExpression){}
 
 int Exponent::getValue(){return 0;}
 
+bool Exponent::isAtomicExponent(){
+    if (children[1]->isAtomicExponent()){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+bool Exponent::isAtomicNumerator(){return true;}
+
 void Exponent::expandExponent(Symbol* parent){
 
-    
-    // unique_ptr<Symbol> expanded = getChild(1)->expandAsExponent(*getChild(0), this, parent);
-    // if (expanded.get() != nullptr){
-    //     return expanded;
-    // }else{
-    //     return this->copy();
-    // }
-    getChild(1)->expandAsExponent(*getChild(0), this, parent);
+    if (!children[1]->isAtomicExponent()){
+        children[1]->expandAsExponent(*children[0], this, parent);
+        
+        // if (parent){
+        //     // replace 'this' with 'expanded' via parentExpression
+        //     parentExpression->replaceNode(this, expanded);
+        // }else{
+        //     // set 'root' to 'expanded'
+        //     parentExpression->setRoot(expanded);
+        // }
+    }
     return;
 }
 
 
 void Exponent::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
-    for (int i = 0; i < operands.size(); i ++){
-        operands[i]->expandExponent(this);
+    if (!children[1]->isAtomicExponent()){
+        children[1]->expandAsExponent(*children[0], this, parent);
+        
+        // if (parent){
+        //     // replace 'this' with 'expanded' via parentExpression
+        //     parentExpression->replaceNode(this, expanded);
+        // }else{
+        //     // set 'root' to 'expanded'
+        //     parentExpression->setRoot(expanded);
+        // }
+        
     }
-    // unique_ptr<Symbol> copy = parent->copy(); // return null and copy symbol in function which calls this
-    // unique_ptr<Symbol> null;
-    // return null;
-    return;
+    parent->expandExponent(grandparent);
+    // return this->copy();
 }
 
 unique_ptr<Symbol> Exponent::copy(){
 
+    unique_ptr<Symbol> copy = make_unique<Exponent>(sign);
     vector<unique_ptr<Symbol>> copiedOperands;
-    for (int i = 0; i < operands.size(); i ++){
-        unique_ptr<Symbol> copied = operands[i]->copy();
+    for (int i = 0; i < children.size(); i ++){
+        unique_ptr<Symbol> copied = children[i]->copy();
         copiedOperands.push_back(move(copied));
     }
-    // unique_ptr<Symbol> copy;
-    // if (auxOp.get() == nullptr){
-    //     copy = make_unique<Exponent>(sign, copiedOperands);
-    // }else{
-    //     unique_ptr<AuxOp> copiedAuxOp = auxOp->copy();
-    //     copy = make_unique<Exponent>(sign, copiedAuxOp, copiedOperands);
-    // }
-    unique_ptr<Symbol> copy = make_unique<Exponent>(sign, copiedOperands);
+    
     copy->setIndex(index);
     return copy;
 }
 
 string Exponent::toString(bool hasParent){
     string ret = "";
-    for (int i = 0; i < operands.size(); i ++){
-        if (i < operands.size() - 1){
-            ret += operands[i]->toString(true) + '^';
+    for (int i = 0; i < children.size(); i ++){
+        if (i < children.size() - 1){
+            ret += children[i]->toString(true) + '^';
         }else{
-            ret += operands[i]->toString(true);
+            ret += children[i]->toString(true);
         }
     }
     if (!sign){
         ret = "-(" + ret + ')';
     }else{
-        if (hasParent && !operands[0]->isAtomic()){
-            ret = '(' + ret + ')';
-        }
+        // if (hasParent && !operands[0]->isAtomic()){
+        //     ret = '(' + ret + ')';
+        // }
     }
     if (isExponent){
         ret = '{' + ret + '}';

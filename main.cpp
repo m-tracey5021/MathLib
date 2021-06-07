@@ -70,7 +70,7 @@ int main(){
 
     // bool separateOperandsPassed = testSeparateOperands();
 
-    bool parseExpressionPassed = testParseExpression();
+    // bool parseExpressionPassed = testParseExpression();
 
     bool expandPassed = testExpand();
 

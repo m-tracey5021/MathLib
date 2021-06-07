@@ -12,15 +12,21 @@ class MulOp : public Operation {
 
         MulOp(bool sign);
 
-        MulOp(bool sign, vector<unique_ptr<Symbol>>& operands);
+        MulOp(bool sign, vector<unique_ptr<Symbol>>& children);
 
-        // MulOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        MulOp(bool sign, shared_ptr<Expression>& parentExpression);
 
-        // MulOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        MulOp(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
 
         unique_ptr<Symbol> extractCoeff();
 
         int getValue() override;
+
+        bool isAtomicExponent() override;
+
+        bool isAtomicNumerator() override;
+
+        void replaceChild(unique_ptr<MulOp>& child, int n) override;
 
         void expandExponent(Symbol* parent) override;
 

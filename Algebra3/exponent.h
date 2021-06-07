@@ -36,13 +36,17 @@ class Exponent : public Operation {
 
         Exponent(bool sign);
 
-        Exponent(bool sign, vector<unique_ptr<Symbol>>& operands);
+        Exponent(bool sign, vector<unique_ptr<Symbol>>& children);
 
-        // Exponent(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        Exponent(bool sign, shared_ptr<Expression>& parentExpression);
 
-        // Exponent(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        Exponent(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
 
         int getValue() override;
+
+        bool isAtomicExponent() override;
+
+        bool isAtomicNumerator() override;
 
         void expandExponent(Symbol* parent) override;
 

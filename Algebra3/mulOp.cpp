@@ -5,33 +5,29 @@ MulOp::MulOp(): Operation('*'){}
 
 MulOp::MulOp(bool sign): Operation('*', sign){}
 
-MulOp::MulOp(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('*', sign, operands){}
+MulOp::MulOp(bool sign, vector<unique_ptr<Symbol>>& children): Operation('*', sign, children){}
 
+MulOp::MulOp(bool sign, shared_ptr<Expression>& parentExpression): Operation('*', sign, parentExpression){}
 
-// int MulOp::getCoeff(){
-//     int coeff = 0;
-//     for (int i = 0; i < operands.size(); i ++){
-//         int val = operands[i]->getValue();
-//         if (val){
-//             if (!coeff){
-//                 coeff = val;
-//             }else{
-//                 coeff = coeff * val;
-//             }
-//         }
-//     }
-//     return coeff;
-// }
+MulOp::MulOp(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('*', sign, children, parentExpression){}
 
 unique_ptr<Symbol> MulOp::extractCoeff(){
     int coeffVal = 1;
-    for (int i = 0; i < operands.size(); i ++){
-        int val = operands[i]->getValue();
-        if (val > 0 && operands[i]->isAtomic() && !operands[i]->getIsTarget()){
+    int i = 0;
+    while (true){
+        int val = children[i]->getValue();
+        if (val > 0 && children[i]->isAtomic() && !children[i]->getIsTarget()){
             
             coeffVal = coeffVal * val;
             removeChild(i);
+            if (i >= children.size()){
+                break;
+            }
+            
+        }else{
+            i ++;
         }
+
     }
     unique_ptr<Symbol> coeff = make_unique<Constant>(coeffVal);
     return coeff;
@@ -39,84 +35,74 @@ unique_ptr<Symbol> MulOp::extractCoeff(){
 
 int MulOp::getValue(){return 0;}
 
+bool MulOp::isAtomicExponent(){return false;}
+
+bool MulOp::isAtomicNumerator(){return true;} // eventually implement a toSum function, which turns multiplications into sums which are not atomic
+
+void MulOp::replaceChild(unique_ptr<MulOp>& child, int n){
+    vector<unique_ptr<Symbol>>& children = child->getChildren();
+    for (unique_ptr<Symbol>& c : children){
+        c->setParentExpression(parentExpression);
+        children.push_back(move(c));
+    }
+    return;
+}
+
 void MulOp::expandExponent(Symbol* parent){
-    // unique_ptr<Symbol> copy = this->copy();
-    // vector<unique_ptr<Symbol>>& copiedOperands = copy->getAllChildren();
-    // for (int i = 0; i < copiedOperands.size(); i ++){
-    //     copiedOperands[i] = move(copiedOperands[i]->expandExponent(this));
-    // }
-    // return copy;
-    for (int i = 0; i < operands.size(); i ++){
-        operands[i]->expandExponent(this);
+    for (int i = 0; i < children.size(); i ++){
+        children[i]->expandExponent(this);
     }
     return;
 }
 
 void MulOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){ // x^(2y) x = base 2y = operands y = duplicates
     
-
-    vector<unique_ptr<Symbol>> ops;
+    for (int i = 0; i < children.size(); i ++){
+        children[i]->expandExponent(this);
+    }
+    unique_ptr<Symbol> root = make_unique<MulOp>();
     unique_ptr<Symbol> coeff = extractCoeff();
     for (int i = 0; i < coeff->getValue(); i ++){
         unique_ptr<Symbol> op = make_unique<Exponent>();
         unique_ptr<Symbol> target = base.copy();
         unique_ptr<Symbol> exponent;
-        if (operands.size() == 1){
-            exponent = operands[0]->copy();
+        if (children.size() == 1){
+            exponent = children[0]->copy();
         }else{
             exponent = make_unique<MulOp>();
-            for (int j = 0; j < operands.size(); j ++){
-                unique_ptr<Symbol> exponentOperand = operands[j]->copy();
+            for (int j = 0; j < children.size(); j ++){
+                unique_ptr<Symbol> exponentOperand = children[j]->copy();
                 exponent->appendChild(exponentOperand);
             }
         }
+        target->setIsTarget(true);
+        exponent->setIsExponent(true);
         op->appendChild(target);
         op->appendChild(exponent);
-        ops.push_back(move(op));
-        //root->appendChild(op);
+        root->appendChild(op);
     }
-    if (grandparent->getSymbol() == '*'){
-        int index = parent->getIndex();
-        grandparent->removeChild(index);
-        grandparent->appendChildren(ops, index);
-        
-        // unique_ptr<Symbol> null;
-        // return null;
-        return;
-    
-    }else{
-        unique_ptr<Symbol> root = make_unique<MulOp>();
-        root->appendChildren(ops);
-        // return root;
-        grandparent->replaceChild(root, parent->getIndex());
-        return;
-    }
+    // return root;   
+    parentExpression->replaceNode(parent, root);
     
 }
 
 unique_ptr<Symbol> MulOp::copy(){
 
+    unique_ptr<Symbol> copy = make_unique<MulOp>(sign);
     vector<unique_ptr<Symbol>> copiedOperands;
-    for (int i = 0; i < operands.size(); i ++){
-        unique_ptr<Symbol> copied = operands[i]->copy();
+    for (int i = 0; i < children.size(); i ++){
+        unique_ptr<Symbol> copied = children[i]->copy();
         copiedOperands.push_back(move(copied));
     }
-    // unique_ptr<Symbol> copy;
-    // if (auxOp.get() == nullptr){
-    //     copy = make_unique<MulOp>(sign, copiedOperands);
-    // }else{
-    //     unique_ptr<AuxOp> copiedAuxOp = auxOp->copy();
-    //     copy = make_unique<MulOp>(sign, copiedAuxOp, copiedOperands);
-    // }
-    unique_ptr<Symbol> copy = make_unique<MulOp>(sign, copiedOperands);
+    
     copy->setIndex(index);
     return copy;
 }
 
 string MulOp::toString(bool hasParent){
     string ret = "";
-    for (int i = 0; i < operands.size(); i ++){
-        ret += operands[i]->toString(true);
+    for (int i = 0; i < children.size(); i ++){
+        ret += children[i]->toString(true);
     }
     if (!sign){
         ret = '-' + ret;

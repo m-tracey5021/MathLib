@@ -1,3 +1,4 @@
+#include "expression.h"
 #include "sumOp.h"
 #include "mulOp.h"
 #include "divOp.h"

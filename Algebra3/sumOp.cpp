@@ -5,51 +5,64 @@ SumOp::SumOp(): Operation('+'){}
 
 SumOp::SumOp(bool sign): Operation('+', sign){}
 
-SumOp::SumOp(bool sign, vector<unique_ptr<Symbol>>& operands): Operation('+', sign, operands){}
+SumOp::SumOp(bool sign, vector<unique_ptr<Symbol>>& children): Operation('+', sign, children){}
 
-// SumOp::SumOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('+', true, auxOp, operands){}
+SumOp::SumOp(bool sign, shared_ptr<Expression>& parentExpression): Operation('+', sign, parentExpression){}
 
-// SumOp::SumOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands): Operation('+', sign, auxOp, operands){}
+SumOp::SumOp(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('+', sign, children, parentExpression){}
+
+
 
 int SumOp::getValue(){return 0;}
 
+bool SumOp::isAtomicExponent(){return false;}
+
+bool SumOp::isAtomicNumerator(){return false;}
+
+void SumOp::replaceChild(unique_ptr<SumOp>& child, int n){
+    vector<unique_ptr<Symbol>>& children = child->getChildren();
+    for (unique_ptr<Symbol>& c : children){
+        c->setParentExpression(parentExpression);
+        children.push_back(move(c));
+    }
+    return;
+}
+
 void SumOp::expandExponent(Symbol* parent){
-    // unique_ptr<Symbol> copy = this->copy();
-    // vector<unique_ptr<Symbol>>& copiedOperands = copy->getAllChildren();
-    // for (int i = 0; i < copiedOperands.size(); i ++){
-    //     copiedOperands[i] = move(copiedOperands[i]->expandExponent(this));
-    // }
-    // return copy;
-    for (int i = 0; i < operands.size(); i ++){
-        operands[i]->expandExponent(this);
+    for (int i = 0; i < children.size(); i ++){
+        children[i]->expandExponent(this);
     }
     return;
 }
 
 void SumOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
+    
+    for (int i = 0; i < children.size(); i ++){
+        children[i]->expandExponent(this);
+    }
     unique_ptr<Symbol> root = make_unique<MulOp>();
-    for (int i = 0; i < operands.size(); i ++){
+    for (int i = 0; i < children.size(); i ++){
         unique_ptr<Symbol> op = make_unique<Exponent>();
         unique_ptr<Symbol> target = base.copy();
-        unique_ptr<Symbol> exponent = operands[i]->copy();
-        target->setAsTarget(true);
-        exponent->setAsExponent(true);
+        unique_ptr<Symbol> exponent = children[i]->copy();
+        target->setIsTarget(true);
+        exponent->setIsExponent(true);
         op->appendChild(target);
         op->appendChild(exponent);
-        root->appendChild(op);
+        root->appendChild(root);
     }
-    grandparent->replaceChild(root, parent->getIndex());
-    return;
+    // return root;
+    parentExpression->replaceNode(parent, root);
 }
 
 unique_ptr<Symbol> SumOp::copy(){
-    
+    unique_ptr<Symbol> copy = make_unique<SumOp>(sign);
     vector<unique_ptr<Symbol>> copiedOperands;
-    for (int i = 0; i < operands.size(); i ++){
-        unique_ptr<Symbol> copied = operands[i]->copy();
+    for (int i = 0; i < children.size(); i ++){
+        unique_ptr<Symbol> copied = children[i]->copy();
+        // copied->setParent(copy);
         copiedOperands.push_back(move(copied));
     }
-    unique_ptr<Symbol> copy = make_unique<SumOp>(sign, copiedOperands);
     
     copy->setIndex(index);
     return copy;
@@ -57,29 +70,37 @@ unique_ptr<Symbol> SumOp::copy(){
 
 string SumOp::toString(bool hasParent){
     string ret = "";
-    for (int i = 0; i < operands.size(); i ++){
+    for (int i = 0; i < children.size(); i ++){
         if (i != 0){
-            if (operands[i]->getSign()){
-                ret += '+' + operands[i]->toString(true);
+            if (children[i]->getSign()){
+                ret += '+' + children[i]->toString(true);
             }else{
-                ret += operands[i]->toString(true);
+                ret += children[i]->toString(true);
             }
             
         }else{
-            ret += operands[i]->toString(true);
+            ret += children[i]->toString(true);
         }
     }
     if (!sign){
         ret = "-(" + ret + ')';
-    }else{
-        if (hasParent){
-            ret = '(' + ret + ')';
-        }
     }
+    // }else{
+    //     if (hasParent && !isExponent && !isRadical){
+    //         ret = '(' + ret + ')';
+    //     }
+    // }
     if (isExponent){
         ret = '{' + ret + '}';
     }else if(isRadical){
         ret = '[' + ret + ']';
+    }else if (isTarget){
+        ret = '(' + ret + ')';
+
+    }else{
+        if (hasParent){
+            ret = '(' + ret + ')';
+        }
     }
 
     // if (auxOp != nullptr && includeAuxilliaries){

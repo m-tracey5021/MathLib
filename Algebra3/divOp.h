@@ -12,13 +12,17 @@ class DivOp : public Operation {
 
         DivOp(bool sign);
 
-        DivOp(bool sign, vector<unique_ptr<Symbol>>& operands);
+        DivOp(bool sign, vector<unique_ptr<Symbol>>& children);
 
-        // DivOp(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        DivOp(bool sign, shared_ptr<Expression>& parentExpression);
 
-        // DivOp(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        DivOp(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
 
         int getValue() override;
+
+        bool isAtomicExponent() override;
+
+        bool isAtomicNumerator() override;
 
         void expandExponent(Symbol* parent) override;
 

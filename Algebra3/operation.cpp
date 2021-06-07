@@ -7,7 +7,11 @@ Operation::Operation(char op): Symbol(op){}
 
 Operation::Operation(char op, bool sign): Symbol(op, sign){}
 
-Operation::Operation(char op, bool sign, vector<unique_ptr<Symbol>>& operands): Symbol(op, sign), operands(move(operands)){}
+Operation::Operation(char op, bool sign, vector<unique_ptr<Symbol>>& children): Symbol(op, sign, children){}
+
+Operation::Operation(char op, bool sign, shared_ptr<Expression>& parentExpression): Symbol(op, sign, parentExpression){}
+
+Operation::Operation(char op, bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Symbol(op, sign, children, parentExpression){}
 
 Operation::~Operation() = default;
 
@@ -21,17 +25,27 @@ int Operation::getValue(){return 0;}
 
 bool Operation::isAtomic(){return false;}
 
+bool Operation::isAtomicExponent(){return false;}
+
+bool Operation::isAtomicNumerator(){return false;}
+
+void Operation::setChildren(vector<unique_ptr<Symbol>>& children){
+    this->children = move(children);
+}
+
 void Operation::appendChild(unique_ptr<Symbol>& child){
-    child->setIndex(operands.size());
-    operands.push_back(move(child));
+    child->setIndex(children.size());
+    child->setParentExpression(parentExpression);
+    children.push_back(move(child));
     return;
 }
 
 void Operation::appendChildren(vector<unique_ptr<Symbol>>& children){
-    int currentSize = operands.size();
+    int currentSize = children.size();
     for (int i = 0; i < children.size(); i ++){
-        children[i]->setIndex(currentSize + i);
-        operands.push_back(move(children[i]));
+        children[i]->setIndex(children.size() + i);
+        children[i]->setParentExpression(parentExpression);
+        children.push_back(move(children[i]));
     }
     return;
 }
@@ -40,20 +54,47 @@ void Operation::appendChildren(vector<unique_ptr<Symbol>>& children, int n){
     
     for (unique_ptr<Symbol>& child : children){
         child->setIndex(n);
-        operands.insert(operands.begin() + n, move(child));
+        child->setParentExpression(parentExpression);
+        children.insert(children.begin() + n, move(child));
         n ++;
     }
-    for (int i = n; i < operands.size(); i ++){
-        operands[i]->setIndex(i);
+    for (int i = n; i < children.size(); i ++){
+        children[i]->setIndex(i);
     }
     return;
 }
 
 void Operation::replaceChild(unique_ptr<Symbol>& child, int n){
-    for (int i = 0; i < operands.size(); i ++){
+    for (int i = 0; i < children.size(); i ++){
         if (i == n){
-            operands[i] = move(child);
             child->setIndex(n);
+            child->setParentExpression(parentExpression);
+            children[i] = move(child);
+            
+        }
+    }
+    return;
+}
+
+void Operation::replaceChild(unique_ptr<SumOp>& child, int n){
+    for (int i = 0; i < children.size(); i ++){
+        if (i == n){
+            child->setIndex(n);
+            child->setParentExpression(parentExpression);
+            children[i] = move(child);
+            
+        }
+    }
+    return;
+}
+
+void Operation::replaceChild(unique_ptr<MulOp>& child, int n){
+    for (int i = 0; i < children.size(); i ++){
+        if (i == n){
+            child->setIndex(n);
+            child->setParentExpression(parentExpression);
+            children[i] = move(child);
+            
         }
     }
     return;
@@ -61,9 +102,12 @@ void Operation::replaceChild(unique_ptr<Symbol>& child, int n){
 
 void Operation::removeChild(unique_ptr<Symbol>& child){
     child->setIndex(-1);
-    for (int i = 0; i < operands.size(); i ++){
-        if (operands[i] == child){
-            operands.erase(operands.begin() + i);
+    for (int i = 0; i < children.size(); i ++){
+        if (children[i] == child){
+            shared_ptr<Expression> null;
+            children[i]->setIndex(-1);
+            children[i]->setParentExpression(null);
+            children.erase(children.begin() + i);
             return;
         }
     }
@@ -71,23 +115,25 @@ void Operation::removeChild(unique_ptr<Symbol>& child){
 }
 
 void Operation::removeChild(int n){
-    operands[n]->setIndex(-1);
-    operands.erase(operands.begin() + n);
+    shared_ptr<Expression> null;
+    children[n]->setIndex(-1);
+    children[n]->setParentExpression(null);
+    children.erase(children.begin() + n);
     return;
 }
 
 unique_ptr<Symbol>& Operation::getChild(int n){
-    return operands[n];
+    return children[n];
 }
 
-vector<unique_ptr<Symbol>>& Operation::getAllChildren(){
-    return operands;
+vector<unique_ptr<Symbol>>& Operation::getChildren(){
+    return children;
 }
 
 vector<unique_ptr<Symbol>> Operation::duplicateChildren(){
     vector<unique_ptr<Symbol>> duplicates;
-    for (int i = 0; i < operands.size(); i ++){
-        unique_ptr<Symbol> duplicate = operands[i]->copy();
+    for (int i = 0; i < children.size(); i ++){
+        unique_ptr<Symbol> duplicate = children[i]->copy();
         duplicates.push_back(move(duplicate));
     }
     return duplicates;
@@ -96,13 +142,13 @@ vector<unique_ptr<Symbol>> Operation::duplicateChildren(){
 vector<unique_ptr<Symbol>> Operation::duplicateChildren(int start, int end){
     vector<unique_ptr<Symbol>> duplicates;
     for (int i = start; i < end; i ++){
-        unique_ptr<Symbol> duplicate = operands[i]->copy();
+        unique_ptr<Symbol> duplicate = children[i]->copy();
         duplicates.push_back(move(duplicate));
     }
     return duplicates;
 }
 
-void Operation::expandExponent(Symbol* parent){}
+void Operation::expandExponent(Symbol* parent){return;}
 
 void Operation::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){}
 
@@ -129,9 +175,9 @@ string Operation::toString(int depth, int offset){
     }
     
     depth ++;
-    for (int i = 0; i < operands.size(); i ++){
+    for (int i = 0; i < children.size(); i ++){
         str += '\n';
-        str += operands[i]->toString(depth, offset);
+        str += children[i]->toString(depth, offset);
     }
     
     return str;

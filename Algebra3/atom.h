@@ -2,38 +2,28 @@
 
 #include "symbol.h"
 
-// struct Scope {
-//     vector<pair<char, int>> ops;
-//     int start;
-//     int end;
-// };
-
 class SumOp;
 class MulOp;
 
-class Operation : public Symbol {
-
+class Atom : public Symbol {
+    
     protected:
+    
 
-        // Scope scope;
-
-        // vector<unique_ptr<Symbol>> operands;
 
     public:
 
-        Operation();
+        Atom();
 
-        Operation(char op);
+        Atom(char symbol);
 
-        Operation(char op, bool sign);
+        Atom(char symbol, bool sign);
 
-        Operation(char op, bool sign, vector<unique_ptr<Symbol>>& children);
+        Atom(char symbol, bool sign, shared_ptr<Expression>& parentExpression);
 
-        Operation(char symbol, bool sign, shared_ptr<Expression>& parentExpression);
+        // Atom(unique_ptr<AuxOp>& auxOp, char value);
 
-        Operation(char symbol, bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
-
-        ~Operation();
+        // Atom(bool sign, unique_ptr<AuxOp>& auxOp, char value);
 
         
 
@@ -80,8 +70,6 @@ class Operation : public Symbol {
 
         vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) override;
 
-        
-
         void expandExponent(Symbol* parent) override;
 
         void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) override;
@@ -91,5 +79,4 @@ class Operation : public Symbol {
         string toString(bool hasParent) override;
 
         string toString(int depth, int offset) override;
-
 };

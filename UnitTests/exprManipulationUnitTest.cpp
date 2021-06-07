@@ -37,10 +37,10 @@ bool testExpand(){
         // "(x+t)^{2}",
         // "2x(y^{2})",
         // "2((xy)^{2})",
-        "xy^{2t}z",
-        "xy^{2+t}z",
-        "xy^{2/t}z",
-        "(xy)^{2x}z",
+        // "xy^{2t}z",
+        // "xy^{2+t}z",
+        // "xy^{2/t}z",
+        // "(xy)^{2x}z",
         "x^{2^{3}}",
         "x^{2x^{3}}",
         "x^{(2x)^{3}}",
@@ -50,16 +50,24 @@ bool testExpand(){
 
     for (string exp : expressions){
         parser.parseExpression(exp);
-        Expression& expression = parser.getParseTree();
-        string parsedExpressionStr = expression.toString();
-        string parseTreeStr = expression.toString(4);
+        shared_ptr<Expression> expression = parser.getParseTree();
+        string parsedExpressionStr = expression->toString();
+        string parseTreeStr = expression->toString(4);
         std::cout << "===== compact =====" << std::endl << std::endl;
         std::cout << parsedExpressionStr << std::endl << std::endl;
         std::cout << parseTreeStr << std::endl << std::endl;
         std::cout << "===== compact =====" << std::endl << std::endl;
-        Expression expanded = expression.expandExponents();
-        string expandedExpressionStr = expanded.toString();
-        string expandedTreeStr = expanded.toString(4);
+
+
+        unique_ptr<Symbol>& theThree = expression->getRoot()->getChildren()[1]->getChildren()[1];
+        // unique_ptr<Symbol> null;
+        unique_ptr<Symbol>& theSecondExp = theThree->getParent(); // getParent(theThree.get(), null, expression->getRoot());
+
+
+        // Expression expanded = expression->expandExponents();
+        expression->expandExponents();
+        string expandedExpressionStr = expression->toString();
+        string expandedTreeStr = expression->toString(4);
         std::cout << "===== expanded =====" << std::endl << std::endl;
         std::cout << expandedExpressionStr << std::endl << std::endl;
         std::cout << expandedTreeStr << std::endl << std::endl;

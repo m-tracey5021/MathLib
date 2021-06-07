@@ -33,13 +33,17 @@ class Radical : public Operation {
 
         Radical(bool sign);
 
-        Radical(bool sign, vector<unique_ptr<Symbol>>& operands);
+        Radical(bool sign, vector<unique_ptr<Symbol>>& children);
 
-        // Radical(unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        Radical(bool sign, shared_ptr<Expression>& parentExpression);
 
-        // Radical(bool sign, unique_ptr<AuxOp>& auxOp, vector<unique_ptr<Symbol>>& operands);
+        Radical(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
 
         int getValue() override;
+
+        bool isAtomicExponent() override;
+
+        bool isAtomicNumerator() override;
 
         void expandExponent(Symbol* parent) override;
 

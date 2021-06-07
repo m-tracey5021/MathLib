@@ -153,7 +153,7 @@ void Scope::appendOperand(string expression, int start, int end, bool pushBack){
 
 MParser::MParser(){}
 
-Expression& MParser::getParseTree(){
+shared_ptr<Expression>& MParser::getParseTree(){
     return parseTree;
 }
 
@@ -163,27 +163,27 @@ unique_ptr<Symbol> MParser::buildSymbol(Scope scope, string expression){
     ScopeType type = scope.type;
     if (type == ScopeType::Atomic){
         if (expression.size() == 1 && isalpha(expression[0])){
-            unique_ptr<Variable> variable = make_unique<Variable>(scope.sign, expression[0]);
+            unique_ptr<Variable> variable = make_unique<Variable>(scope.sign, expression[0], parseTree);
             return variable;
         }else{
             int num = std::stoi(expression);
-            unique_ptr<Constant> constant = make_unique<Constant>(scope.sign, num);
+            unique_ptr<Constant> constant = make_unique<Constant>(scope.sign, num, parseTree);
             return constant;
         }
     }else if (type == ScopeType::Summation){
-        unique_ptr<SumOp> sumOp = make_unique<SumOp>(scope.sign);
+        unique_ptr<SumOp> sumOp = make_unique<SumOp>(scope.sign, parseTree);
         return sumOp;
     }else if (type == ScopeType::Multiplication){
-        unique_ptr<MulOp> mulOp = make_unique<MulOp>(scope.sign);
+        unique_ptr<MulOp> mulOp = make_unique<MulOp>(scope.sign, parseTree);
         return mulOp;
     }else if (type == ScopeType::Division){
-        unique_ptr<DivOp> divOp = make_unique<DivOp>(scope.sign);
+        unique_ptr<DivOp> divOp = make_unique<DivOp>(scope.sign, parseTree);
         return divOp;
     }else if (type == ScopeType::Exponent){
-        unique_ptr<Exponent> exponent = make_unique<Exponent>(scope.sign);
+        unique_ptr<Exponent> exponent = make_unique<Exponent>(scope.sign, parseTree);
         return exponent;
     }else if (type == ScopeType::Radical){
-        unique_ptr<Radical> radical = make_unique<Radical>(scope.sign);
+        unique_ptr<Radical> radical = make_unique<Radical>(scope.sign, parseTree);
         return radical;
     }else{
         // throw error
@@ -351,14 +351,13 @@ bool MParser::isMultiplied(string expression, int start, int end){
     }
 }
 
-
 void MParser::setSymbolAsAuxillary(unique_ptr<Symbol>& symbol, AuxilliaryRelation relation){
     if (relation == AuxilliaryRelation::Exponent){
-        symbol->setAsExponent(true);
+        symbol->setIsExponent(true);
     }else if (relation == AuxilliaryRelation::Radical){
-        symbol->setAsRadical(true);
+        symbol->setIsRadical(true);
     }else if (relation == AuxilliaryRelation::Target){
-        symbol->setAsTarget(true);
+        symbol->setIsTarget(true);
     }else{
         return;
     }
@@ -372,7 +371,8 @@ void MParser::setSymbolAsAuxillary(unique_ptr<Symbol>& symbol, AuxilliaryRelatio
 // }
 
 void MParser::parseExpression(string expression){
-    parseTree = Expression();
+    parseTree = make_shared<Expression>();
+
     
     Scope mainScope = findMainScope(expression);
 
@@ -382,13 +382,15 @@ void MParser::parseExpression(string expression){
         string atom = mainScope.operands[0];
         unique_ptr<Symbol> child = buildSymbol(mainScope, atom);
 
-        parseTree.setRoot(child);
+        // child->setParentExpression(parseTree);
+        parseTree->setRoot(child);
 
         return;
         
     }else{
 
         unique_ptr<Symbol> child = buildSymbol(mainScope, expression);
+        // child->setParentExpression(parseTree);
 
         // vector<string> operands = separateOperands(mainScope, expression);
         // vector<string> operands = mainScope.operands;
@@ -411,8 +413,8 @@ void MParser::parseExpression(string expression){
                 parseExpression(child, AuxilliaryRelation::None, mainScope.operands[i]);
             }
         }
-
-        parseTree.setRoot(child);
+        
+        parseTree->setRoot(child);
     }  
 }
 
@@ -441,7 +443,6 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, AuxilliaryRelation par
         // }else{
         //     parent->appendChild(child);
         // }
-
         parent->appendChild(child);
 
         return;
@@ -462,6 +463,7 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, AuxilliaryRelation par
         // for (string auxillary : auxillaries){
             
         // }
+        
         
         for (int i = 0; i < mainScope.operands.size(); i ++){
             if (mainScope.type == ScopeType::Radical){

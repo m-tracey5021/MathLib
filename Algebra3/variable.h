@@ -1,8 +1,8 @@
 #pragma once
 
-#include "symbol.h"
+#include "atom.h"
 
-class Variable : public Symbol {
+class Variable : public Atom {
     
     private:
     
@@ -16,6 +16,8 @@ class Variable : public Symbol {
 
         Variable(bool sign, char value);
 
+        Variable(bool sign, char value, shared_ptr<Expression>& parentExpression);
+
         // Variable(unique_ptr<AuxOp>& auxOp, char value);
 
         // Variable(bool sign, unique_ptr<AuxOp>& auxOp, char value);
@@ -26,29 +28,33 @@ class Variable : public Symbol {
 
         bool isAtomic() override;
 
-        void appendChild(unique_ptr<Symbol>& child) override;
+        bool isAtomicExponent() override;
 
-        void appendChildren(vector<unique_ptr<Symbol>>& children) override;
+        bool isAtomicNumerator() override;
 
-        void appendChildren(vector<unique_ptr<Symbol>>& children, int n) override;
+        // void appendChild(unique_ptr<Symbol>& child) override;
 
-        void replaceChild(unique_ptr<Symbol>& child, int n) override;
+        // void appendChildren(vector<unique_ptr<Symbol>>& children) override;
 
-        void removeChild(unique_ptr<Symbol>& child) override;
+        // void appendChildren(vector<unique_ptr<Symbol>>& children, int n) override;
 
-        void removeChild(int n) override;
+        // void replaceChild(unique_ptr<Symbol>& child, int n) override;
+
+        // void removeChild(unique_ptr<Symbol>& child) override;
+
+        // void removeChild(int n) override;
 
         
 
-        unique_ptr<Symbol>& getChild(int n) override;
+        // unique_ptr<Symbol>& getChild(int n) override;
 
-        vector<unique_ptr<Symbol>>& getAllChildren() override;
+        // vector<unique_ptr<Symbol>>& getAllChildren() override;
 
-        vector<unique_ptr<Symbol>> duplicateChildren() override;
+        // vector<unique_ptr<Symbol>> duplicateChildren() override;
 
-        vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) override;
+        // vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) override;
 
-        void expandExponent(Symbol* parent) override;
+        // void expandExponent(Symbol* parent, Symbol* grandparent) override;
 
         void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) override;
 
