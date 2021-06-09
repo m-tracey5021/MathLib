@@ -3,3 +3,5 @@
 bool testEquality();
 
 bool testExpand();
+
+bool testAppend();

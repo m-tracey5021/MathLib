@@ -1,6 +1,7 @@
 #pragma once
 
 #include "symbol.h"
+#include "Visitors/appendToMulOp.h"
 
 // struct Scope {
 //     vector<pair<char, int>> ops;
@@ -17,7 +18,7 @@ class Operation : public Symbol {
 
         // Scope scope;
 
-        // vector<unique_ptr<Symbol>> operands;
+        // vector<shared_ptr<Symbol>> operands;
 
     public:
 
@@ -27,15 +28,14 @@ class Operation : public Symbol {
 
         Operation(char op, bool sign);
 
-        Operation(char op, bool sign, vector<unique_ptr<Symbol>>& children);
+        Operation(char op, bool sign, vector<shared_ptr<Symbol>>& children);
 
         Operation(char symbol, bool sign, shared_ptr<Expression>& parentExpression);
 
-        Operation(char symbol, bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
+        Operation(char symbol, bool sign, vector<shared_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
 
         ~Operation();
 
-        
 
         int getValue() override;
 
@@ -47,38 +47,46 @@ class Operation : public Symbol {
 
         // bool isParentTo(Symbol* symbol) override;
 
-        // unique_ptr<Symbol>& searchParent(Symbol* symbol, unique_ptr<Symbol>& parent) override;
+        // shared_ptr<Symbol>& searchParent(Symbol* symbol, shared_ptr<Symbol>& parent) override;
 
-        void setChildren(vector<unique_ptr<Symbol>>& children) override;
+        void setChildren(vector<shared_ptr<Symbol>>& children) override;
 
-        void appendChild(unique_ptr<Symbol>& child) override;
-        // void appendChild(unique_ptr<SumOp> child) override;
-        // void appendChild(unique_ptr<MulOp> child) override;
-        // void appendChild(unique_ptr<DivOp> child) override;
-        // void appendChild(unique_ptr<Constant> child) override;
-        // void appendChild(unique_ptr<Variable> child) override;
+        // void appendChild(shared_ptr<Symbol>& child) override;
 
-        void appendChildren(vector<unique_ptr<Symbol>>& children) override;
+        // void appendToParent(SumOp* parent) override;
+        // void appendToParent(MulOp* parent) override;
+        // void appendToParent(DivOp* parent) override;
+        // void appendToParent(Exponent* parent) override;
+        // void appendToParent(Radical* parent) override;
+        // void appendToParent(Constant* parent) override;
+        // void appendToParent(Variable* parent) override;
+        // void appendChild(shared_ptr<SumOp> child) override;
+        // void appendChild(shared_ptr<MulOp> child) override;
+        // void appendChild(shared_ptr<DivOp> child) override;
+        // void appendChild(shared_ptr<Constant> child) override;
+        // void appendChild(shared_ptr<Variable> child) override;
 
-        void appendChildren(vector<unique_ptr<Symbol>>& children, int n) override;
+        void appendChildren(vector<shared_ptr<Symbol>>& children) override;
 
-        void replaceChild(unique_ptr<Symbol>& child, int n) override;
-        void replaceChild(unique_ptr<SumOp>& child, int n) override;
-        void replaceChild(unique_ptr<MulOp>& child, int n) override;
+        void appendChildren(vector<shared_ptr<Symbol>>& children, int n) override;
 
-        void removeChild(unique_ptr<Symbol>& child) override;
+        void replaceChild(shared_ptr<Symbol>& child, int n) override;
+        void replaceChild(shared_ptr<SumOp>& child, int n) override;
+        void replaceChild(shared_ptr<MulOp>& child, int n) override;
+
+        void removeChild(shared_ptr<Symbol>& child) override;
 
         void removeChild(int n) override;
 
         
 
-        unique_ptr<Symbol>& getChild(int n) override;
+        // shared_ptr<Symbol>& getChild(int n) override;
 
-        vector<unique_ptr<Symbol>>& getChildren() override;
+        // vector<shared_ptr<Symbol>>& getChildren() override;
 
-        vector<unique_ptr<Symbol>> duplicateChildren() override;
+        vector<shared_ptr<Symbol>> duplicateChildren() override;
 
-        vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) override;
+        vector<shared_ptr<Symbol>> duplicateChildren(int start, int end) override;
 
         
 
@@ -86,7 +94,7 @@ class Operation : public Symbol {
 
         void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) override;
 
-        unique_ptr<Symbol> copy() override;
+        shared_ptr<Symbol> copy() override;
 
         string toString(bool hasParent) override;
 

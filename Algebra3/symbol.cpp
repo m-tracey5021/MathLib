@@ -7,11 +7,11 @@ Symbol::Symbol(char symbol): symbol(symbol), sign(true), isTarget(false), isExpo
 
 Symbol::Symbol(char symbol, bool sign): symbol(symbol), sign(sign), isTarget(false), isExponent(false), isRadical(false), index(-1){}
 
-Symbol::Symbol(char symbol, bool sign, vector<unique_ptr<Symbol>>& children): symbol(symbol), sign(sign), children(move(children)), isTarget(false), isExponent(false), isRadical(false), index(-1){}
+Symbol::Symbol(char symbol, bool sign, vector<shared_ptr<Symbol>>& children): symbol(symbol), sign(sign), children(move(children)), isTarget(false), isExponent(false), isRadical(false), index(-1){}
 
 Symbol::Symbol(char symbol, bool sign, shared_ptr<Expression>& parentExpression): symbol(symbol), sign(sign), parentExpression(parentExpression), isTarget(false), isExponent(false), isRadical(false), index(-1){}
 
-Symbol::Symbol(char symbol, bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): symbol(symbol), sign(sign), children(move(children)), parentExpression(parentExpression), isTarget(false), isExponent(false), isRadical(false), index(-1){}
+Symbol::Symbol(char symbol, bool sign, vector<shared_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): symbol(symbol), sign(sign), children(move(children)), parentExpression(parentExpression), isTarget(false), isExponent(false), isRadical(false), index(-1){}
 
 Symbol::~Symbol() = default;
 
@@ -27,9 +27,13 @@ bool Symbol::getIsRadical(){return isRadical;}
 
 int Symbol::getIndex(){return index;}
 
-unique_ptr<Symbol>& Symbol::getParent(){
-    return parentExpression->getParent(this);
-}
+// shared_ptr<Symbol>& Symbol::getParent(){
+//     return parentExpression->getParent(this);
+// }
+
+shared_ptr<Symbol>& Symbol::getParent(){return parent;}
+
+vector<shared_ptr<Symbol>>& Symbol::getChildren(){return children;}
 
 shared_ptr<Expression>& Symbol::getParentExpression(){return parentExpression;}
 
@@ -61,6 +65,9 @@ void Symbol::setParentExpression(shared_ptr<Expression>& parentExpression){
     this->parentExpression = parentExpression;
 }
 
+void Symbol::testVariant(variant<shared_ptr<SumOp>, shared_ptr<MulOp>, shared_ptr<DivOp>> symbols){
+    
+}
 
 
 

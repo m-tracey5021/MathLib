@@ -9,6 +9,10 @@ Variable::Variable(bool sign, char value): Atom(value, sign), value(value){}
 
 Variable::Variable(bool sign, char value, shared_ptr<Expression>& parentExpression): Atom(value, sign, parentExpression), value(value){}
 
+void Variable::accept(Visitor* visitor){
+    visitor->Visit(this);
+}
+
 int Variable::getValue(){return 0;}
 
 bool Variable::isAtomic(){return true;}
@@ -17,17 +21,45 @@ bool Variable::isAtomicExponent(){return true;}
 
 bool Variable::isAtomicNumerator(){return true;}
 
+void Variable::appendToParent(SumOp* parent){
+    
+}
+
+void Variable::appendToParent(MulOp* parent){
+    
+}
+
+void Variable::appendToParent(DivOp* parent){
+    
+}
+
+void Variable::appendToParent(Exponent* parent){
+    
+}
+
+void Variable::appendToParent(Radical* parent){
+    
+}
+
+void Variable::appendToParent(Constant* parent){
+    
+}
+
+void Variable::appendToParent(Variable* parent){
+    
+}
+
 void Variable::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
 
-    // unique_ptr<Symbol> null;
+    // shared_ptr<Symbol> null;
     // return null;
     return;
 
 }
 
-unique_ptr<Symbol> Variable::copy(){
+shared_ptr<Symbol> Variable::copy(){
 
-    unique_ptr<Symbol> copy = make_unique<Variable>(sign, value);
+    shared_ptr<Symbol> copy = make_shared<Variable>(sign, value);
     copy->setIndex(index);
     return copy;
 }

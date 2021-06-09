@@ -74,6 +74,8 @@ int main(){
 
     bool expandPassed = testExpand();
 
+    bool appendPassed = testAppend();
+
     // bool equalityPassed = testEquality();
 
     int elements1[] = {3, 4, 5};

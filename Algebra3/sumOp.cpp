@@ -5,13 +5,16 @@ SumOp::SumOp(): Operation('+'){}
 
 SumOp::SumOp(bool sign): Operation('+', sign){}
 
-SumOp::SumOp(bool sign, vector<unique_ptr<Symbol>>& children): Operation('+', sign, children){}
+SumOp::SumOp(bool sign, vector<shared_ptr<Symbol>>& children): Operation('+', sign, children){}
 
 SumOp::SumOp(bool sign, shared_ptr<Expression>& parentExpression): Operation('+', sign, parentExpression){}
 
-SumOp::SumOp(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('+', sign, children, parentExpression){}
+SumOp::SumOp(bool sign, vector<shared_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('+', sign, children, parentExpression){}
 
 
+void SumOp::accept(Visitor* visitor){
+    visitor->Visit(this);
+}
 
 int SumOp::getValue(){return 0;}
 
@@ -19,9 +22,43 @@ bool SumOp::isAtomicExponent(){return false;}
 
 bool SumOp::isAtomicNumerator(){return false;}
 
-void SumOp::replaceChild(unique_ptr<SumOp>& child, int n){
-    vector<unique_ptr<Symbol>>& children = child->getChildren();
-    for (unique_ptr<Symbol>& c : children){
+void SumOp::appendChild(shared_ptr<Symbol>& child){
+    child->setIndex(children.size());
+    child->setParentExpression(parentExpression);
+    children.push_back(move(child));
+}
+
+void SumOp::appendToParent(SumOp* parent){
+    
+}
+
+void SumOp::appendToParent(MulOp* parent){
+    
+}
+
+void SumOp::appendToParent(DivOp* parent){
+    
+}
+
+void SumOp::appendToParent(Exponent* parent){
+    
+}
+
+void SumOp::appendToParent(Radical* parent){
+    
+}
+
+void SumOp::appendToParent(Constant* parent){
+    
+}
+
+void SumOp::appendToParent(Variable* parent){
+    
+}
+
+void SumOp::replaceChild(shared_ptr<SumOp>& child, int n){
+    vector<shared_ptr<Symbol>>& children = child->getChildren();
+    for (shared_ptr<Symbol>& c : children){
         c->setParentExpression(parentExpression);
         children.push_back(move(c));
     }
@@ -40,11 +77,11 @@ void SumOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     for (int i = 0; i < children.size(); i ++){
         children[i]->expandExponent(this);
     }
-    unique_ptr<Symbol> root = make_unique<MulOp>();
+    shared_ptr<Symbol> root = make_shared<MulOp>();
     for (int i = 0; i < children.size(); i ++){
-        unique_ptr<Symbol> op = make_unique<Exponent>();
-        unique_ptr<Symbol> target = base.copy();
-        unique_ptr<Symbol> exponent = children[i]->copy();
+        shared_ptr<Symbol> op = make_shared<Exponent>();
+        shared_ptr<Symbol> target = base.copy();
+        shared_ptr<Symbol> exponent = children[i]->copy();
         target->setIsTarget(true);
         exponent->setIsExponent(true);
         op->appendChild(target);
@@ -55,11 +92,11 @@ void SumOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     parentExpression->replaceNode(parent, root);
 }
 
-unique_ptr<Symbol> SumOp::copy(){
-    unique_ptr<Symbol> copy = make_unique<SumOp>(sign);
-    vector<unique_ptr<Symbol>> copiedOperands;
+shared_ptr<Symbol> SumOp::copy(){
+    shared_ptr<Symbol> copy = make_shared<SumOp>(sign);
+    vector<shared_ptr<Symbol>> copiedOperands;
     for (int i = 0; i < children.size(); i ++){
-        unique_ptr<Symbol> copied = children[i]->copy();
+        shared_ptr<Symbol> copied = children[i]->copy();
         // copied->setParent(copy);
         copiedOperands.push_back(move(copied));
     }

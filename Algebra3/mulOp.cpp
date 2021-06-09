@@ -1,15 +1,17 @@
 #include "mulOp.h"
 #include "expressionComponents.h"
+#include "Visitors/appendToMulOp.h"
+
 
 MulOp::MulOp(): Operation('*'){}
 
 MulOp::MulOp(bool sign): Operation('*', sign){}
 
-MulOp::MulOp(bool sign, vector<unique_ptr<Symbol>>& children): Operation('*', sign, children){}
+MulOp::MulOp(bool sign, vector<shared_ptr<Symbol>>& children): Operation('*', sign, children){}
 
 MulOp::MulOp(bool sign, shared_ptr<Expression>& parentExpression): Operation('*', sign, parentExpression){}
 
-MulOp::MulOp(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('*', sign, children, parentExpression){}
+MulOp::MulOp(bool sign, vector<shared_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('*', sign, children, parentExpression){}
 
 unique_ptr<Symbol> MulOp::extractCoeff(){
     int coeffVal = 1;
@@ -33,15 +35,52 @@ unique_ptr<Symbol> MulOp::extractCoeff(){
     return coeff;
 }
 
+void MulOp::accept(Visitor* visitor){
+    visitor->Visit(this);
+}
+
 int MulOp::getValue(){return 0;}
 
 bool MulOp::isAtomicExponent(){return false;}
 
 bool MulOp::isAtomicNumerator(){return true;} // eventually implement a toSum function, which turns multiplications into sums which are not atomic
 
-void MulOp::replaceChild(unique_ptr<MulOp>& child, int n){
-    vector<unique_ptr<Symbol>>& children = child->getChildren();
-    for (unique_ptr<Symbol>& c : children){
+void MulOp::appendChild(shared_ptr<Symbol>& child){
+    AppendToMulOp* append = new AppendToMulOp(*this, child);
+    child->accept(append);
+}
+
+void MulOp::appendToParent(SumOp* parent){
+    
+}
+
+void MulOp::appendToParent(MulOp* parent){
+    
+}
+
+void MulOp::appendToParent(DivOp* parent){
+    
+}
+
+void MulOp::appendToParent(Exponent* parent){
+    
+}
+
+void MulOp::appendToParent(Radical* parent){
+    
+}
+
+void MulOp::appendToParent(Constant* parent){
+    
+}
+
+void MulOp::appendToParent(Variable* parent){
+    
+}
+
+void MulOp::replaceChild(shared_ptr<MulOp>& child, int n){
+    vector<shared_ptr<Symbol>>& children = child->getChildren();
+    for (shared_ptr<Symbol>& c : children){
         c->setParentExpression(parentExpression);
         children.push_back(move(c));
     }
@@ -60,18 +99,22 @@ void MulOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     for (int i = 0; i < children.size(); i ++){
         children[i]->expandExponent(this);
     }
-    unique_ptr<Symbol> root = make_unique<MulOp>();
-    unique_ptr<Symbol> coeff = extractCoeff();
+    shared_ptr<Symbol> root = make_shared<MulOp>();
+    shared_ptr<Symbol> coeff = extractCoeff();
     for (int i = 0; i < coeff->getValue(); i ++){
-        unique_ptr<Symbol> op = make_unique<Exponent>();
-        unique_ptr<Symbol> target = base.copy();
-        unique_ptr<Symbol> exponent;
-        if (children.size() == 1){
+        shared_ptr<Symbol> op = make_shared<Exponent>();
+        shared_ptr<Symbol> target = base.copy();
+        shared_ptr<Symbol> exponent;
+        if (children.size() == 0){
+            if (coeff.get() != nullptr){
+                
+            }
+        }else if (children.size() == 1){
             exponent = children[0]->copy();
         }else{
-            exponent = make_unique<MulOp>();
+            exponent = make_shared<MulOp>();
             for (int j = 0; j < children.size(); j ++){
-                unique_ptr<Symbol> exponentOperand = children[j]->copy();
+                shared_ptr<Symbol> exponentOperand = children[j]->copy();
                 exponent->appendChild(exponentOperand);
             }
         }
@@ -86,12 +129,12 @@ void MulOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     
 }
 
-unique_ptr<Symbol> MulOp::copy(){
+shared_ptr<Symbol> MulOp::copy(){
 
-    unique_ptr<Symbol> copy = make_unique<MulOp>(sign);
-    vector<unique_ptr<Symbol>> copiedOperands;
+    shared_ptr<Symbol> copy = make_shared<MulOp>(sign);
+    vector<shared_ptr<Symbol>> copiedOperands;
     for (int i = 0; i < children.size(); i ++){
-        unique_ptr<Symbol> copied = children[i]->copy();
+        shared_ptr<Symbol> copied = children[i]->copy();
         copiedOperands.push_back(move(copied));
     }
     

@@ -59,9 +59,9 @@ bool testExpand(){
         std::cout << "===== compact =====" << std::endl << std::endl;
 
 
-        unique_ptr<Symbol>& theThree = expression->getRoot()->getChildren()[1]->getChildren()[1];
-        // unique_ptr<Symbol> null;
-        unique_ptr<Symbol>& theSecondExp = theThree->getParent(); // getParent(theThree.get(), null, expression->getRoot());
+        shared_ptr<Symbol>& theThree = expression->getRoot()->getChildren()[1]->getChildren()[1];
+        // shared_ptr<Symbol> null;
+        shared_ptr<Symbol>& theSecondExp = theThree->getParent(); // getParent(theThree.get(), null, expression->getRoot());
 
 
         // Expression expanded = expression->expandExponents();
@@ -73,5 +73,23 @@ bool testExpand(){
         std::cout << expandedTreeStr << std::endl << std::endl;
         std::cout << "===== expanded =====" << std::endl << std::endl;
         int x = 0;
+    }
+}
+
+bool testAppend(){
+    MParser parser;
+    vector<pair<string, string>> expressions = {
+
+        {"xyz", "abc"}
+    };
+
+    for (pair<string, string> exp : expressions){
+        parser.parseExpression(exp.first);
+        shared_ptr<Expression> expression1 = parser.getParseTree();
+
+        parser.parseExpression(exp.second);
+        shared_ptr<Expression> expression2 = parser.getParseTree();
+        
+        expression1->getRoot()->appendChild(expression2->getRoot());
     }
 }

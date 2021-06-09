@@ -159,103 +159,103 @@ shared_ptr<Expression>& MParser::getParseTree(){
 
 
 
-unique_ptr<Symbol> MParser::buildSymbol(Scope scope, string expression){
+shared_ptr<Symbol> MParser::buildSymbol(Scope scope, string expression){
     ScopeType type = scope.type;
     if (type == ScopeType::Atomic){
         if (expression.size() == 1 && isalpha(expression[0])){
-            unique_ptr<Variable> variable = make_unique<Variable>(scope.sign, expression[0], parseTree);
+            shared_ptr<Variable> variable = make_shared<Variable>(scope.sign, expression[0], parseTree);
             return variable;
         }else{
             int num = std::stoi(expression);
-            unique_ptr<Constant> constant = make_unique<Constant>(scope.sign, num, parseTree);
+            shared_ptr<Constant> constant = make_shared<Constant>(scope.sign, num, parseTree);
             return constant;
         }
     }else if (type == ScopeType::Summation){
-        unique_ptr<SumOp> sumOp = make_unique<SumOp>(scope.sign, parseTree);
+        shared_ptr<SumOp> sumOp = make_shared<SumOp>(scope.sign, parseTree);
         return sumOp;
     }else if (type == ScopeType::Multiplication){
-        unique_ptr<MulOp> mulOp = make_unique<MulOp>(scope.sign, parseTree);
+        shared_ptr<MulOp> mulOp = make_shared<MulOp>(scope.sign, parseTree);
         return mulOp;
     }else if (type == ScopeType::Division){
-        unique_ptr<DivOp> divOp = make_unique<DivOp>(scope.sign, parseTree);
+        shared_ptr<DivOp> divOp = make_shared<DivOp>(scope.sign, parseTree);
         return divOp;
     }else if (type == ScopeType::Exponent){
-        unique_ptr<Exponent> exponent = make_unique<Exponent>(scope.sign, parseTree);
+        shared_ptr<Exponent> exponent = make_shared<Exponent>(scope.sign, parseTree);
         return exponent;
     }else if (type == ScopeType::Radical){
-        unique_ptr<Radical> radical = make_unique<Radical>(scope.sign, parseTree);
+        shared_ptr<Radical> radical = make_shared<Radical>(scope.sign, parseTree);
         return radical;
     }else{
         // throw error
     }
 }
 
-unique_ptr<Symbol> MParser::buildAtom(string s){
+shared_ptr<Symbol> MParser::buildAtom(string s){
     if (s.size() == 1 && isalpha(s[0])){
-        unique_ptr<Variable> variable = make_unique<Variable>(s[0]);
+        shared_ptr<Variable> variable = make_shared<Variable>(s[0]);
         return variable;
     }else{
         int num = std::stoi(s);
-        unique_ptr<Constant> constant = make_unique<Constant>(num);
+        shared_ptr<Constant> constant = make_shared<Constant>(num);
         return constant;
     }
 }
 
-unique_ptr<Operation> MParser::buildOperation(ScopeType type){
+shared_ptr<Operation> MParser::buildOperation(ScopeType type){
     
     if (type == ScopeType::Summation){
-        unique_ptr<SumOp> sumOp = make_unique<SumOp>();
+        shared_ptr<SumOp> sumOp = make_shared<SumOp>();
         return sumOp;
     }else if (type == ScopeType::Multiplication){
-        unique_ptr<MulOp> mulOp = make_unique<MulOp>();
+        shared_ptr<MulOp> mulOp = make_shared<MulOp>();
         return mulOp;
     }else if (type == ScopeType::Division){
-        unique_ptr<DivOp> divOp = make_unique<DivOp>();
+        shared_ptr<DivOp> divOp = make_shared<DivOp>();
         return divOp;
     }else if (type == ScopeType::Exponent){
-        unique_ptr<Exponent> exponent = make_unique<Exponent>();
+        shared_ptr<Exponent> exponent = make_shared<Exponent>();
         return exponent;
     }else if (type == ScopeType::Radical){
-        unique_ptr<Radical> radical = make_unique<Radical>();
+        shared_ptr<Radical> radical = make_shared<Radical>();
         return radical;
     }else{
         // throw
     }
 }
 
-unique_ptr<Operation> MParser::buildOperation(char c){
+shared_ptr<Operation> MParser::buildOperation(char c){
     if (c == '+' || c == '-'){
-        unique_ptr<SumOp> sumOp = make_unique<SumOp>();
+        shared_ptr<SumOp> sumOp = make_shared<SumOp>();
         return sumOp;
     }else if (c == '*'){
-        unique_ptr<MulOp> mulOp = make_unique<MulOp>();
+        shared_ptr<MulOp> mulOp = make_shared<MulOp>();
         return mulOp;
     }else if (c == '/'){
-        unique_ptr<DivOp> divOp = make_unique<DivOp>();
+        shared_ptr<DivOp> divOp = make_shared<DivOp>();
         return divOp;
     }else{
         // throw
     }
 }
 
-// unique_ptr<AuxOp> MParser::buildAuxOperation(char c, string expression){
-//     unique_ptr<Symbol> root = unique_ptr<Symbol>();
+// shared_ptr<AuxOp> MParser::buildAuxOperation(char c, string expression){
+//     shared_ptr<Symbol> root = shared_ptr<Symbol>();
 //     parseExpression(root, expression);
 //     if (c == '^'){
-//         unique_ptr<AuxOp> exponent = make_unique<Exponent>(root);
+//         shared_ptr<AuxOp> exponent = make_shared<Exponent>(root);
 //         return exponent;
 //     }else if (c == 'v'){
-//         unique_ptr<AuxOp> radical = make_unique<Radical>(root);
+//         shared_ptr<AuxOp> radical = make_shared<Radical>(root);
 //         return radical;
 //     }else if (c == 'f'){
-//         unique_ptr<AuxOp> function = make_unique<Function>(root);
+//         shared_ptr<AuxOp> function = make_shared<Function>(root);
 //         return function;
 //     }else{
 //         // throw
 //     }
 // }
 
-// unique_ptr<AuxOp> MParser::buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression){
+// shared_ptr<AuxOp> MParser::buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression){
 
 //     // make sure that somewhere further up the chain there is a 
 //     // check that makes it impossible to both take a radical and 
@@ -278,18 +278,18 @@ unique_ptr<Operation> MParser::buildOperation(char c){
 //             // rootSymbol& = previous->getRoot()
 //             // rootSymbol->appendAuxillary(current);
 //             // previous = current;
-//             unique_ptr<Symbol>& rootSymbol = previousAuxOp->getRoot();
-//             unique_ptr<AuxOp> copiedCurrent = currentAuxOp->copy();
+//             shared_ptr<Symbol>& rootSymbol = previousAuxOp->getRoot();
+//             shared_ptr<AuxOp> copiedCurrent = currentAuxOp->copy();
 //             rootSymbol->appendAuxillary(copiedCurrent);
 //             previousAuxOp = currentAuxOp;
 
 //         }
 //     }
 //     if (rootAuxOp != nullptr){
-//         unique_ptr<AuxOp> copiedRoot = rootAuxOp->copy();
+//         shared_ptr<AuxOp> copiedRoot = rootAuxOp->copy();
 //         return copiedRoot;
 //     }else{
-//         unique_ptr<AuxOp> null = unique_ptr<AuxOp>();
+//         shared_ptr<AuxOp> null = shared_ptr<AuxOp>();
 //         return null;
 //         // return nullptr kinda deal
 //     }
@@ -351,7 +351,7 @@ bool MParser::isMultiplied(string expression, int start, int end){
     }
 }
 
-void MParser::setSymbolAsAuxillary(unique_ptr<Symbol>& symbol, AuxilliaryRelation relation){
+void MParser::setSymbolAsAuxillary(shared_ptr<Symbol>& symbol, AuxilliaryRelation relation){
     if (relation == AuxilliaryRelation::Exponent){
         symbol->setIsExponent(true);
     }else if (relation == AuxilliaryRelation::Radical){
@@ -365,7 +365,7 @@ void MParser::setSymbolAsAuxillary(unique_ptr<Symbol>& symbol, AuxilliaryRelatio
 
 // void MParser::parseExpression(string expression){
 //     parseTree = Expression();
-//     unique_ptr<Symbol> root = unique_ptr<Symbol>();
+//     shared_ptr<Symbol> root = shared_ptr<Symbol>();
 //     parseExpression(root, expression);
 //     parseTree.setRoot(root);
 // }
@@ -380,7 +380,7 @@ void MParser::parseExpression(string expression){
 
         // string atom = expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1);
         string atom = mainScope.operands[0];
-        unique_ptr<Symbol> child = buildSymbol(mainScope, atom);
+        shared_ptr<Symbol> child = buildSymbol(mainScope, atom);
 
         // child->setParentExpression(parseTree);
         parseTree->setRoot(child);
@@ -389,7 +389,7 @@ void MParser::parseExpression(string expression){
         
     }else{
 
-        unique_ptr<Symbol> child = buildSymbol(mainScope, expression);
+        shared_ptr<Symbol> child = buildSymbol(mainScope, expression);
         // child->setParentExpression(parseTree);
 
         // vector<string> operands = separateOperands(mainScope, expression);
@@ -418,12 +418,12 @@ void MParser::parseExpression(string expression){
     }  
 }
 
-void MParser::parseExpression(unique_ptr<Symbol>& parent, AuxilliaryRelation parentRelation, string expression){    
+void MParser::parseExpression(shared_ptr<Symbol>& parent, AuxilliaryRelation parentRelation, string expression){    
 
     Scope mainScope = findMainScope(expression);
 
 
-    // unique_ptr<AuxOp> auxOp = buildAuxOperationChain(mainScope.auxOps, expression);
+    // shared_ptr<AuxOp> auxOp = buildAuxOperationChain(mainScope.auxOps, expression);
 
     // bool emptyTree;
     // parent == nullptr ? emptyTree = true : emptyTree = false;
@@ -434,7 +434,7 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, AuxilliaryRelation par
 
         // string atom = expression.substr(mainScope.start + 1, mainScope.end - mainScope.start - 1);
         string atom = mainScope.operands[0];
-        unique_ptr<Symbol> child = buildSymbol(mainScope, atom);
+        shared_ptr<Symbol> child = buildSymbol(mainScope, atom);
 
         setSymbolAsAuxillary(child, parentRelation);
 
@@ -452,7 +452,7 @@ void MParser::parseExpression(unique_ptr<Symbol>& parent, AuxilliaryRelation par
         // child = buildOperation(mainScope.type);
         // child->appendAuxillary(auxOp);
 
-        unique_ptr<Symbol> child = buildSymbol(mainScope, expression);
+        shared_ptr<Symbol> child = buildSymbol(mainScope, expression);
 
         // vector<string> operands = separateOperands(mainScope, expression);
         // vector<string> operands = mainScope.operands;

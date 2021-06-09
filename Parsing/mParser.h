@@ -123,23 +123,23 @@ class MParser {
 
         
 
-        unique_ptr<Symbol> buildSymbol(Scope scope, string expression);
+        shared_ptr<Symbol> buildSymbol(Scope scope, string expression);
 
-        unique_ptr<Symbol> buildAtom(string s);
+        shared_ptr<Symbol> buildAtom(string s);
 
-        unique_ptr<Operation> buildOperation(ScopeType type);
+        shared_ptr<Operation> buildOperation(ScopeType type);
 
-        unique_ptr<Operation> buildOperation(char c);
+        shared_ptr<Operation> buildOperation(char c);
 
-        unique_ptr<AuxOp> buildAuxOperation(char c, string expression);
+        shared_ptr<AuxOp> buildAuxOperation(char c, string expression);
 
-        unique_ptr<AuxOp> buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression);
+        shared_ptr<AuxOp> buildAuxOperationChain(vector<AuxOpInfo>& auxillaries, string expression);
 
-        void setSymbolAsAuxillary(unique_ptr<Symbol>& symbol, AuxilliaryRelation relation);
+        void setSymbolAsAuxillary(shared_ptr<Symbol>& symbol, AuxilliaryRelation relation);
 
         void parseExpression(string expression);
 
-        void parseExpression(unique_ptr<Symbol>& parent, AuxilliaryRelation parentRelation, string expression);
+        void parseExpression(shared_ptr<Symbol>& parent, AuxilliaryRelation parentRelation, string expression);
 
         void parseEquation(string equation);
 

@@ -5,11 +5,15 @@ DivOp::DivOp(): Operation('/'){}
 
 DivOp::DivOp(bool sign): Operation('/', sign){}
 
-DivOp::DivOp(bool sign, vector<unique_ptr<Symbol>>& children): Operation('/', sign, children){}
+DivOp::DivOp(bool sign, vector<shared_ptr<Symbol>>& children): Operation('/', sign, children){}
 
 DivOp::DivOp(bool sign, shared_ptr<Expression>& parentExpression): Operation('/', sign, parentExpression){}
 
-DivOp::DivOp(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('/', sign, children, parentExpression){}
+DivOp::DivOp(bool sign, vector<shared_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('/', sign, children, parentExpression){}
+
+void DivOp::accept(Visitor* visitor){
+    visitor->Visit(this);
+}
 
 int DivOp::getValue(){return 0;}
 
@@ -23,6 +27,40 @@ bool DivOp::isAtomicExponent(){
 
 bool DivOp::isAtomicNumerator(){return true;}
 
+void DivOp::appendChild(shared_ptr<Symbol>& child){
+    child->setIndex(children.size());
+    child->setParentExpression(parentExpression);
+    children.push_back(move(child));
+}
+
+void DivOp::appendToParent(SumOp* parent){
+    
+}
+
+void DivOp::appendToParent(MulOp* parent){
+    
+}
+
+void DivOp::appendToParent(DivOp* parent){
+    
+}
+
+void DivOp::appendToParent(Exponent* parent){
+    
+}
+
+void DivOp::appendToParent(Radical* parent){
+    
+}
+
+void DivOp::appendToParent(Constant* parent){
+    
+}
+
+void DivOp::appendToParent(Variable* parent){
+    
+}
+
 void DivOp::expandExponent(Symbol* parent){
     for (int i = 0; i < children.size(); i ++){
         children[i]->expandExponent(this);
@@ -34,26 +72,26 @@ void DivOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     for (int i = 0; i < children.size(); i ++){
         children[i]->expandExponent(this);
     }
-    unique_ptr<Symbol> root;
-    unique_ptr<Symbol> target;
-    unique_ptr<Symbol> exponent;
+    shared_ptr<Symbol> root;
+    shared_ptr<Symbol> target;
+    shared_ptr<Symbol> exponent;
     int numeratorValue = children[0]->getValue();
     if (numeratorValue <= 1){
 
-        // unique_ptr<Symbol> null;
+        // shared_ptr<Symbol> null;
         // return null;
         return;
         
     }else{
-        root = make_unique<MulOp>();
-        vector<unique_ptr<Symbol>> ops;
+        root = make_shared<MulOp>();
+        vector<shared_ptr<Symbol>> ops;
         for (int i = 0; i < numeratorValue; i ++){
-            unique_ptr<Symbol> numerator = make_unique<Constant>(1);
-            unique_ptr<Symbol> denominator = children[1]->copy();
+            shared_ptr<Symbol> numerator = make_shared<Constant>(1);
+            shared_ptr<Symbol> denominator = children[1]->copy();
 
-            unique_ptr<Symbol> op = make_unique<Exponent>();
+            shared_ptr<Symbol> op = make_shared<Exponent>();
             target = base.copy();
-            exponent = make_unique<DivOp>(sign);
+            exponent = make_shared<DivOp>(sign);
 
             exponent->appendChild(numerator);
             exponent->appendChild(denominator);
@@ -68,12 +106,12 @@ void DivOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     }
 }
 
-unique_ptr<Symbol> DivOp::copy(){
+shared_ptr<Symbol> DivOp::copy(){
 
-    unique_ptr<Symbol> copy = make_unique<DivOp>(sign);
-    vector<unique_ptr<Symbol>> copiedOperands;
+    shared_ptr<Symbol> copy = make_shared<DivOp>(sign);
+    vector<shared_ptr<Symbol>> copiedOperands;
     for (int i = 0; i < children.size(); i ++){
-        unique_ptr<Symbol> copied = children[i]->copy();
+        shared_ptr<Symbol> copied = children[i]->copy();
         copiedOperands.push_back(move(copied));
     }
     

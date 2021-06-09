@@ -6,11 +6,15 @@ Exponent::Exponent(): Operation('^'){}
 
 Exponent::Exponent(bool sign): Operation('^', sign){}
 
-Exponent::Exponent(bool sign, vector<unique_ptr<Symbol>>& children): Operation('^', sign, children){}
+Exponent::Exponent(bool sign, vector<shared_ptr<Symbol>>& children): Operation('^', sign, children){}
 
 Exponent::Exponent(bool sign, shared_ptr<Expression>& parentExpression): Operation('^', sign, parentExpression){}
 
-Exponent::Exponent(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('^', sign, children, parentExpression){}
+Exponent::Exponent(bool sign, vector<shared_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): Operation('^', sign, children, parentExpression){}
+
+void Exponent::accept(Visitor* visitor){
+    visitor->Visit(this);
+}
 
 int Exponent::getValue(){return 0;}
 
@@ -23,6 +27,40 @@ bool Exponent::isAtomicExponent(){
 }
 
 bool Exponent::isAtomicNumerator(){return true;}
+
+void Exponent::appendChild(shared_ptr<Symbol>& child){
+    child->setIndex(children.size());
+    child->setParentExpression(parentExpression);
+    children.push_back(move(child));
+}
+
+void Exponent::appendToParent(SumOp* parent){
+    
+}
+
+void Exponent::appendToParent(MulOp* parent){
+    
+}
+
+void Exponent::appendToParent(DivOp* parent){
+    
+}
+
+void Exponent::appendToParent(Exponent* parent){
+    
+}
+
+void Exponent::appendToParent(Radical* parent){
+    
+}
+
+void Exponent::appendToParent(Constant* parent){
+    
+}
+
+void Exponent::appendToParent(Variable* parent){
+    
+}
 
 void Exponent::expandExponent(Symbol* parent){
 
@@ -58,12 +96,12 @@ void Exponent::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparen
     // return this->copy();
 }
 
-unique_ptr<Symbol> Exponent::copy(){
+shared_ptr<Symbol> Exponent::copy(){
 
-    unique_ptr<Symbol> copy = make_unique<Exponent>(sign);
-    vector<unique_ptr<Symbol>> copiedOperands;
+    shared_ptr<Symbol> copy = make_shared<Exponent>(sign);
+    vector<shared_ptr<Symbol>> copiedOperands;
     for (int i = 0; i < children.size(); i ++){
-        unique_ptr<Symbol> copied = children[i]->copy();
+        shared_ptr<Symbol> copied = children[i]->copy();
         copiedOperands.push_back(move(copied));
     }
     

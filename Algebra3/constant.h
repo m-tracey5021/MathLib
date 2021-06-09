@@ -18,11 +18,11 @@ class Constant : public Atom {
 
         Constant(bool sign, int value, shared_ptr<Expression>& parentExpression);
 
-        // Constant(unique_ptr<AuxOp>& auxOp, int value);
+        // Constant(shared_ptr<AuxOp>& auxOp, int value);
 
-        // Constant(bool sign, unique_ptr<AuxOp>& auxOp, int value);
+        // Constant(bool sign, shared_ptr<AuxOp>& auxOp, int value);
 
-        
+        void accept(Visitor* visitor) override;
 
         int getValue() override;
 
@@ -32,31 +32,39 @@ class Constant : public Atom {
 
         bool isAtomicNumerator() override;
 
-        // void appendChild(unique_ptr<Symbol>& child) override;
+        void appendToParent(SumOp* parent) override;
+        void appendToParent(MulOp* parent) override;
+        void appendToParent(DivOp* parent) override;
+        void appendToParent(Exponent* parent) override;
+        void appendToParent(Radical* parent) override;
+        void appendToParent(Constant* parent) override;
+        void appendToParent(Variable* parent) override;
 
-        // void appendChildren(vector<unique_ptr<Symbol>>& children) override;
+        // void appendChild(shared_ptr<Symbol>& child) override;
 
-        // void appendChildren(vector<unique_ptr<Symbol>>& children, int n) override;
+        // void appendChildren(vector<shared_ptr<Symbol>>& children) override;
 
-        // void replaceChild(unique_ptr<Symbol>& child, int n) override;
+        // void appendChildren(vector<shared_ptr<Symbol>>& children, int n) override;
 
-        // void removeChild(unique_ptr<Symbol>& child) override;
+        // void replaceChild(shared_ptr<Symbol>& child, int n) override;
+
+        // void removeChild(shared_ptr<Symbol>& child) override;
 
         // void removeChild(int n) override;
 
-        // unique_ptr<Symbol>& getChild(int n) override;        
+        // shared_ptr<Symbol>& getChild(int n) override;        
 
-        // vector<unique_ptr<Symbol>>& getAllChildren() override;
+        // vector<shared_ptr<Symbol>>& getAllChildren() override;
 
-        // vector<unique_ptr<Symbol>> duplicateChildren() override;
+        // vector<shared_ptr<Symbol>> duplicateChildren() override;
 
-        // vector<unique_ptr<Symbol>> duplicateChildren(int start, int end) override;
+        // vector<shared_ptr<Symbol>> duplicateChildren(int start, int end) override;
 
         // void expandExponent(Symbol* parent, Symbol* grandparent) override;
 
         void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) override;
 
-        unique_ptr<Symbol> copy() override;
+        shared_ptr<Symbol> copy() override;
 
         string toString(bool hasParent) override;
 

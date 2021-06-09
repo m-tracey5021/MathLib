@@ -11,9 +11,9 @@
 
 //         Radical();
 
-//         Radical(unique_ptr<Symbol>& root);
+//         Radical(shared_ptr<Symbol>& root);
 
-//         unique_ptr<AuxOp> copy() override;
+//         shared_ptr<AuxOp> copy() override;
 
 //         string toString(string target) override;
         
@@ -33,11 +33,13 @@ class Radical : public Operation {
 
         Radical(bool sign);
 
-        Radical(bool sign, vector<unique_ptr<Symbol>>& children);
+        Radical(bool sign, vector<shared_ptr<Symbol>>& children);
 
         Radical(bool sign, shared_ptr<Expression>& parentExpression);
 
-        Radical(bool sign, vector<unique_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
+        Radical(bool sign, vector<shared_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
+
+        void accept(Visitor* visitor) override;
 
         int getValue() override;
 
@@ -45,11 +47,21 @@ class Radical : public Operation {
 
         bool isAtomicNumerator() override;
 
+        void appendChild(shared_ptr<Symbol>& child) override;
+
+        void appendToParent(SumOp* parent) override;
+        void appendToParent(MulOp* parent) override;
+        void appendToParent(DivOp* parent) override;
+        void appendToParent(Exponent* parent) override;
+        void appendToParent(Radical* parent) override;
+        void appendToParent(Constant* parent) override;
+        void appendToParent(Variable* parent) override;
+
         void expandExponent(Symbol* parent) override;
 
         void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) override;
 
-        unique_ptr<Symbol> copy() override;
+        shared_ptr<Symbol> copy() override;
 
         string toString(bool hasParent) override;
 

@@ -9,11 +9,43 @@ Constant::Constant(bool sign, int value): Atom(value, sign), value(value){}
 
 Constant::Constant(bool sign, int value, shared_ptr<Expression>& parentExpression): Atom(value, sign, parentExpression), value(value){}
 
+void Constant::accept(Visitor* visitor){
+    visitor->Visit(this);
+}
+
 int Constant::getValue(){return value;}
 
 bool Constant::isAtomic(){return true;}
 
 bool Constant::isAtomicExponent(){return false;}
+
+void Constant::appendToParent(SumOp* parent){
+    
+}
+
+void Constant::appendToParent(MulOp* parent){
+    
+}
+
+void Constant::appendToParent(DivOp* parent){
+    
+}
+
+void Constant::appendToParent(Exponent* parent){
+    
+}
+
+void Constant::appendToParent(Radical* parent){
+    
+}
+
+void Constant::appendToParent(Constant* parent){
+    
+}
+
+void Constant::appendToParent(Variable* parent){
+    
+}
 
 bool Constant::isAtomicNumerator(){
     if (value == 1){
@@ -24,19 +56,19 @@ bool Constant::isAtomicNumerator(){
 }
 
 void Constant::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
-    unique_ptr<Symbol> root = make_unique<MulOp>();
-    vector<unique_ptr<Symbol>> ops;
+    shared_ptr<Symbol> root = make_shared<MulOp>();
+    vector<shared_ptr<Symbol>> ops;
     for (int i = 0; i < value; i ++){
-        unique_ptr<Symbol> copy = base.copy();
+        shared_ptr<Symbol> copy = base.copy();
         root->appendChild(copy);
     }
     // return root;
     parentExpression->replaceNode(parent, root);
 }
 
-unique_ptr<Symbol> Constant::copy(){
+shared_ptr<Symbol> Constant::copy(){
 
-    unique_ptr<Symbol> copy = make_unique<Constant>(sign, value);
+    shared_ptr<Symbol> copy = make_shared<Constant>(sign, value);
     copy->setIndex(index);
     return copy;
 }
