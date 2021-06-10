@@ -26,6 +26,7 @@ class Atom : public Symbol {
         // Atom(bool sign, shared_ptr<AuxOp>& auxOp, char value);
 
         
+        // void sanitise() override;
 
         int getValue() override;
 

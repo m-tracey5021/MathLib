@@ -46,8 +46,8 @@ bool MulOp::isAtomicExponent(){return false;}
 bool MulOp::isAtomicNumerator(){return true;} // eventually implement a toSum function, which turns multiplications into sums which are not atomic
 
 void MulOp::appendChild(shared_ptr<Symbol>& child){
-    AppendToMulOp* append = new AppendToMulOp(*this, child);
-    child->accept(append);
+    unique_ptr<AppendToMulOp> append = make_unique<AppendToMulOp>(*this, child);
+    child->accept(append.get());
 }
 
 void MulOp::appendToParent(SumOp* parent){

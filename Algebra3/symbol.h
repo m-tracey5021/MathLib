@@ -126,6 +126,8 @@ class Symbol {
         
         virtual void accept(Visitor* visitor) = 0;
 
+        // virtual void sanitise() = 0;
+
         virtual int getValue() = 0;
 
         virtual bool isAtomic() = 0;

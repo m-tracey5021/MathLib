@@ -1,5 +1,6 @@
 #include "sumOp.h"
 #include "expressionComponents.h"
+#include "Visitors/appendToSumOp.h"
 
 SumOp::SumOp(): Operation('+'){}
 
@@ -23,9 +24,8 @@ bool SumOp::isAtomicExponent(){return false;}
 bool SumOp::isAtomicNumerator(){return false;}
 
 void SumOp::appendChild(shared_ptr<Symbol>& child){
-    child->setIndex(children.size());
-    child->setParentExpression(parentExpression);
-    children.push_back(move(child));
+    unique_ptr<AppendToSumOp> append = make_unique<AppendToSumOp>(*this, child);
+    child->accept(append.get());
 }
 
 void SumOp::appendToParent(SumOp* parent){

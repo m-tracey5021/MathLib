@@ -13,7 +13,7 @@ Atom::Atom(char value, bool sign, shared_ptr<Expression>& parentExpression): Sym
 
 // Atom::Atom(bool sign, shared_ptr<AuxOp>& auxOp, char value): Symbol(value, sign, auxOp), value(value){}
 
-
+// void Atom::sanitise(){return;}
 
 int Atom::getValue(){return 0;}
 

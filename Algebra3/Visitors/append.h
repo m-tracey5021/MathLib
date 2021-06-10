@@ -10,4 +10,6 @@ class Append : public Visitor {
 
         void append(Symbol& parent, shared_ptr<Symbol>& child);
 
+        void appendEach(Symbol& parent, shared_ptr<Symbol>& child);
+
 };
