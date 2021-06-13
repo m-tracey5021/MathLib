@@ -59,9 +59,9 @@ bool testExpand(){
         std::cout << "===== compact =====" << std::endl << std::endl;
 
 
-        shared_ptr<Symbol>& theThree = expression->getRoot()->getChildren()[1]->getChildren()[1];
+        shared_ptr<Symbol> theThree = expression->getRoot()->getChildren()[1]->getChildren()[1];
         // shared_ptr<Symbol> null;
-        shared_ptr<Symbol>& theSecondExp = theThree->getParent(); // getParent(theThree.get(), null, expression->getRoot());
+        shared_ptr<Symbol> theSecondExp = theThree->getParent(); // getParent(theThree.get(), null, expression->getRoot());
 
 
         // Expression expanded = expression->expandExponents();
@@ -91,5 +91,33 @@ bool testAppend(){
         shared_ptr<Expression> expression2 = parser.getParseTree();
         
         expression1->getRoot()->appendChild(expression2->getRoot());
+
+        std::cout << expression1->toString(4) << std::endl;
+    }
+}
+
+bool testEvaluateConstants(){
+    MParser parser;
+    vector<string> expressions = {
+        // "4+2+3",
+        // "4+2+3+x",
+        // "4+2+3+(x+6)",
+        // "4+2+3+(6+7)",
+        // "4-2-3",
+        // "4+2+3-1",
+        // "4+(2-x)",
+        // "-4+2",
+        "4-2+7(1+2)"
+    };
+    for (string exp : expressions){
+        parser.parseExpression(exp);
+        shared_ptr<Expression> expression = parser.getParseTree();
+
+        expression->getRoot()->evaluateConstants();
+
+        std::cout << expression->toString() << std::endl;
+
+        std::cout << expression->toString(4) << std::endl;
+        
     }
 }

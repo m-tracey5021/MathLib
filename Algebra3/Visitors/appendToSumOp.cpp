@@ -1,8 +1,9 @@
+#include "append.h"
 #include "appendToSumOp.h"
 #include "../symbol.h"
 #include "../expressionComponents.h"
 
-AppendToSumOp::AppendToSumOp(Symbol& parent, shared_ptr<Symbol>& child): parent(parent), child(child){}
+AppendToSumOp::AppendToSumOp(Symbol& parent, shared_ptr<Symbol> child): parent(parent), child(child){}
 
 AppendToSumOp::~AppendToSumOp(){}
 

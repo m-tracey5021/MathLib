@@ -9,7 +9,7 @@ class Expression {
 
         shared_ptr<Symbol> root;
 
-        unique_ptr<Symbol> rootNull;
+        shared_ptr<Symbol> rootNull;
 
         // vector<shared_ptr<Symbol>> context;
 
@@ -21,23 +21,24 @@ class Expression {
 
         shared_ptr<Symbol>& getRoot();
 
-        unique_ptr<Symbol>& getRootNull();
+        shared_ptr<Symbol>& getRootNull();
 
-        shared_ptr<Symbol>& getNode(Symbol* target);
+        shared_ptr<Symbol> getNode(vector<int> path);
 
-        // shared_ptr<Symbol>& getParent(Symbol* target);
+        shared_ptr<Symbol> getNode(Symbol* target);
 
-        // shared_ptr<Symbol>& getParent(Symbol* target, shared_ptr<Symbol>& parent, shared_ptr<Symbol>& child);
+        optional<shared_ptr<Symbol>> getNode(Symbol* target, shared_ptr<Symbol> current);
 
         void setRoot(shared_ptr<Symbol>& root);
 
-        void replaceNode(Symbol* target, shared_ptr<Symbol>& symbol);
+        void appendNode(shared_ptr<Symbol>& parent, shared_ptr<Symbol>& child);
 
-        // void addNode(shared_ptr<Symbol>& symbol);
+        void removeNode(Symbol* target);
 
-        // void replaceNode(shared_ptr<Symbol>& symbol, Symbol* target);
+        void insertNode(Symbol* target, shared_ptr<Symbol>& replacement);
 
-        // void removeNode(shared_ptr<Symbol>& symbol);
+        void replaceNode(Symbol* target, shared_ptr<Symbol>& replacement);
+
 
         void expandExponents();
 

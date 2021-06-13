@@ -13,39 +13,15 @@ void Constant::accept(Visitor* visitor){
     visitor->Visit(this);
 }
 
-int Constant::getValue(){return value;}
+optional<int> Constant::getValue(){
+    optional<int> result;
+    result.emplace(value);
+    return result;
+}
 
 bool Constant::isAtomic(){return true;}
 
 bool Constant::isAtomicExponent(){return false;}
-
-void Constant::appendToParent(SumOp* parent){
-    
-}
-
-void Constant::appendToParent(MulOp* parent){
-    
-}
-
-void Constant::appendToParent(DivOp* parent){
-    
-}
-
-void Constant::appendToParent(Exponent* parent){
-    
-}
-
-void Constant::appendToParent(Radical* parent){
-    
-}
-
-void Constant::appendToParent(Constant* parent){
-    
-}
-
-void Constant::appendToParent(Variable* parent){
-    
-}
 
 bool Constant::isAtomicNumerator(){
     if (value == 1){

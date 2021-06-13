@@ -31,11 +31,17 @@ int Symbol::getIndex(){return index;}
 //     return parentExpression->getParent(this);
 // }
 
-shared_ptr<Symbol>& Symbol::getParent(){return parent;}
+vector<int> Symbol::getPath(){return path;}
+
+int Symbol::getPathValue(){return path[path.size() - 1];}
+
+shared_ptr<Symbol> Symbol::getParent(){return parent;}
+
+shared_ptr<Symbol> Symbol::getWrapped(){return parentExpression->getNode(path);}
 
 vector<shared_ptr<Symbol>>& Symbol::getChildren(){return children;}
 
-shared_ptr<Expression>& Symbol::getParentExpression(){return parentExpression;}
+shared_ptr<Expression> Symbol::getParentExpression(){return parentExpression;}
 
 void Symbol::setSymbol(char symbol){
     this->symbol = symbol;
@@ -61,13 +67,37 @@ void Symbol::setIndex(int index){
     this->index = index;
 }
 
-void Symbol::setParentExpression(shared_ptr<Expression>& parentExpression){
+void Symbol::setPath(vector<int> path){
+    this->path = path;
+}
+
+void Symbol::setPathValue(int value){
+    path[path.size() - 1] = value;
+}
+
+void Symbol::setParent(shared_ptr<Symbol> parent){
+    this->parent = parent;
+}
+
+void Symbol::setParentExpression(shared_ptr<Expression> parentExpression){
     this->parentExpression = parentExpression;
 }
 
-void Symbol::testVariant(variant<shared_ptr<SumOp>, shared_ptr<MulOp>, shared_ptr<DivOp>> symbols){
-    
-}
+
+// void append(Symbol& parent, shared_ptr<Symbol>& child){
+//     child->setIndex(parent.getChildren().size());
+//     child->setParentExpression(parent.getParentExpression());
+//     parent.getChildren().push_back(move(child));
+// }
+
+// void appendEach(Symbol& parent, shared_ptr<Symbol>& child){
+//     vector<shared_ptr<Symbol>>& children = child->getChildren();
+//     for (int i = 0; i < children.size(); i ++){
+//         children[i]->setIndex(i);
+//         children[i]->setParentExpression(parent.getParentExpression());
+//         parent.getChildren().push_back(move(children[i]));
+//     }
+// }
 
 
 

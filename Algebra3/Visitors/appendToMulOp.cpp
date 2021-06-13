@@ -1,13 +1,14 @@
+#include "append.h"
 #include "appendToMulOp.h"
 #include "../symbol.h"
 #include "../expressionComponents.h"
 
-AppendToMulOp::AppendToMulOp(Symbol& parent, shared_ptr<Symbol>& child): parent(parent), child(child){}
+AppendToMulOp::AppendToMulOp(Symbol& parent, shared_ptr<Symbol> child): parent(parent), child(child){}
 
 AppendToMulOp::~AppendToMulOp(){}
 
 void AppendToMulOp::Visit(SumOp* symbol){
-
+    append(parent, child);
 }
 
 void AppendToMulOp::Visit(MulOp* symbol){

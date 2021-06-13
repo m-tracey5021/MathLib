@@ -1,6 +1,7 @@
 #include "mulOp.h"
 #include "expressionComponents.h"
 #include "Visitors/appendToMulOp.h"
+#include "Visitors/sanitiseMulOp.h"
 
 
 MulOp::MulOp(): Operation('*'){}
@@ -17,11 +18,12 @@ unique_ptr<Symbol> MulOp::extractCoeff(){
     int coeffVal = 1;
     int i = 0;
     while (true){
-        int val = children[i]->getValue();
-        if (val > 0 && children[i]->isAtomic() && !children[i]->getIsTarget()){
-            
+        
+        if (children[i]->getValue() && children[i]->isAtomic() && !children[i]->getIsTarget()){
+            int val = *children[i]->getValue();
             coeffVal = coeffVal * val;
-            removeChild(i);
+            // removeChild(i);
+            parentExpression->removeNode(children[i].get());
             if (i >= children.size()){
                 break;
             }
@@ -39,52 +41,53 @@ void MulOp::accept(Visitor* visitor){
     visitor->Visit(this);
 }
 
-int MulOp::getValue(){return 0;}
-
 bool MulOp::isAtomicExponent(){return false;}
 
 bool MulOp::isAtomicNumerator(){return true;} // eventually implement a toSum function, which turns multiplications into sums which are not atomic
 
-void MulOp::appendChild(shared_ptr<Symbol>& child){
-    unique_ptr<AppendToMulOp> append = make_unique<AppendToMulOp>(*this, child);
-    child->accept(append.get());
-}
+// void MulOp::appendChild(shared_ptr<Symbol>& child){
+//     unique_ptr<AppendToMulOp> append = make_unique<AppendToMulOp>(*this, child);
+//     child->accept(append.get());
+// }
 
-void MulOp::appendToParent(SumOp* parent){
-    
-}
-
-void MulOp::appendToParent(MulOp* parent){
-    
-}
-
-void MulOp::appendToParent(DivOp* parent){
-    
-}
-
-void MulOp::appendToParent(Exponent* parent){
-    
-}
-
-void MulOp::appendToParent(Radical* parent){
-    
-}
-
-void MulOp::appendToParent(Constant* parent){
-    
-}
-
-void MulOp::appendToParent(Variable* parent){
-    
-}
-
-void MulOp::replaceChild(shared_ptr<MulOp>& child, int n){
-    vector<shared_ptr<Symbol>>& children = child->getChildren();
-    for (shared_ptr<Symbol>& c : children){
-        c->setParentExpression(parentExpression);
-        children.push_back(move(c));
+void MulOp::evaluateConstants(){
+    int total = 1;
+    bool totalSign = true;
+    for (int i = 0; i < children.size(); i ++){
+        optional<int> result = children[i]->getValue();
+        if (result){
+            evaluateSingleConstant(result, i, total, totalSign);
+        }else{
+            children[i]->evaluateConstants();
+            optional<int> newResult = children[i]->getValue();
+            if (newResult){
+                evaluateSingleConstant(newResult, i, total, totalSign);
+            }
+        }
     }
-    return;
+    // create new constant from total
+    shared_ptr<Symbol> multiplied = make_shared<Constant>(totalSign, total);
+    if (children.size() == 0){
+        // replace this with new constant
+        parentExpression->replaceNode(this, multiplied);
+    }else{
+        appendChild(multiplied);
+    }
+}
+
+void MulOp::evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign ){
+    int val = *result;
+    total *= val;
+    if (children[index]->getSign()){
+        if (!totalSign){
+            totalSign = true;
+        }
+    }else{
+        totalSign = false;
+    }
+    // removeChild(index);
+    parentExpression->removeNode(children[index].get());
+    index --;
 }
 
 void MulOp::expandExponent(Symbol* parent){
@@ -127,6 +130,16 @@ void MulOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     // return root;   
     parentExpression->replaceNode(parent, root);
     
+}
+
+shared_ptr<Symbol> MulOp::sanitise(){
+    unique_ptr<SanitiseMulOp> sanitise = make_unique<SanitiseMulOp>();
+    for (int i = 0; i < children.size(); i ++){
+        children[i]->accept(sanitise.get());
+        if (sanitise->multiplyValue){
+
+        }
+    }
 }
 
 shared_ptr<Symbol> MulOp::copy(){

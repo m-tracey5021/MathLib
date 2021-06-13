@@ -390,6 +390,8 @@ void MParser::parseExpression(string expression){
     }else{
 
         shared_ptr<Symbol> child = buildSymbol(mainScope, expression);
+        parseTree->setRoot(child);
+        
         // child->setParentExpression(parseTree);
 
         // vector<string> operands = separateOperands(mainScope, expression);
@@ -413,8 +415,8 @@ void MParser::parseExpression(string expression){
                 parseExpression(child, AuxilliaryRelation::None, mainScope.operands[i]);
             }
         }
+
         
-        parseTree->setRoot(child);
     }  
 }
 
@@ -443,7 +445,9 @@ void MParser::parseExpression(shared_ptr<Symbol>& parent, AuxilliaryRelation par
         // }else{
         //     parent->appendChild(child);
         // }
-        parent->appendChild(child);
+        parseTree->appendNode(parent, child);
+        // child->setParent(parent);
+        // parent->appendChild(child);
 
         return;
         
@@ -458,6 +462,8 @@ void MParser::parseExpression(shared_ptr<Symbol>& parent, AuxilliaryRelation par
         // vector<string> operands = mainScope.operands;
 
         setSymbolAsAuxillary(child, parentRelation);
+
+        parseTree->appendNode(parent, child);
         // vector<string> auxillaries = separateAuxillaries(mainScope, expression);  
 
         // for (string auxillary : auxillaries){
@@ -491,7 +497,9 @@ void MParser::parseExpression(shared_ptr<Symbol>& parent, AuxilliaryRelation par
         // }else{
         //     parent->appendChild(child);
         // }
-        parent->appendChild(child);
+        
+        // child->setParent(parent);
+        // parent->appendChild(child);
     }  
 }
 
@@ -1235,6 +1243,7 @@ Scope MParser::findScope(int i, string expression){
         scope.start = i - 1;
         scope.end = i + 1;
         scope.type = ScopeType::Atomic;
+        expression[scope.start] == '-' ? scope.sign = false : scope.sign = true; 
         string variable = "";
         variable += expression[i];
         scope.operands.push_back(variable);

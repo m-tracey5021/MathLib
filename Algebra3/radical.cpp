@@ -16,45 +16,15 @@ void Radical::accept(Visitor* visitor){
     visitor->Visit(this);
 }
 
-int Radical::getValue(){return 0;}
-
 bool Radical::isAtomicExponent(){return true;}
 
 bool Radical::isAtomicNumerator(){return true;}
 
-void Radical::appendChild(shared_ptr<Symbol>& child){
-    child->setIndex(children.size());
-    child->setParentExpression(parentExpression);
-    children.push_back(move(child));
-}
-
-void Radical::appendToParent(SumOp* parent){
-    
-}
-
-void Radical::appendToParent(MulOp* parent){
-    
-}
-
-void Radical::appendToParent(DivOp* parent){
-    
-}
-
-void Radical::appendToParent(Exponent* parent){
-    
-}
-
-void Radical::appendToParent(Radical* parent){
-    
-}
-
-void Radical::appendToParent(Constant* parent){
-    
-}
-
-void Radical::appendToParent(Variable* parent){
-    
-}
+// void Radical::appendChild(shared_ptr<Symbol>& child){
+//     child->setIndex(children.size());
+//     child->setParentExpression(parentExpression);
+//     children.push_back(move(child));
+// }
 
 void Radical::expandExponent(Symbol* parent){return;}
 
@@ -75,6 +45,10 @@ shared_ptr<Symbol> Radical::copy(){
     
     copy->setIndex(index);
     return copy;
+}
+
+shared_ptr<Symbol> Radical::sanitise(){
+    
 }
 
 string Radical::toString(bool hasParent){

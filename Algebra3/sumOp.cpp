@@ -17,52 +17,55 @@ void SumOp::accept(Visitor* visitor){
     visitor->Visit(this);
 }
 
-int SumOp::getValue(){return 0;}
-
 bool SumOp::isAtomicExponent(){return false;}
 
 bool SumOp::isAtomicNumerator(){return false;}
 
-void SumOp::appendChild(shared_ptr<Symbol>& child){
-    unique_ptr<AppendToSumOp> append = make_unique<AppendToSumOp>(*this, child);
-    child->accept(append.get());
-}
+// void SumOp::appendChild(shared_ptr<Symbol>& child){
+//     unique_ptr<AppendToSumOp> append = make_unique<AppendToSumOp>(*this, child);
+//     child->accept(append.get());
+// }
 
-void SumOp::appendToParent(SumOp* parent){
-    
-}
-
-void SumOp::appendToParent(MulOp* parent){
-    
-}
-
-void SumOp::appendToParent(DivOp* parent){
-    
-}
-
-void SumOp::appendToParent(Exponent* parent){
-    
-}
-
-void SumOp::appendToParent(Radical* parent){
-    
-}
-
-void SumOp::appendToParent(Constant* parent){
-    
-}
-
-void SumOp::appendToParent(Variable* parent){
-    
-}
-
-void SumOp::replaceChild(shared_ptr<SumOp>& child, int n){
-    vector<shared_ptr<Symbol>>& children = child->getChildren();
-    for (shared_ptr<Symbol>& c : children){
-        c->setParentExpression(parentExpression);
-        children.push_back(move(c));
+void SumOp::evaluateConstants(){
+    int total = 0;
+    bool totalSign = true;
+    for (int i = 0; i < children.size(); i ++){
+        optional<int> result = children[i]->getValue();
+        if (result){
+            evaluateSingleConstant(result, i, total, totalSign);
+        }else{
+            children[i]->evaluateConstants();
+            optional<int> newResult = children[i]->getValue();
+            if (newResult){
+                evaluateSingleConstant(newResult, i, total, totalSign);
+            }
+        }
     }
-    return;
+    // create new constant from total
+    if (total < 0){
+        totalSign = false;
+        total = total + (2 * (-1 * total));
+    }
+    shared_ptr<Symbol> summed = make_shared<Constant>(totalSign, total);
+    if (children.size() == 0){
+        // replace this with new constant
+        parentExpression->replaceNode(this, summed);
+    }else{
+        appendChild(summed);
+    }
+}
+
+void SumOp::evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign ){
+    int val = *result;
+    
+    if (children[index]->getSign()){
+        total += val;    
+    }else{
+        total -= val;
+    }
+    // removeChild(index);
+    parentExpression->removeNode(children[index].get());
+    index --;
 }
 
 void SumOp::expandExponent(Symbol* parent){
@@ -103,6 +106,10 @@ shared_ptr<Symbol> SumOp::copy(){
     
     copy->setIndex(index);
     return copy;
+}
+
+shared_ptr<Symbol> SumOp::sanitise(){
+    
 }
 
 string SumOp::toString(bool hasParent){

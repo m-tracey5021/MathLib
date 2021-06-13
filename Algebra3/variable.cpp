@@ -13,41 +13,16 @@ void Variable::accept(Visitor* visitor){
     visitor->Visit(this);
 }
 
-int Variable::getValue(){return 0;}
+optional<int> Variable::getValue(){
+    optional<int> result = nullopt;
+    return result;
+}
 
 bool Variable::isAtomic(){return true;}
 
 bool Variable::isAtomicExponent(){return true;}
 
 bool Variable::isAtomicNumerator(){return true;}
-
-void Variable::appendToParent(SumOp* parent){
-    
-}
-
-void Variable::appendToParent(MulOp* parent){
-    
-}
-
-void Variable::appendToParent(DivOp* parent){
-    
-}
-
-void Variable::appendToParent(Exponent* parent){
-    
-}
-
-void Variable::appendToParent(Radical* parent){
-    
-}
-
-void Variable::appendToParent(Constant* parent){
-    
-}
-
-void Variable::appendToParent(Variable* parent){
-    
-}
 
 void Variable::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
 

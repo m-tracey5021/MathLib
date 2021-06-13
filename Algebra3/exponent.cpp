@@ -16,8 +16,6 @@ void Exponent::accept(Visitor* visitor){
     visitor->Visit(this);
 }
 
-int Exponent::getValue(){return 0;}
-
 bool Exponent::isAtomicExponent(){
     if (children[1]->isAtomicExponent()){
         return true;
@@ -28,39 +26,11 @@ bool Exponent::isAtomicExponent(){
 
 bool Exponent::isAtomicNumerator(){return true;}
 
-void Exponent::appendChild(shared_ptr<Symbol>& child){
-    child->setIndex(children.size());
-    child->setParentExpression(parentExpression);
-    children.push_back(move(child));
-}
-
-void Exponent::appendToParent(SumOp* parent){
-    
-}
-
-void Exponent::appendToParent(MulOp* parent){
-    
-}
-
-void Exponent::appendToParent(DivOp* parent){
-    
-}
-
-void Exponent::appendToParent(Exponent* parent){
-    
-}
-
-void Exponent::appendToParent(Radical* parent){
-    
-}
-
-void Exponent::appendToParent(Constant* parent){
-    
-}
-
-void Exponent::appendToParent(Variable* parent){
-    
-}
+// void Exponent::appendChild(shared_ptr<Symbol>& child){
+//     child->setIndex(children.size());
+//     child->setParentExpression(parentExpression);
+//     children.push_back(move(child));
+// }
 
 void Exponent::expandExponent(Symbol* parent){
 
@@ -107,6 +77,10 @@ shared_ptr<Symbol> Exponent::copy(){
     
     copy->setIndex(index);
     return copy;
+}
+
+shared_ptr<Symbol> Exponent::sanitise(){
+    
 }
 
 string Exponent::toString(bool hasParent){

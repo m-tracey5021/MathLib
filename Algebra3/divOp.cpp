@@ -15,8 +15,6 @@ void DivOp::accept(Visitor* visitor){
     visitor->Visit(this);
 }
 
-int DivOp::getValue(){return 0;}
-
 bool DivOp::isAtomicExponent(){
     if (children[0]->isAtomicNumerator()){
         return true;
@@ -27,38 +25,16 @@ bool DivOp::isAtomicExponent(){
 
 bool DivOp::isAtomicNumerator(){return true;}
 
-void DivOp::appendChild(shared_ptr<Symbol>& child){
-    child->setIndex(children.size());
-    child->setParentExpression(parentExpression);
-    children.push_back(move(child));
-}
+// void DivOp::appendChild(shared_ptr<Symbol>& child){
+//     child->setIndex(children.size());
+//     child->setParentExpression(parentExpression);
+//     children.push_back(move(child));
+// }
 
-void DivOp::appendToParent(SumOp* parent){
-    
-}
+void DivOp::evaluateConstants(){}
 
-void DivOp::appendToParent(MulOp* parent){
-    
-}
+void DivOp::evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign ){
 
-void DivOp::appendToParent(DivOp* parent){
-    
-}
-
-void DivOp::appendToParent(Exponent* parent){
-    
-}
-
-void DivOp::appendToParent(Radical* parent){
-    
-}
-
-void DivOp::appendToParent(Constant* parent){
-    
-}
-
-void DivOp::appendToParent(Variable* parent){
-    
 }
 
 void DivOp::expandExponent(Symbol* parent){
@@ -75,35 +51,38 @@ void DivOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     shared_ptr<Symbol> root;
     shared_ptr<Symbol> target;
     shared_ptr<Symbol> exponent;
-    int numeratorValue = children[0]->getValue();
-    if (numeratorValue <= 1){
+    if (children[0]->getValue()){
+        int numeratorValue = *children[0]->getValue();
+        if (numeratorValue <= 1){
 
-        // shared_ptr<Symbol> null;
-        // return null;
-        return;
-        
-    }else{
-        root = make_shared<MulOp>();
-        vector<shared_ptr<Symbol>> ops;
-        for (int i = 0; i < numeratorValue; i ++){
-            shared_ptr<Symbol> numerator = make_shared<Constant>(1);
-            shared_ptr<Symbol> denominator = children[1]->copy();
+            // shared_ptr<Symbol> null;
+            // return null;
+            return;
+            
+        }else{
+            root = make_shared<MulOp>();
+            vector<shared_ptr<Symbol>> ops;
+            for (int i = 0; i < numeratorValue; i ++){
+                shared_ptr<Symbol> numerator = make_shared<Constant>(1);
+                shared_ptr<Symbol> denominator = children[1]->copy();
 
-            shared_ptr<Symbol> op = make_shared<Exponent>();
-            target = base.copy();
-            exponent = make_shared<DivOp>(sign);
+                shared_ptr<Symbol> op = make_shared<Exponent>();
+                target = base.copy();
+                exponent = make_shared<DivOp>(sign);
 
-            exponent->appendChild(numerator);
-            exponent->appendChild(denominator);
-            target->setIsTarget(true);
-            exponent->setIsExponent(true);
-            op->appendChild(target);
-            op->appendChild(exponent);
-            root->appendChild(op);
+                exponent->appendChild(numerator);
+                exponent->appendChild(denominator);
+                target->setIsTarget(true);
+                exponent->setIsExponent(true);
+                op->appendChild(target);
+                op->appendChild(exponent);
+                root->appendChild(op);
+            }
+            // return root;
+            parentExpression->replaceNode(parent, root);
         }
-        // return root;
-        parentExpression->replaceNode(parent, root);
     }
+    
 }
 
 shared_ptr<Symbol> DivOp::copy(){
@@ -117,6 +96,10 @@ shared_ptr<Symbol> DivOp::copy(){
     
     copy->setIndex(index);
     return copy;
+}
+
+shared_ptr<Symbol> DivOp::sanitise(){
+    
 }
 
 string DivOp::toString(bool hasParent){

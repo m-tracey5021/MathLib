@@ -22,23 +22,17 @@ class Constant : public Atom {
 
         // Constant(bool sign, shared_ptr<AuxOp>& auxOp, int value);
 
+
+
         void accept(Visitor* visitor) override;
 
-        int getValue() override;
+        optional<int> getValue() override;
 
         bool isAtomic() override;
 
         bool isAtomicExponent() override;
 
         bool isAtomicNumerator() override;
-
-        void appendToParent(SumOp* parent) override;
-        void appendToParent(MulOp* parent) override;
-        void appendToParent(DivOp* parent) override;
-        void appendToParent(Exponent* parent) override;
-        void appendToParent(Radical* parent) override;
-        void appendToParent(Constant* parent) override;
-        void appendToParent(Variable* parent) override;
 
         // void appendChild(shared_ptr<Symbol>& child) override;
 

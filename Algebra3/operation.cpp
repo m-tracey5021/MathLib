@@ -19,7 +19,10 @@ Operation::~Operation() = default;
 
 // Operation::Operation(char op, bool sign, shared_ptr<AuxOp>& auxOp, vector<shared_ptr<Symbol>>& operands): Symbol(op, sign, auxOp), operands(move(operands)){}
 
-int Operation::getValue(){return 0;}
+optional<int> Operation::getValue(){
+    optional<int> result = nullopt;
+    return result;
+}
 
 bool Operation::isAtomic(){return false;}
 
@@ -70,12 +73,18 @@ void Operation::setChildren(vector<shared_ptr<Symbol>>& children){
     
 // }
 
+void Operation::appendChild(shared_ptr<Symbol>& child){
+    children.push_back(child);
+}
+
 void Operation::appendChildren(vector<shared_ptr<Symbol>>& children){
-    int currentSize = children.size();
+    vector<int> path = parent->getPath();
     for (int i = 0; i < children.size(); i ++){
-        children[i]->setIndex(children.size() + i);
+        path.push_back(parent->getChildren().size());
+        // children[i]->setIndex(children.size() + i);
         children[i]->setParentExpression(parentExpression);
         children.push_back(move(children[i]));
+        path.erase(path.end());
     }
     return;
 }
@@ -95,30 +104,6 @@ void Operation::appendChildren(vector<shared_ptr<Symbol>>& children, int n){
 }
 
 void Operation::replaceChild(shared_ptr<Symbol>& child, int n){
-    for (int i = 0; i < children.size(); i ++){
-        if (i == n){
-            child->setIndex(n);
-            child->setParentExpression(parentExpression);
-            children[i] = move(child);
-            
-        }
-    }
-    return;
-}
-
-void Operation::replaceChild(shared_ptr<SumOp>& child, int n){
-    for (int i = 0; i < children.size(); i ++){
-        if (i == n){
-            child->setIndex(n);
-            child->setParentExpression(parentExpression);
-            children[i] = move(child);
-            
-        }
-    }
-    return;
-}
-
-void Operation::replaceChild(shared_ptr<MulOp>& child, int n){
     for (int i = 0; i < children.size(); i ++){
         if (i == n){
             child->setIndex(n);
@@ -178,9 +163,9 @@ vector<shared_ptr<Symbol>> Operation::duplicateChildren(int start, int end){
     return duplicates;
 }
 
-void Operation::expandExponent(Symbol* parent){return;}
+void Operation::evaluateConstants(){}
 
-void Operation::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){}
+void Operation::evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign){}
 
 shared_ptr<Symbol> Operation::copy(){}
 

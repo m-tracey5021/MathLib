@@ -9,13 +9,8 @@ Atom::Atom(char value, bool sign): Symbol(value, sign){}
 
 Atom::Atom(char value, bool sign, shared_ptr<Expression>& parentExpression): Symbol(value, sign, parentExpression){}
 
-// Atom::Atom(shared_ptr<AuxOp>& auxOp, char value): Symbol(value, auxOp), value(value){}
 
-// Atom::Atom(bool sign, shared_ptr<AuxOp>& auxOp, char value): Symbol(value, sign, auxOp), value(value){}
 
-// void Atom::sanitise(){return;}
-
-int Atom::getValue(){return 0;}
 
 bool Atom::isAtomic(){return true;}
 
@@ -32,8 +27,6 @@ void Atom::appendChildren(vector<shared_ptr<Symbol>>& children){return;}
 void Atom::appendChildren(vector<shared_ptr<Symbol>>& children, int n){return;}
 
 void Atom::replaceChild(shared_ptr<Symbol>& child, int n){return;}
-void Atom::replaceChild(shared_ptr<SumOp>& child, int n){return;}
-void Atom::replaceChild(shared_ptr<MulOp>& child, int n){return;}
 
 void Atom::removeChild(shared_ptr<Symbol>& child){return;}
 
@@ -59,6 +52,10 @@ vector<shared_ptr<Symbol>> Atom::duplicateChildren(int start, int end){
     return empty;
 }
 
+void Atom::evaluateConstants(){return;}
+
+void Atom::evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign){}
+
 void Atom::expandExponent(Symbol* parent){return;}
 
 void Atom::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
@@ -70,6 +67,8 @@ void Atom::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
 }
 
 shared_ptr<Symbol> Atom::copy(){}
+
+shared_ptr<Symbol> Atom::sanitise(){}
 
 string Atom::toString(bool hasParent){}
 

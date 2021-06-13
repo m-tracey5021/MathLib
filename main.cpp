@@ -72,9 +72,11 @@ int main(){
 
     // bool parseExpressionPassed = testParseExpression();
 
-    bool expandPassed = testExpand();
+    // bool expandPassed = testExpand();
 
-    bool appendPassed = testAppend();
+    // bool appendPassed = testAppend();
+
+    bool evaluateConstantsPassed = testEvaluateConstants();
 
     // bool equalityPassed = testEquality();
 

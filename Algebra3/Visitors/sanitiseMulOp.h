@@ -1,16 +1,25 @@
 #pragma once
 
+#include <vector>
+#include <utility>
 #include "visitor.h"
 
-class Append : public Visitor {
+using std::vector;
+using std::pair;
+
+class SanitiseMulOp : public Visitor {
 
     public:
 
-        shared_ptr<Symbol> child;
+        vector<int> constants;
 
-        Append(shared_ptr<Symbol> child);
+        bool multiplyValue;
 
-        ~Append();
+        shared_ptr<Symbol> other;
+
+        SanitiseMulOp();
+
+        ~SanitiseMulOp();
 
         void Visit(SumOp* symbol) override;
 
@@ -26,10 +35,6 @@ class Append : public Visitor {
 
         void Visit(Variable* symbol) override;
 
-        
+        void setOther(shared_ptr<Symbol>& other);
 
 };
-
-void append(Symbol& parent, shared_ptr<Symbol>& child);
-
-void appendEach(Symbol& parent, shared_ptr<Symbol>& child);

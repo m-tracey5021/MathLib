@@ -1,18 +1,18 @@
 #pragma once
 
-#include "append.h"
+#include "visitor.h"
 
-class AppendToMulOp : public Append {
+class AppendToMulOp : public Visitor {
 
     public:
 
-        AppendToMulOp(Symbol& parent, shared_ptr<Symbol>& child);
-
-        ~AppendToMulOp();
-
         Symbol& parent;
 
-        shared_ptr<Symbol>& child;
+        shared_ptr<Symbol> child;
+
+        AppendToMulOp(Symbol& parent, shared_ptr<Symbol> child);
+
+        ~AppendToMulOp();        
 
         void Visit(SumOp* symbol) override;
 
