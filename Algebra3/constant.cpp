@@ -31,6 +31,8 @@ bool Constant::isAtomicNumerator(){
     }
 }
 
+bool Constant::isEqual(Symbol* other){}
+
 void Constant::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     shared_ptr<Symbol> root = make_shared<MulOp>();
     vector<shared_ptr<Symbol>> ops;

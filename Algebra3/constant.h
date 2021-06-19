@@ -34,6 +34,9 @@ class Constant : public Atom {
 
         bool isAtomicNumerator() override;
 
+        bool isEqual(Symbol* other) override;
+        
+
         // void appendChild(shared_ptr<Symbol>& child) override;
 
         // void appendChildren(vector<shared_ptr<Symbol>>& children) override;

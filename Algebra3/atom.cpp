@@ -54,8 +54,6 @@ vector<shared_ptr<Symbol>> Atom::duplicateChildren(int start, int end){
 
 void Atom::evaluateConstants(){return;}
 
-void Atom::evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign){}
-
 void Atom::expandExponent(Symbol* parent){return;}
 
 void Atom::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){

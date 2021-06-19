@@ -45,6 +45,8 @@ bool MulOp::isAtomicExponent(){return false;}
 
 bool MulOp::isAtomicNumerator(){return true;} // eventually implement a toSum function, which turns multiplications into sums which are not atomic
 
+bool MulOp::isEqual(Symbol* other){}
+
 // void MulOp::appendChild(shared_ptr<Symbol>& child){
 //     unique_ptr<AppendToMulOp> append = make_unique<AppendToMulOp>(*this, child);
 //     child->accept(append.get());
@@ -53,25 +55,30 @@ bool MulOp::isAtomicNumerator(){return true;} // eventually implement a toSum fu
 void MulOp::evaluateConstants(){
     int total = 1;
     bool totalSign = true;
+    bool change = false;
     for (int i = 0; i < children.size(); i ++){
         optional<int> result = children[i]->getValue();
         if (result){
             evaluateSingleConstant(result, i, total, totalSign);
+            change = true;
         }else{
             children[i]->evaluateConstants();
             optional<int> newResult = children[i]->getValue();
             if (newResult){
                 evaluateSingleConstant(newResult, i, total, totalSign);
+                change = true;
             }
         }
     }
     // create new constant from total
-    shared_ptr<Symbol> multiplied = make_shared<Constant>(totalSign, total);
-    if (children.size() == 0){
-        // replace this with new constant
-        parentExpression->replaceNode(this, multiplied);
-    }else{
-        appendChild(multiplied);
+    if (change){
+        shared_ptr<Symbol> multiplied = make_shared<Constant>(totalSign, total);
+        if (children.size() == 0){
+            // replace this with new constant
+            parentExpression->replaceNode(this, multiplied);
+        }else{
+            appendChild(multiplied);
+        }
     }
 }
 
@@ -85,7 +92,6 @@ void MulOp::evaluateSingleConstant(optional<int>& result, int& index, int& total
     }else{
         totalSign = false;
     }
-    // removeChild(index);
     parentExpression->removeNode(children[index].get());
     index --;
 }

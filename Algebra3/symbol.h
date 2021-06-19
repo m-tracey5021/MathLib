@@ -135,7 +135,9 @@ class Symbol {
 
         virtual bool isAtomicExponent() = 0;
 
-        virtual bool isAtomicNumerator() = 0;        
+        virtual bool isAtomicNumerator() = 0; 
+
+        virtual bool isEqual(Symbol* other) = 0;   
 
         virtual void appendChild(shared_ptr<Symbol>& child) = 0;
 
@@ -156,8 +158,6 @@ class Symbol {
         virtual vector<shared_ptr<Symbol>> duplicateChildren(int start, int end) = 0; 
 
         virtual void evaluateConstants() = 0; 
-
-        virtual void evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign) = 0;    
 
         virtual void expandExponent(Symbol* parent) = 0;
 

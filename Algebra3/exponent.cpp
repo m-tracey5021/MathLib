@@ -26,24 +26,18 @@ bool Exponent::isAtomicExponent(){
 
 bool Exponent::isAtomicNumerator(){return true;}
 
-// void Exponent::appendChild(shared_ptr<Symbol>& child){
-//     child->setIndex(children.size());
-//     child->setParentExpression(parentExpression);
-//     children.push_back(move(child));
-// }
+bool Exponent::isEqual(Symbol* other){}
+
+
+void Exponent::evaluateConstants(){
+    for (int i = 0; i < children.size(); i ++){
+        children[i]->evaluateConstants();
+    }
+}
 
 void Exponent::expandExponent(Symbol* parent){
-
     if (!children[1]->isAtomicExponent()){
         children[1]->expandAsExponent(*children[0], this, parent);
-        
-        // if (parent){
-        //     // replace 'this' with 'expanded' via parentExpression
-        //     parentExpression->replaceNode(this, expanded);
-        // }else{
-        //     // set 'root' to 'expanded'
-        //     parentExpression->setRoot(expanded);
-        // }
     }
     return;
 }
@@ -52,18 +46,8 @@ void Exponent::expandExponent(Symbol* parent){
 void Exponent::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     if (!children[1]->isAtomicExponent()){
         children[1]->expandAsExponent(*children[0], this, parent);
-        
-        // if (parent){
-        //     // replace 'this' with 'expanded' via parentExpression
-        //     parentExpression->replaceNode(this, expanded);
-        // }else{
-        //     // set 'root' to 'expanded'
-        //     parentExpression->setRoot(expanded);
-        // }
-        
     }
     parent->expandExponent(grandparent);
-    // return this->copy();
 }
 
 shared_ptr<Symbol> Exponent::copy(){
@@ -74,7 +58,6 @@ shared_ptr<Symbol> Exponent::copy(){
         shared_ptr<Symbol> copied = children[i]->copy();
         copiedOperands.push_back(move(copied));
     }
-    
     copy->setIndex(index);
     return copy;
 }
@@ -95,9 +78,7 @@ string Exponent::toString(bool hasParent){
     if (!sign){
         ret = "-(" + ret + ')';
     }else{
-        // if (hasParent && !operands[0]->isAtomic()){
-        //     ret = '(' + ret + ')';
-        // }
+    
     }
     if (isExponent){
         ret = '{' + ret + '}';
@@ -106,11 +87,5 @@ string Exponent::toString(bool hasParent){
     }else if(isTarget){
         ret = '(' + ret + ')';
     }
-    // if (parent != nullptr){
-    //     ret = '(' + ret + ')';
-    // }
-    // if (auxOp != nullptr && includeAuxilliaries){
-    //     ret = auxOp->toString(ret);
-    // }
     return ret;
 }

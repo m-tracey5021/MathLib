@@ -25,11 +25,13 @@ class SumOp : public Operation {
 
         bool isAtomicNumerator() override;
 
+        bool isEqual(Symbol* other) override;
+
         // void appendChild(shared_ptr<Symbol>& child) override;
 
         void evaluateConstants() override;
 
-        void evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign) override;    
+        void evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign);    
 
         void expandExponent(Symbol* parent) override;
 

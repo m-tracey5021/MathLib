@@ -165,8 +165,6 @@ vector<shared_ptr<Symbol>> Operation::duplicateChildren(int start, int end){
 
 void Operation::evaluateConstants(){}
 
-void Operation::evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign){}
-
 shared_ptr<Symbol> Operation::copy(){}
 
 string Operation::toString(bool hasParent){return "";}

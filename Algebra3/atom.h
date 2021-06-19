@@ -56,8 +56,6 @@ class Atom : public Symbol {
 
         void evaluateConstants() override;
 
-        void evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign) override;    
-
         void expandExponent(Symbol* parent) override;
 
         void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) override;

@@ -116,10 +116,11 @@ void Expression::insertNode(Symbol* target, shared_ptr<Symbol>& replacement){
     if (parent.get() == nullptr){
         setRoot(replacement);
     }else{
-        vector<shared_ptr<Symbol>> siblings = parent->getChildren();
+        vector<shared_ptr<Symbol>>& siblings = parent->getChildren();
         siblings.erase(siblings.begin() + path[path.size() - 1]);
         siblings.insert(siblings.begin() + path[path.size() - 1], replacement); 
         replacement->setPath(path);
+        replacement->setParent(parent);
         vector<int> emptyPath;   
         target->setPath(emptyPath);
     }
@@ -131,10 +132,11 @@ void Expression::replaceNode(Symbol* target, shared_ptr<Symbol>& replacement){
     if (parent.get() == nullptr){
         setRoot(replacement);
     }else{
-        vector<shared_ptr<Symbol>> siblings = parent->getChildren();
+        vector<shared_ptr<Symbol>>& siblings = parent->getChildren();
         siblings.erase(siblings.begin() + path[path.size() - 1]);
         siblings.insert(siblings.begin() + path[path.size() - 1], replacement);    
         replacement->setPath(path);  
+        replacement->setParent(parent);
         vector<int> emptyPath;   
         target->setPath(emptyPath);
     }

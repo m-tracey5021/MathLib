@@ -20,11 +20,19 @@ bool Radical::isAtomicExponent(){return true;}
 
 bool Radical::isAtomicNumerator(){return true;}
 
+bool Radical::isEqual(Symbol* other){}
+
 // void Radical::appendChild(shared_ptr<Symbol>& child){
 //     child->setIndex(children.size());
 //     child->setParentExpression(parentExpression);
 //     children.push_back(move(child));
 // }
+
+void Radical::evaluateConstants(){
+    for (int i = 0; i < children.size(); i ++){
+        children[i]->evaluateConstants();
+    }
+}
 
 void Radical::expandExponent(Symbol* parent){return;}
 

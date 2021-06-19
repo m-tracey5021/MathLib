@@ -24,6 +24,8 @@ bool Variable::isAtomicExponent(){return true;}
 
 bool Variable::isAtomicNumerator(){return true;}
 
+bool Variable::isEqual(Symbol* other){}
+
 void Variable::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
 
     // shared_ptr<Symbol> null;

@@ -25,16 +25,37 @@ bool DivOp::isAtomicExponent(){
 
 bool DivOp::isAtomicNumerator(){return true;}
 
+bool DivOp::isEqual(Symbol* other){}
+
 // void DivOp::appendChild(shared_ptr<Symbol>& child){
 //     child->setIndex(children.size());
 //     child->setParentExpression(parentExpression);
 //     children.push_back(move(child));
 // }
 
-void DivOp::evaluateConstants(){}
-
-void DivOp::evaluateSingleConstant(optional<int>& result, int& index, int& total, bool& totalSign ){
-
+void DivOp::evaluateConstants(){
+    int total;
+    bool totalSign;
+    optional<int> num = children[0]->getValue();
+    optional<int> denom = children[1]->getValue();
+    if (!num){
+        children[0]->evaluateConstants();
+        num = children[0]->getValue();
+    }
+    if (!denom){
+        children[1]->evaluateConstants();
+        denom = children[1]->getValue();
+    }
+    if (children[0]->getSign() == children[1]->getSign()){
+        totalSign = true;
+    }else{
+        totalSign = false;
+    }
+    if (num && denom){
+        int result = *num / *denom;
+        shared_ptr<Symbol> divided = make_shared<Constant>(totalSign, result);
+        parentExpression->replaceNode(this, divided);
+    }
 }
 
 void DivOp::expandExponent(Symbol* parent){
