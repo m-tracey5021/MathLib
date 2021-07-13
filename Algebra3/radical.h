@@ -47,6 +47,7 @@ class Radical : public Operation {
 
         bool isEqual(Symbol* other) override;
         
+        bool isLikeTerm(Symbol* other) override;
 
         // void appendChild(shared_ptr<Symbol>& child) override;
 
@@ -55,6 +56,8 @@ class Radical : public Operation {
         void expandExponent(Symbol* parent) override;
 
         void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) override;
+
+        void sumLikeTerms() override;
 
         shared_ptr<Symbol> copy() override;
 

@@ -34,6 +34,7 @@ class Variable : public Atom {
 
         bool isEqual(Symbol* other) override;
         
+        bool isLikeTerm(Symbol* other) override;
 
         // void appendChild(shared_ptr<Symbol>& child) override;
 
@@ -60,6 +61,8 @@ class Variable : public Atom {
         // void expandExponent(Symbol* parent, Symbol* grandparent) override;
 
         void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) override;
+
+        void sumLikeTerms() override;
 
         shared_ptr<Symbol> copy() override;
 

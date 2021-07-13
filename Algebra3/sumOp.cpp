@@ -1,7 +1,7 @@
 #include "sumOp.h"
 #include "expressionComponents.h"
 #include "Visitors/appendToSumOp.h"
-#include "Visitors/equalToSum.h"
+#include "Visitors/equalTo.h"
 
 SumOp::SumOp(): Operation('+'){}
 
@@ -27,6 +27,8 @@ bool SumOp::isEqual(Symbol* other){
     other->accept(equal.get());
     return equal->isEqual;
 }
+
+bool SumOp::isLikeTerm(Symbol* other){return false;}
 
 // void SumOp::appendChild(shared_ptr<Symbol>& child){
 //     unique_ptr<AppendToSumOp> append = make_unique<AppendToSumOp>(*this, child);
@@ -106,6 +108,22 @@ void SumOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     }
     // return root;
     parentExpression->replaceNode(parent, root);
+}
+
+void SumOp::sumLikeTerms(){
+    for (int i = 0; i < children.size(); i ++){
+        if (i + 1 != children.size()){
+            for (int j = i + 1; j < children.size(); j ++){
+                if (children[i]->isLikeTerm(children[j].get())){
+                    // add the two together
+                    // remove each
+                    // append the added term
+                }
+            }
+        }else{
+            return;
+        }
+    }
 }
 
 shared_ptr<Symbol> SumOp::copy(){

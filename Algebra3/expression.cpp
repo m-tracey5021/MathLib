@@ -143,10 +143,16 @@ void Expression::replaceNode(Symbol* target, shared_ptr<Symbol>& replacement){
     
 }
 
-
+void Expression::evaluateConstants(){
+    root->evaluateConstants();
+}
 
 void Expression::expandExponents(){
     root->expandExponent(nullptr);
+}
+
+void Expression::sumLikeTerms(){
+    root->sumLikeTerms();
 }
 
 string Expression::toString(){

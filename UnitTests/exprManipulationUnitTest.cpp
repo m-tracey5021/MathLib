@@ -126,3 +126,23 @@ bool testEvaluateConstants(){
         
     }
 }
+
+bool testLikeTerms(){
+    MParser parser;
+    vector<string> expressions = {
+        "2x+3x",
+        "2xy-4xy",
+        "3x^{2}+9x^{2}"
+    };
+    for (string exp : expressions){
+        parser.parseExpression(exp);
+        shared_ptr<Expression> expression = parser.getParseTree();
+
+        expression->getRoot()->evaluateConstants();
+
+        std::cout << expression->toString() << std::endl;
+
+        std::cout << expression->toString(4) << std::endl;
+        
+    }
+}

@@ -1,5 +1,6 @@
 #include "variable.h"
 #include "expressionComponents.h"
+#include "Visitors/equalTo.h"
 
 Variable::Variable(): Atom(){}
 
@@ -24,7 +25,13 @@ bool Variable::isAtomicExponent(){return true;}
 
 bool Variable::isAtomicNumerator(){return true;}
 
-bool Variable::isEqual(Symbol* other){}
+bool Variable::isEqual(Symbol* other){
+    shared_ptr<EqualToVariable> equal = make_shared<EqualToVariable>(*this);
+    other->accept(equal.get());
+    return equal->isEqual;
+}
+
+bool Variable::isLikeTerm(Symbol* other){return false;}
 
 void Variable::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
 
@@ -33,6 +40,8 @@ void Variable::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparen
     return;
 
 }
+
+void Variable::sumLikeTerms(){return;}
 
 shared_ptr<Symbol> Variable::copy(){
 

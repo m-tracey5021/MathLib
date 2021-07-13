@@ -1,5 +1,6 @@
 #include "constant.h"
 #include "expressionComponents.h"
+#include "Visitors/equalTo.h"
 
 Constant::Constant(): Atom(){}
 
@@ -31,7 +32,13 @@ bool Constant::isAtomicNumerator(){
     }
 }
 
-bool Constant::isEqual(Symbol* other){}
+bool Constant::isEqual(Symbol* other){
+    shared_ptr<EqualToConstant> equal = make_shared<EqualToConstant>(*this);
+    other->accept(equal.get());
+    return equal->isEqual;
+}
+
+bool Constant::isLikeTerm(Symbol* other){return false;}
 
 void Constant::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     shared_ptr<Symbol> root = make_shared<MulOp>();
@@ -43,6 +50,8 @@ void Constant::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparen
     // return root;
     parentExpression->replaceNode(parent, root);
 }
+
+void Constant::sumLikeTerms(){return;}
 
 shared_ptr<Symbol> Constant::copy(){
 

@@ -1,5 +1,6 @@
 #include "divOp.h"
 #include "expressionComponents.h"
+#include "Visitors/equalTo.h"
 
 DivOp::DivOp(): Operation('/'){}
 
@@ -25,7 +26,13 @@ bool DivOp::isAtomicExponent(){
 
 bool DivOp::isAtomicNumerator(){return true;}
 
-bool DivOp::isEqual(Symbol* other){}
+bool DivOp::isEqual(Symbol* other){
+    shared_ptr<EqualToDiv> equal = make_shared<EqualToDiv>(*this);
+    other->accept(equal.get());
+    return equal->isEqual;
+}
+
+bool DivOp::isLikeTerm(Symbol* other){return false;}
 
 // void DivOp::appendChild(shared_ptr<Symbol>& child){
 //     child->setIndex(children.size());
@@ -104,6 +111,12 @@ void DivOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
         }
     }
     
+}
+
+void DivOp::sumLikeTerms(){
+    for (shared_ptr<Symbol> child : children){
+        child->sumLikeTerms();
+    }
 }
 
 shared_ptr<Symbol> DivOp::copy(){

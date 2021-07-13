@@ -1,7 +1,8 @@
 #include "mulOp.h"
 #include "expressionComponents.h"
 #include "Visitors/appendToMulOp.h"
-#include "Visitors/sanitiseMulOp.h"
+#include "Visitors/equalTo.h"
+#include "Visitors/isLikeTerm.h"
 
 
 MulOp::MulOp(): Operation('*'){}
@@ -45,7 +46,17 @@ bool MulOp::isAtomicExponent(){return false;}
 
 bool MulOp::isAtomicNumerator(){return true;} // eventually implement a toSum function, which turns multiplications into sums which are not atomic
 
-bool MulOp::isEqual(Symbol* other){}
+bool MulOp::isEqual(Symbol* other){
+    shared_ptr<EqualToMul> equal = make_shared<EqualToMul>(*this);
+    other->accept(equal.get());
+    return equal->isEqual;
+}
+
+bool MulOp::isLikeTerm(Symbol* other){
+    shared_ptr<IsLikeTerm> isLikeTerm = make_shared<IsLikeTerm>(*this);
+    other->accept(isLikeTerm.get());
+    return isLikeTerm->isLikeTerm;
+}
 
 // void MulOp::appendChild(shared_ptr<Symbol>& child){
 //     unique_ptr<AppendToMulOp> append = make_unique<AppendToMulOp>(*this, child);
@@ -138,14 +149,20 @@ void MulOp::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent){
     
 }
 
-shared_ptr<Symbol> MulOp::sanitise(){
-    unique_ptr<SanitiseMulOp> sanitise = make_unique<SanitiseMulOp>();
-    for (int i = 0; i < children.size(); i ++){
-        children[i]->accept(sanitise.get());
-        if (sanitise->multiplyValue){
-
-        }
+void MulOp::sumLikeTerms(){
+    for (shared_ptr<Symbol> child : children){
+        child->sumLikeTerms();
     }
+}
+
+shared_ptr<Symbol> MulOp::sanitise(){
+    // unique_ptr<SanitiseMulOp> sanitise = make_unique<SanitiseMulOp>();
+    // for (int i = 0; i < children.size(); i ++){
+    //     children[i]->accept(sanitise.get());
+    //     if (sanitise->multiplyValue){
+
+    //     }
+    // }
 }
 
 shared_ptr<Symbol> MulOp::copy(){

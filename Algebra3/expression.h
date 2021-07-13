@@ -39,8 +39,11 @@ class Expression {
 
         void replaceNode(Symbol* target, shared_ptr<Symbol>& replacement);
 
+        void evaluateConstants();
 
         void expandExponents();
+
+        void sumLikeTerms();
 
         string toString();
 

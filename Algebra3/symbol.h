@@ -139,6 +139,8 @@ class Symbol {
 
         virtual bool isEqual(Symbol* other) = 0;   
 
+        virtual bool isLikeTerm(Symbol* other) = 0;
+
         virtual void appendChild(shared_ptr<Symbol>& child) = 0;
 
         virtual void setChildren(vector<shared_ptr<Symbol>>& children) = 0;
@@ -162,6 +164,8 @@ class Symbol {
         virtual void expandExponent(Symbol* parent) = 0;
 
         virtual void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) = 0;
+
+        virtual void sumLikeTerms() = 0;
 
         virtual shared_ptr<Symbol> copy() = 0;
 

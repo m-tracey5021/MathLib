@@ -7,3 +7,5 @@ bool testExpand();
 bool testAppend();
 
 bool testEvaluateConstants();
+
+bool testLikeTerms();

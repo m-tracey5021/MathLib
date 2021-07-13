@@ -1,6 +1,7 @@
 
 #include "exponent.h"
 #include "expressionComponents.h"
+#include "Visitors/equalTo.h"
 
 Exponent::Exponent(): Operation('^'){}
 
@@ -26,7 +27,13 @@ bool Exponent::isAtomicExponent(){
 
 bool Exponent::isAtomicNumerator(){return true;}
 
-bool Exponent::isEqual(Symbol* other){}
+bool Exponent::isEqual(Symbol* other){
+    shared_ptr<EqualToExponent> equal = make_shared<EqualToExponent>(*this);
+    other->accept(equal.get());
+    return equal->isEqual;
+}
+
+bool Exponent::isLikeTerm(Symbol* other){return false;}
 
 
 void Exponent::evaluateConstants(){
@@ -48,6 +55,12 @@ void Exponent::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparen
         children[1]->expandAsExponent(*children[0], this, parent);
     }
     parent->expandExponent(grandparent);
+}
+
+void Exponent::sumLikeTerms(){
+    for (shared_ptr<Symbol> child : children){
+        child->sumLikeTerms();
+    }
 }
 
 shared_ptr<Symbol> Exponent::copy(){

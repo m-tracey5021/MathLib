@@ -1,6 +1,7 @@
 
 #include "radical.h"
 #include "expressionComponents.h"
+#include "Visitors/equalTo.h"
 
 Radical::Radical(): Operation('v'){}
 
@@ -20,7 +21,13 @@ bool Radical::isAtomicExponent(){return true;}
 
 bool Radical::isAtomicNumerator(){return true;}
 
-bool Radical::isEqual(Symbol* other){}
+bool Radical::isEqual(Symbol* other){
+    shared_ptr<EqualToRadical> equal = make_shared<EqualToRadical>(*this);
+    other->accept(equal.get());
+    return equal->isEqual;
+}
+
+bool Radical::isLikeTerm(Symbol* other){return false;}
 
 // void Radical::appendChild(shared_ptr<Symbol>& child){
 //     child->setIndex(children.size());
@@ -40,6 +47,12 @@ void Radical::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent
     // shared_ptr<Symbol> null;
     // return null;
     return;
+}
+
+void Radical::sumLikeTerms(){
+    for (shared_ptr<Symbol> child : children){
+        child->sumLikeTerms();
+    }
 }
 
 shared_ptr<Symbol> Radical::copy(){
