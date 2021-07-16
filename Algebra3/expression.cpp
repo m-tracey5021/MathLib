@@ -85,15 +85,7 @@ void Expression::setRoot(shared_ptr<Symbol>& root){
 void Expression::appendNode(shared_ptr<Symbol>& parent, shared_ptr<Symbol>& child){
     shared_ptr<Append> append = make_shared<Append>(child);
     parent->accept(append.get());
-    // shared_ptr<Symbol> test = this->getRoot();
 
-    // Append* append = new Append(child);
-    // parent->accept(append);
-    
-    // child->setParent(parent);
-    // child->setParentExpression(parent->getParentExpression());
-    // child->setIndex(parent->getChildren().size());
-    // parent->getChildren().push_back(child);
 }
 
 void Expression::removeNode(Symbol* target){

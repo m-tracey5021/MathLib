@@ -2,10 +2,6 @@
 #include "../symbol.h"
 #include "../expressionComponents.h"
 
-shared_ptr<Symbol> addWithLikeTerms(Symbol& lhs, Symbol* rhs){
-    
-}
-
 AddToSumOp::AddToSumOp(SumOp& lhs): lhs(lhs){}
 
 void AddToSumOp::Visit(SumOp* rhs){

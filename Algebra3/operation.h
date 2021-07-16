@@ -1,7 +1,6 @@
 #pragma once
 
 #include "symbol.h"
-#include "Visitors/appendToMulOp.h"
 
 // struct Scope {
 //     vector<pair<char, int>> ops;

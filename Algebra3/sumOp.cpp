@@ -1,6 +1,5 @@
 #include "sumOp.h"
 #include "expressionComponents.h"
-#include "Visitors/appendToSumOp.h"
 #include "Visitors/equalTo.h"
 
 SumOp::SumOp(): Operation('+'){}

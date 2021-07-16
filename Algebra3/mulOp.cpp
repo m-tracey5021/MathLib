@@ -1,6 +1,5 @@
 #include "mulOp.h"
 #include "expressionComponents.h"
-#include "Visitors/appendToMulOp.h"
 #include "Visitors/equalTo.h"
 #include "Visitors/isLikeTerm.h"
 
