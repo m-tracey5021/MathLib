@@ -63,6 +63,20 @@ void Exponent::sumLikeTerms(){
     }
 }
 
+shared_ptr<Symbol> Exponent::evaluate(){}
+
+shared_ptr<Symbol> Exponent::sum(Symbol& other){
+
+}
+
+shared_ptr<Symbol> Exponent::multiply(Symbol& other){
+    
+}
+
+shared_ptr<Symbol> Exponent::divide(Symbol& other){
+    
+}
+
 shared_ptr<Symbol> Exponent::copy(){
 
     shared_ptr<Symbol> copy = make_shared<Exponent>(sign);

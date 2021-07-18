@@ -125,6 +125,36 @@ void SumOp::sumLikeTerms(){
     }
 }
 
+shared_ptr<Symbol> SumOp::evaluate(){
+
+    shared_ptr<Symbol> result = children[0];
+
+    for (int i = 0; i < children.size(); i ++){
+
+        shared_ptr<Symbol> lhs = result->evaluate();
+        shared_ptr<Symbol> rhs = children[i + 1]->evaluate();
+
+        result = lhs->sum(*rhs.get());
+        
+        if (result == nullptr){ // check that operation was successful, otherwise move on
+            result = children[i + 1];
+        }
+    }
+    return result;
+}
+
+shared_ptr<Symbol> SumOp::sum(Symbol& other){
+
+}
+
+shared_ptr<Symbol> SumOp::multiply(Symbol& other){
+    
+}
+
+shared_ptr<Symbol> SumOp::divide(Symbol& other){
+    
+}
+
 shared_ptr<Symbol> SumOp::copy(){
     shared_ptr<Symbol> copy = make_shared<SumOp>(sign);
     vector<shared_ptr<Symbol>> copiedOperands;

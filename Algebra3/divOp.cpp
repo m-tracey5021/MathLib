@@ -119,6 +119,36 @@ void DivOp::sumLikeTerms(){
     }
 }
 
+shared_ptr<Symbol> DivOp::evaluate(){
+
+    shared_ptr<Symbol> result = children[0];
+    
+    for(int i = 0; i < children.size(); i ++){
+
+        shared_ptr<Symbol> lhs = result->evaluate();
+        shared_ptr<Symbol> rhs = children[i + 1]->evaluate();
+
+        result = lhs->divide(*rhs.get());
+        
+        if (result == nullptr){ // check that operation was successful, otherwise move on
+            result = children[i + 1];
+        }
+    }
+    return result;
+}
+
+shared_ptr<Symbol> DivOp::sum(Symbol& other){
+
+}
+
+shared_ptr<Symbol> DivOp::multiply(Symbol& other){
+    
+}
+
+shared_ptr<Symbol> DivOp::divide(Symbol& other){
+    
+}
+
 shared_ptr<Symbol> DivOp::copy(){
 
     shared_ptr<Symbol> copy = make_shared<DivOp>(sign);

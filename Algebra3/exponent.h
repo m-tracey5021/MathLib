@@ -62,6 +62,14 @@ class Exponent : public Operation {
 
         void sumLikeTerms() override;
 
+        shared_ptr<Symbol> evaluate() override;
+
+        shared_ptr<Symbol> sum(Symbol& other) override;
+
+        shared_ptr<Symbol> multiply(Symbol& other) override;
+
+        shared_ptr<Symbol> divide(Symbol& other) override;
+
         shared_ptr<Symbol> copy() override;
 
         shared_ptr<Symbol> sanitise() override;

@@ -96,6 +96,37 @@ bool testAppend(){
     }
 }
 
+bool testEvaluate(){
+    MParser parser;
+    vector<string> expressions = {
+        "4+2+3",
+        "4+2+3+x",
+        "4+2+3+(x+6)",
+        "4+2+3+(6+7)",
+        "4-2-3",
+        "4+2+3-1",
+        "4+(2-x)",
+        "-4+2",
+        "4-2+7(1+2)",
+        "4/2",
+        "4/(1+1)",
+        "x+x",
+        "x^{2+3}",
+        "x^{2+10/5}"
+    };
+    for (string exp : expressions){
+        parser.parseExpression(exp);
+        shared_ptr<Expression> expression = parser.getParseTree();
+
+        shared_ptr<Symbol> result = expression->getRoot()->evaluate();
+
+        // std::cout << result->toString(false) << std::endl;
+
+        std::cout << result->toString(4) << std::endl;
+        
+    }
+}
+
 bool testEvaluateConstants(){
     MParser parser;
     vector<string> expressions = {

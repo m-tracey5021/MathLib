@@ -164,6 +164,36 @@ shared_ptr<Symbol> MulOp::sanitise(){
     // }
 }
 
+shared_ptr<Symbol> MulOp::evaluate(){
+
+    shared_ptr<Symbol> result = children[0];
+
+    for(int i = 0; i < children.size(); i ++){
+
+        shared_ptr<Symbol> lhs = result->evaluate();
+        shared_ptr<Symbol> rhs = children[i + 1]->evaluate();
+
+        result = lhs->multiply(*rhs.get());
+        
+        if (result == nullptr){ // check that operation was successful, otherwise move on
+            result = children[i + 1];
+        }
+    }
+    return result;
+}
+
+shared_ptr<Symbol> MulOp::sum(Symbol& other){
+
+}
+
+shared_ptr<Symbol> MulOp::multiply(Symbol& other){
+    
+}
+
+shared_ptr<Symbol> MulOp::divide(Symbol& other){
+    
+}
+
 shared_ptr<Symbol> MulOp::copy(){
 
     shared_ptr<Symbol> copy = make_shared<MulOp>(sign);

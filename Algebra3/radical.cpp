@@ -55,6 +55,20 @@ void Radical::sumLikeTerms(){
     }
 }
 
+shared_ptr<Symbol> Radical::evaluate(){}
+
+shared_ptr<Symbol> Radical::sum(Symbol& other){
+
+}
+
+shared_ptr<Symbol> Radical::multiply(Symbol& other){
+    
+}
+
+shared_ptr<Symbol> Radical::divide(Symbol& other){
+    
+}
+
 shared_ptr<Symbol> Radical::copy(){
 
     shared_ptr<Symbol> copy = make_shared<Radical>(sign);

@@ -9,9 +9,22 @@ Symbol::Symbol(char symbol, bool sign): symbol(symbol), sign(sign), isTarget(fal
 
 Symbol::Symbol(char symbol, bool sign, vector<shared_ptr<Symbol>>& children): symbol(symbol), sign(sign), children(move(children)), isTarget(false), isExponent(false), isRadical(false), index(-1){}
 
-Symbol::Symbol(char symbol, bool sign, shared_ptr<Expression>& parentExpression): symbol(symbol), sign(sign), parentExpression(parentExpression), isTarget(false), isExponent(false), isRadical(false), index(-1){}
+Symbol::Symbol(char symbol, bool sign, shared_ptr<Expression>& parentExpression): symbol(symbol), sign(sign), path({-1}), parentExpression(parentExpression), isTarget(false), isExponent(false), isRadical(false), index(-1){}
 
-Symbol::Symbol(char symbol, bool sign, vector<shared_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): symbol(symbol), sign(sign), children(move(children)), parentExpression(parentExpression), isTarget(false), isExponent(false), isRadical(false), index(-1){}
+Symbol::Symbol(char symbol, bool sign, vector<shared_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression): symbol(symbol), sign(sign), path({-1}), children(move(children)), parentExpression(parentExpression), isTarget(false), isExponent(false), isRadical(false), index(-1){}
+
+Symbol::Symbol(const Symbol& other){
+    symbol = other.symbol;
+    sign = other.sign;
+    isTarget = other.isTarget;
+    isExponent = other.isExponent;
+    isRadical = other.isRadical;
+
+}
+
+Symbol& Symbol::operator=(const Symbol& other){
+
+}
 
 Symbol::~Symbol() = default;
 

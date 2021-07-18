@@ -73,6 +73,10 @@ class Symbol {
 
         Symbol(char symbol, bool sign, vector<shared_ptr<Symbol>>& children, shared_ptr<Expression>& parentExpression);
 
+        Symbol(const Symbol& other);
+
+        Symbol& operator=(const Symbol& other);
+
         ~Symbol();
 
     
@@ -166,6 +170,14 @@ class Symbol {
         virtual void expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparent) = 0;
 
         virtual void sumLikeTerms() = 0;
+
+        virtual shared_ptr<Symbol> evaluate() = 0;
+
+        virtual shared_ptr<Symbol> sum(Symbol& other) = 0;
+
+        virtual shared_ptr<Symbol> multiply(Symbol& other) = 0;
+
+        virtual shared_ptr<Symbol> divide (Symbol& other) = 0;
 
         virtual shared_ptr<Symbol> copy() = 0;
 

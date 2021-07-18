@@ -15,6 +15,8 @@ shared_ptr<Symbol>& Expression::getRootNull(){return rootNull;}
 shared_ptr<Symbol> Expression::getNode(vector<int> path){
     if (path.size() == 0){
         return root;
+    }else if (path.size() == 1 && path[0] == -1){
+        
     }else{
         shared_ptr<Symbol> current = root;
         for (int index : path){
@@ -80,6 +82,10 @@ void Expression::setRoot(shared_ptr<Symbol>& root){
     this->root = root;
     vector<int> emptyPath;
     root->setPath(emptyPath);
+}
+
+void Expression::setPending(shared_ptr<Symbol>& pending){
+    this->pending = pending;
 }
 
 void Expression::appendNode(shared_ptr<Symbol>& parent, shared_ptr<Symbol>& child){

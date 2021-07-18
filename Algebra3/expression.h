@@ -11,7 +11,9 @@ class Expression {
 
         shared_ptr<Symbol> rootNull;
 
-        // vector<shared_ptr<Symbol>> context;
+        vector<shared_ptr<Symbol>> allocated;
+
+        vector<shared_ptr<Symbol>> unallocated;
 
     public:
 
@@ -30,6 +32,8 @@ class Expression {
         optional<shared_ptr<Symbol>> getNode(Symbol* target, shared_ptr<Symbol> current);
 
         void setRoot(shared_ptr<Symbol>& root);
+
+        void setPending(shared_ptr<Symbol>& pending);
 
         void appendNode(shared_ptr<Symbol>& parent, shared_ptr<Symbol>& child);
 

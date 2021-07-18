@@ -53,6 +53,22 @@ void Constant::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparen
 
 void Constant::sumLikeTerms(){return;}
 
+shared_ptr<Symbol> Constant::evaluate(){
+    return this->getWrapped();
+}
+
+shared_ptr<Symbol> Constant::sum(Symbol& other){
+
+}
+
+shared_ptr<Symbol> Constant::multiply(Symbol& other){
+    
+}
+
+shared_ptr<Symbol> Constant::divide(Symbol& other){
+    
+}
+
 shared_ptr<Symbol> Constant::copy(){
 
     shared_ptr<Symbol> copy = make_shared<Constant>(sign, value);

@@ -251,7 +251,15 @@ void MultiplyConstant::Visit(Radical* rhs){
 }
 
 void MultiplyConstant::Visit(Constant* rhs){
-    result = multiply(lhs, rhs);
+    int total = *lhs.getValue() * *rhs->getValue();
+    bool sign;
+    if (lhs.getSign() == rhs->getSign()){
+        sign = true;
+    }else{
+        sign = false;
+    }
+    shared_ptr<Symbol> multiplied = make_shared<Constant>(sign, total);
+    result = multiplied;
 }
 
 void MultiplyConstant::Visit(Variable* rhs){

@@ -78,6 +78,8 @@ int main(){
 
     bool evaluateConstantsPassed = testEvaluateConstants();
 
+    bool evaluatePassed = testEvaluate();
+
     // bool equalityPassed = testEquality();
 
     int elements1[] = {3, 4, 5};

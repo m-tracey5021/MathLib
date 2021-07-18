@@ -38,27 +38,33 @@ void AppendToSumOp::Visit(SumOp* child){
 }
 
 void AppendToSumOp::Visit(MulOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToSumOp::Visit(DivOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToSumOp::Visit(Exponent* child){
-   
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToSumOp::Visit(Radical* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToSumOp::Visit(Constant* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToSumOp::Visit(Variable* child){
-    
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 // ========
@@ -66,7 +72,8 @@ void AppendToSumOp::Visit(Variable* child){
 AppendToMulOp::AppendToMulOp(MulOp& parent): parent(parent){}
 
 void AppendToMulOp::Visit(SumOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToMulOp::Visit(MulOp* child){
@@ -75,23 +82,28 @@ void AppendToMulOp::Visit(MulOp* child){
 }
 
 void AppendToMulOp::Visit(DivOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToMulOp::Visit(Exponent* child){
-   
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToMulOp::Visit(Radical* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToMulOp::Visit(Constant* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToMulOp::Visit(Variable* child){
-    
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 // ========
@@ -99,31 +111,38 @@ void AppendToMulOp::Visit(Variable* child){
 AppendToDivOp::AppendToDivOp(DivOp& parent): parent(parent){}
 
 void AppendToDivOp::Visit(SumOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToDivOp::Visit(MulOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToDivOp::Visit(DivOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToDivOp::Visit(Exponent* child){
-   
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToDivOp::Visit(Radical* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToDivOp::Visit(Constant* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToDivOp::Visit(Variable* child){
-    
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 // ========
@@ -131,31 +150,38 @@ void AppendToDivOp::Visit(Variable* child){
 AppendToExponent::AppendToExponent(Exponent& parent): parent(parent){}
 
 void AppendToExponent::Visit(SumOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToExponent::Visit(MulOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToExponent::Visit(DivOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToExponent::Visit(Exponent* child){
-   
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToExponent::Visit(Radical* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToExponent::Visit(Constant* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToExponent::Visit(Variable* child){
-    
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 // ========
@@ -163,31 +189,38 @@ void AppendToExponent::Visit(Variable* child){
 AppendToRadical::AppendToRadical(Radical& parent): parent(parent){}
 
 void AppendToRadical::Visit(SumOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToRadical::Visit(MulOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToRadical::Visit(DivOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToRadical::Visit(Exponent* child){
-   
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToRadical::Visit(Radical* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToRadical::Visit(Constant* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToRadical::Visit(Variable* child){
-    
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 // ========
@@ -195,31 +228,38 @@ void AppendToRadical::Visit(Variable* child){
 AppendToConstant::AppendToConstant(Constant& parent): parent(parent){}
 
 void AppendToConstant::Visit(SumOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToConstant::Visit(MulOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToConstant::Visit(DivOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToConstant::Visit(Exponent* child){
-   
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToConstant::Visit(Radical* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToConstant::Visit(Constant* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToConstant::Visit(Variable* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 // ========
@@ -227,31 +267,38 @@ void AppendToConstant::Visit(Variable* child){
 AppendToVariable::AppendToVariable(Variable& parent): parent(parent){}
 
 void AppendToVariable::Visit(SumOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToVariable::Visit(MulOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToVariable::Visit(DivOp* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToVariable::Visit(Exponent* child){
-   
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToVariable::Visit(Radical* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToVariable::Visit(Constant* child){
-
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 void AppendToVariable::Visit(Variable* child){
-    
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(parent, wrappedChild);
 }
 
 // ========
@@ -273,21 +320,26 @@ void Append::Visit(MulOp* parent){
 }
 
 void Append::Visit(DivOp* parent){
-    append(*child, child);
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(*parent, wrappedChild);
 }
 
 void Append::Visit(Exponent* parent){
-    append(*child, child);
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(*parent, wrappedChild);
 }
 
 void Append::Visit(Radical* parent){
-    append(*child, child);
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(*parent, wrappedChild);
 }
 
 void Append::Visit(Constant* parent){
-    append(*child, child);
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(*parent, wrappedChild);
 }
 
 void Append::Visit(Variable* parent){
-    append(*child, child);
+    shared_ptr<Symbol> wrappedChild = child->getWrapped();
+    append(*parent, wrappedChild);
 }

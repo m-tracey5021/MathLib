@@ -43,6 +43,22 @@ void Variable::expandAsExponent(Symbol& base, Symbol* parent, Symbol* grandparen
 
 void Variable::sumLikeTerms(){return;}
 
+shared_ptr<Symbol> Variable::evaluate(){
+    return this->getWrapped();
+}
+
+shared_ptr<Symbol> Variable::sum(Symbol& other){
+
+}
+
+shared_ptr<Symbol> Variable::multiply(Symbol& other){
+    
+}
+
+shared_ptr<Symbol> Variable::divide(Symbol& other){
+    
+}
+
 shared_ptr<Symbol> Variable::copy(){
 
     shared_ptr<Symbol> copy = make_shared<Variable>(sign, value);
