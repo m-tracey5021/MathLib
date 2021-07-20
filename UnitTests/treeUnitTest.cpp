@@ -1,5 +1,4 @@
 #include "../Trees/binaryTree.h"
-#include "../Algebra/algabraicFunctions.h"
 
 // bool testTreeStructure(){
 //     char eq1[] = "(509 + 4) / 2 - 3 = 12 + x";
