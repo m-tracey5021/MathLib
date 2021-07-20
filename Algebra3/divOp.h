@@ -6,6 +6,8 @@ class DivOp : public Symbol {
 
     public:
 
+        DivOp();
+
         Expression add(SumOp& other) override;
         Expression add(MulOp& other) override;
         Expression add(DivOp& other) override;
@@ -13,6 +15,8 @@ class DivOp : public Symbol {
         Expression add(Radical& other) override;
         Expression add(Variable& other) override;
         Expression add(Constant& other) override;
+
+        string toString() override;
     
 
 };

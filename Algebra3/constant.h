@@ -4,7 +4,15 @@
 
 class Constant : public Symbol {
 
+    private:
+
+        int constant;
+
     public:
+
+        Constant();
+
+        Constant(int constant);
 
         Expression add(SumOp& other) override;
         Expression add(MulOp& other) override;
@@ -13,6 +21,8 @@ class Constant : public Symbol {
         Expression add(Radical& other) override;
         Expression add(Variable& other) override;
         Expression add(Constant& other) override;
+
+        string toString() override;
     
 
 };

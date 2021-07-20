@@ -6,6 +6,8 @@ class Exponent : public Symbol {
 
     public:
 
+        Exponent();
+
         Expression add(SumOp& other) override;
         Expression add(MulOp& other) override;
         Expression add(DivOp& other) override;
@@ -13,6 +15,8 @@ class Exponent : public Symbol {
         Expression add(Radical& other) override;
         Expression add(Variable& other) override;
         Expression add(Constant& other) override;
+
+        string toString() override;
     
 
 };

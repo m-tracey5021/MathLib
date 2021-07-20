@@ -1,10 +1,17 @@
 #pragma once
 
+#include <iostream>
+#include <string>
+
+using std::string;
+
 class SymbolContainerBase {
 
     public:
 
         SymbolContainerBase(){}
+
+        virtual string toString() = 0;
 
 };
 
@@ -20,7 +27,13 @@ class SymbolContainer : public SymbolContainerBase {
 
         SymbolContainer(T symbol)
         {
-            this.symbol = symbol;
+            this->symbol = symbol;
+        }
+
+        string toString() override
+        {
+            std::cout << "to string hit";
+            return symbol.toString();
         }
         
 };

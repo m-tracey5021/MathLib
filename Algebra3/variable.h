@@ -4,7 +4,15 @@
 
 class Variable : public Symbol {
 
+    private:
+
+        char variable;
+
     public:
+
+        Variable();
+
+        Variable(char variable);
 
         Expression add(SumOp& other) override;
         Expression add(MulOp& other) override;
@@ -13,6 +21,8 @@ class Variable : public Symbol {
         Expression add(Radical& other) override;
         Expression add(Variable& other) override;
         Expression add(Constant& other) override;
+
+        string toString() override;
     
 
 };

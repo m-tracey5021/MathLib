@@ -6,6 +6,8 @@ class SumOp : public Symbol {
 
     public:
 
+        SumOp();
+
         Expression add(SumOp& other) override;
         Expression add(MulOp& other) override;
         Expression add(DivOp& other) override;
@@ -14,5 +16,6 @@ class SumOp : public Symbol {
         Expression add(Variable& other) override;
         Expression add(Constant& other) override;
     
+        string toString() override;
 
 };
