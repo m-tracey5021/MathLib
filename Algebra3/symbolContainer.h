@@ -32,7 +32,6 @@ class SymbolContainer : public SymbolContainerBase {
 
         string toString() override
         {
-            std::cout << "to string hit";
             return symbol.toString();
         }
         

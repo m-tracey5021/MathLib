@@ -1,4 +1,5 @@
 #include "constant.h"
+#include "expression.h"
 #include "expressionComponents.h"
 
 Constant::Constant(): Symbol(){}

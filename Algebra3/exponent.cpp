@@ -1,5 +1,6 @@
 
 #include "exponent.h"
+#include "expression.h"
 #include "expressionComponents.h"
 
 Exponent::Exponent(): Symbol('^', nullopt){}

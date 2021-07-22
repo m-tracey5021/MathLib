@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "algebraUnitTest.h"
+#include "../Algebra3/expression.h"
 #include "../Algebra3/expressionComponents.h"
 
 using std::shared_ptr;
@@ -30,9 +31,11 @@ bool testStructure(){
 
     Expression expression = Expression();
 
-    shared_ptr<SymbolContainerBase> root = expression.buildSymbol(true, '+', nullopt);
-    shared_ptr<SymbolContainerBase> lhs = expression.buildSymbol(true, '3', 3);
-    shared_ptr<SymbolContainerBase> rhs = expression.buildSymbol(true, 'x', nullopt);
+    ExpressionBuilder builder = ExpressionBuilder();
+
+    shared_ptr<SymbolContainerBase> root = builder.buildSymbol(true, '+');
+    shared_ptr<SymbolContainerBase> lhs = builder.buildSymbol(true, '3');
+    shared_ptr<SymbolContainerBase> rhs = builder.buildSymbol(true, 'x');
 
     expression.addNode(root);
     expression.addNode(lhs);

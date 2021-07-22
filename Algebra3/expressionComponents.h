@@ -1,4 +1,6 @@
-#include "expression.h"
+#pragma once
+
+// #include "expression.h"
 #include "sumOp.h"
 #include "mulOp.h"
 #include "divOp.h"

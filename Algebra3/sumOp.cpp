@@ -1,4 +1,5 @@
 #include "sumOp.h"
+#include "expression.h"
 #include "expressionComponents.h"
 
 SumOp::SumOp(): Symbol('+', nullopt){}

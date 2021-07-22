@@ -1,5 +1,6 @@
 
 #include "radical.h"
+#include "expression.h"
 #include "expressionComponents.h"
 
 Radical::Radical(): Symbol('v', nullopt){}

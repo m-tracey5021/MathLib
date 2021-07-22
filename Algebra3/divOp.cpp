@@ -1,4 +1,5 @@
 #include "divOp.h"
+#include "expression.h"
 #include "expressionComponents.h"
 
 DivOp::DivOp(): Symbol('/', nullopt){}

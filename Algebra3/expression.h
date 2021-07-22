@@ -46,7 +46,7 @@ class Expression {
 
         void addNodes(shared_ptr<SymbolContainerBase>& parent, vector<shared_ptr<SymbolContainerBase>> children);
 
-        shared_ptr<SymbolContainerBase> buildSymbol(bool sign, char symbol, optional<int> value);
+        // void applyToTree(shared_ptr<SymbolContainerBase>& operation);
 
         string toString();
 
@@ -54,5 +54,57 @@ class Expression {
 
 };
 
+
+class ExpressionBuilder {
+
+    private:
+
+        Expression expression;
+
+    public:
+
+        shared_ptr<SymbolContainerBase> buildSymbol(bool sign, char symbol);
+
+        void build();
+
+        void plus(int constant);
+
+        void minus(int constant);
+
+        void times(int constant);
+
+        void divide(int constant);
+
+        void raise(int constant);
+
+        void floor(int constant);
+
+        void plus(char variable);
+
+        void minus(char variable);
+
+        void times(char variable);
+
+        void divide(char variable);
+
+        void raise(char variable);
+
+        void floor(char variable);
+
+        void plus(Expression expression);
+
+        void minus(Expression expression);
+
+        void times(Expression expression);
+
+        void divide(Expression expression);
+
+        void raise(Expression expression);
+
+        void floor(Expression expression);
+
+        Expression get();
+
+};
 
 

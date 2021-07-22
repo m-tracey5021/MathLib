@@ -1,4 +1,5 @@
 #include "mulOp.h"
+#include "expression.h"
 #include "expressionComponents.h"
 
 MulOp::MulOp(): Symbol('*', nullopt){}

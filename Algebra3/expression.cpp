@@ -1,6 +1,7 @@
 #include "expression.h"
 #include "expressionComponents.h"
 
+#include <iostream>
 #include <algorithm>
 
 Expression::Expression(){}
@@ -59,7 +60,19 @@ void Expression::addNodes(shared_ptr<SymbolContainerBase>& parent, vector<shared
     }
 }
 
-shared_ptr<SymbolContainerBase> buildSymbol(bool sign, char symbol, optional<int> value)
+string Expression::toString()
+{
+    string result = "";
+
+    for (shared_ptr<SymbolContainerBase> container : tree)
+    {
+        result += container->toString();
+    }
+    
+    return result;
+}
+
+shared_ptr<SymbolContainerBase> ExpressionBuilder::buildSymbol(bool sign, char symbol)
 {
     if (symbol == '+' || symbol == '-')
     {
@@ -109,14 +122,13 @@ shared_ptr<SymbolContainerBase> buildSymbol(bool sign, char symbol, optional<int
     }
 }
 
-string Expression::toString()
+void ExpressionBuilder::build()
 {
-    string result = "";
+    expression = Expression();
+}
 
-    for (shared_ptr<SymbolContainerBase> container : tree)
-    {
-        result += container->toString();
-    }
-    
-    return result;
+void ExpressionBuilder::plus(int constant)
+{
+    shared_ptr<SymbolContainerBase> container = buildSymbol(true, constant);
+    expression.addNode(container);
 }
